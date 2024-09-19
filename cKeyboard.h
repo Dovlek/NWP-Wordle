@@ -3,7 +3,7 @@
 
 class cKeyboard
 {
-protected:
+public:
 	int keyboardSize;
 	wxStaticText** keyLabel;
 	wxString keyboardString;
@@ -13,14 +13,14 @@ protected:
 	wxBoxSizer* gridKeyRow3;
 	wxVector<wxBitmap> bitmapsKeys;
 
-public:
 	virtual wxBoxSizer* CreateKeyboard(wxWindow* parent) = 0;
 };
 
 class cKeyboardENG : public cKeyboard
 {
 public:
-	wxBoxSizer* CreateKeyboard(wxWindow* parent);
 	cKeyboardENG();
 	~cKeyboardENG();
+	
+	wxBoxSizer* CreateKeyboard(wxWindow* parent);
 };

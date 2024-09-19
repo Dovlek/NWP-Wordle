@@ -50,7 +50,6 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
 		keyPosition++;
 	}
 
-
 	gridKey[keyPosition] = new wxButton(parent, 500 + keyPosition, wxEmptyString, wxDefaultPosition, wxSize(bitmapsKeys[1].GetWidth(), bitmapsKeys[1].GetHeight()), wxBORDER_NONE);
 	gridKey[keyPosition]->SetBitmap(bitmapsKeys.at(1));
 
