@@ -43,6 +43,21 @@ wxGridSizer* cGrid::CreateGrid(wxWindow* parent)
 	return grid;
 }
 
+void cGrid::SetLetter(int row, int col, const wxString& letter)
+{
+    if (!IsValidPosition(row, col))
+        return;
+
+    int index = row * nFieldWidth + col;
+	gridText[index]->SetLabel(letter);
+    gridText[index]->CenterOnParent();
+}
+
+bool cGrid::IsValidPosition(int row, int col) const
+{
+    return row >= 0 && row < nFieldHeight && col >= 0 && col < nFieldWidth;
+}
+
 cGrid::~cGrid()
 {
 	delete[]gridButton;

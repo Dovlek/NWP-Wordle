@@ -1,4 +1,4 @@
-#include "cMain.h"
+﻿#include "cMain.h"
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxSize(800, 600))
 {
@@ -10,35 +10,27 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
 	wxBoxSizer* keyboardSizer = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticText* title = new wxStaticText(panel, wxID_ANY, "WORDLE", wxDefaultPosition, wxDefaultSize);
-
 	title->SetBackgroundColour(wxColor(20, 20, 20));
 	title->SetForegroundColour(wxColor(*wxWHITE));
-	title->SetFont(wxFont (22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
+	title->SetFont(wxFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
-	//Create Grid
+	// Create Grid
+	cgrid = new cGrid(5, 6);
+	gridSizer->Add(cgrid->CreateGrid(panel));
 
-	cGrid grid(5, 6);
-	gridSizer->Add(grid.CreateGrid(panel));
-
-	//Create keyboard Grid
-
-	int selectedKeyboard = 1;
-
-	switch (selectedKeyboard)
+	// Create keyboard Grid
+	ckeyboard_eng = new cKeyboardENG();
+    wxBoxSizer* keyboardPanel = ckeyboard_eng->CreateKeyboard(panel);
+	
+	// Bind keyboard buttons
+	for (int i = 0; i < ckeyboard_eng->keyboardSize + 2; i++)
 	{
-		case 1:
-		{
-			cKeyboardENG keyboard;
-			keyboardSizer->Add(keyboard.CreateKeyboard(panel), wxSizerFlags().CenterHorizontal().Border(wxALL, 2));
-			break;
-		}
-
-		default:
-			break;
+		ckeyboard_eng->gridKey[i]->Bind(wxEVT_BUTTON, &cMain::OnKeyboardButtonClicked, this);
 	}
 
-	//Set Sizers
+    keyboardSizer->Add(keyboardPanel, wxSizerFlags().CenterHorizontal().Border(wxALL, 2));
 
+	// Set Sizers
 	gameSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 25));
 	gameSizer->Add(gridSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 10));
 	gameSizer->Add(keyboardSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 25));
@@ -47,6 +39,54 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
 	gameSizer->SetSizeHints(this);
 }
 
+void cMain::OnKeyboardButtonClicked(wxCommandEvent& evt)
+{
+    wxButton* button = wxDynamicCast(evt.GetEventObject(), wxButton);
+    if (!button) return;
+
+    wxString letter;
+
+    // Find the child wxStaticText and get its label
+    const wxWindowList& children = button->GetChildren();
+    for (wxWindowList::const_iterator it = children.begin(); it != children.end(); ++it)
+    {
+        wxStaticText* labelCtrl = dynamic_cast<wxStaticText*>(*it);
+        if (labelCtrl)
+        {
+            letter = labelCtrl->GetLabel();
+            break;
+        }
+    }
+
+    //wxMessageBox("You clicked: " + letter);
+
+    // Handle special keys
+    if (letter == "ENTER")
+    {
+        if (currentCol == cgrid->GetWidth())
+        {
+            currentRow++;
+            currentCol = 0;
+        }
+    }
+    else if (letter == "backspace")
+    {
+        if (currentCol > 0) {
+            currentCol--;
+            cgrid->SetLetter(currentRow, currentCol, "");
+        }
+    }
+    else if (currentCol < cgrid->GetWidth() && currentRow < cgrid->GetHeight())
+    {
+        cgrid->SetLetter(currentRow, currentCol, letter);
+        currentCol++;
+    }
+
+    evt.Skip();
+}
+
 cMain::~cMain()
 {
+    delete cgrid;
+    delete ckeyboard_eng;
 }

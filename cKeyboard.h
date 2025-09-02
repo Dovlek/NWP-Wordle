@@ -23,4 +23,5 @@ public:
 	~cKeyboardENG();
 	
 	wxBoxSizer* CreateKeyboard(wxWindow* parent);
+	void OnKeyLabelClicked(wxMouseEvent& event);
 };
