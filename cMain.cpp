@@ -2,7 +2,7 @@
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxSize(800, 600))
 {
-	wxPanel* panel = new wxPanel(this);
+	wxPanel* panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
 	panel->SetBackgroundColour(wxColor(20, 20, 20));
 
 	wxBoxSizer* gameSizer = new wxBoxSizer(wxVERTICAL);
@@ -37,16 +37,44 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
 	gameSizer->AddStretchSpacer();
 	panel->SetSizer(gameSizer);
 	gameSizer->SetSizeHints(this);
+	panel->SetFocus();
+	
+	// Bind keyboard events to both panel and frame
+	panel->Bind(wxEVT_CHAR_HOOK, &cMain::OnKeyboardButtonPressed, this);
+	this->Bind(wxEVT_CHAR_HOOK, &cMain::OnKeyboardButtonPressed, this);
+}
+
+// TODO: Fix Enter key not bypassing button focus
+void cMain::OnKeyboardButtonPressed(wxKeyEvent& evt)
+{
+    int keyCode = evt.GetKeyCode();
+    wxString key;
+
+    if (keyCode >= 'A' && keyCode <= 'Z')
+        key = wxString(static_cast<char>(keyCode));
+    else if (keyCode >= 'a' && keyCode <= 'z')
+        key = wxString(static_cast<char>(keyCode - 32));
+    else if (keyCode == WXK_RETURN || keyCode == WXK_NUMPAD_ENTER || keyCode == 13)
+        key = "ENTER";
+    else if (keyCode == WXK_BACK)
+        key = "backspace";
+
+    if (!key.IsEmpty())
+    {
+        ProcessKey(key);
+        this->SetFocus();
+    }   
+    else
+        evt.Skip();
 }
 
 void cMain::OnKeyboardButtonClicked(wxCommandEvent& evt)
 {
     wxButton* button = wxDynamicCast(evt.GetEventObject(), wxButton);
-    if (!button) return;
+    if (!button)
+        return;
 
     wxString letter;
-
-    // Find the child wxStaticText and get its label
     const wxWindowList& children = button->GetChildren();
     for (wxWindowList::const_iterator it = children.begin(); it != children.end(); ++it)
     {
@@ -58,31 +86,34 @@ void cMain::OnKeyboardButtonClicked(wxCommandEvent& evt)
         }
     }
 
-    //wxMessageBox("You clicked: " + letter);
+    ProcessKey(letter);
+    this->SetFocus();
+    evt.Skip();
+}
 
-    // Handle special keys
-    if (letter == "ENTER")
+void cMain::ProcessKey(const wxString& key)
+{
+    if (key == "ENTER")
     {
-        if (currentCol == cgrid->GetWidth())
+        if (currentCol == cgrid->GetWidth() && currentRow < cgrid->GetHeight() - 1)
         {
             currentRow++;
             currentCol = 0;
         }
     }
-    else if (letter == "backspace")
+    else if (key == "backspace")
     {
-        if (currentCol > 0) {
+        if (currentCol > 0)
+        {
             currentCol--;
             cgrid->SetLetter(currentRow, currentCol, "");
         }
     }
-    else if (currentCol < cgrid->GetWidth() && currentRow < cgrid->GetHeight())
+    else if (key.Length() == 1 && currentCol < cgrid->GetWidth() && currentRow < cgrid->GetHeight())
     {
-        cgrid->SetLetter(currentRow, currentCol, letter);
+        cgrid->SetLetter(currentRow, currentCol, key.Upper());
         currentCol++;
     }
-
-    evt.Skip();
 }
 
 cMain::~cMain()
