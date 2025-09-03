@@ -9,8 +9,8 @@ cKeyboardENG::cKeyboardENG()
 	gridKeyRow2 = new wxBoxSizer(wxHORIZONTAL);
 	gridKeyRow3 = new wxBoxSizer(wxHORIZONTAL);
 	keyLabel = new wxStaticText * [keyboardSize + 2];
-	bitmapsKeys.push_back(wxBitmap("Resources/Keys/Unused.bmp", wxBITMAP_TYPE_BMP));
-	bitmapsKeys.push_back(wxBitmap("Resources/Keys/BigButton.bmp", wxBITMAP_TYPE_BMP));
+	bitmapsKeys.push_back(wxBitmap(wxT("IDB_UNUSED"), wxBITMAP_TYPE_BMP_RESOURCE));
+	bitmapsKeys.push_back(wxBitmap(wxT("IDB_BIGBUTTON"), wxBITMAP_TYPE_BMP_RESOURCE));
 }
 
 wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)

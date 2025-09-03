@@ -8,11 +8,11 @@ cGrid::cGrid(int width, int height)
 	gridButton = new wxButton * [nFieldHeight * nFieldWidth];
 	gridText = new wxStaticText * [nFieldHeight * nFieldWidth];
 
-	bitmapsGrid.push_back(wxBitmap("Resources/Grid/Unmarked.bmp", wxBITMAP_TYPE_BMP));
-	bitmapsGrid.push_back(wxBitmap("Resources/Grid/Marked.bmp", wxBITMAP_TYPE_BMP));
-	bitmapsGrid.push_back(wxBitmap("Resources/Grid/Cold.bmp", wxBITMAP_TYPE_BMP));
-	bitmapsGrid.push_back(wxBitmap("Resources/Grid/Warm.bmp", wxBITMAP_TYPE_BMP));
-	bitmapsGrid.push_back(wxBitmap("Resources/Grid/Hot.bmp", wxBITMAP_TYPE_BMP));
+	bitmapsGrid.push_back(wxBitmap(wxT("IDB_UNMARKED"), wxBITMAP_TYPE_BMP_RESOURCE));
+	bitmapsGrid.push_back(wxBitmap(wxT("IDB_MARKED"), wxBITMAP_TYPE_BMP_RESOURCE));
+	bitmapsGrid.push_back(wxBitmap(wxT("IDB_COLD"), wxBITMAP_TYPE_BMP_RESOURCE));
+	bitmapsGrid.push_back(wxBitmap(wxT("IDB_WARM"), wxBITMAP_TYPE_BMP_RESOURCE));
+	bitmapsGrid.push_back(wxBitmap(wxT("IDB_HOT"), wxBITMAP_TYPE_BMP_RESOURCE));
 }
 
 wxGridSizer* cGrid::CreateGrid(wxWindow* parent)

@@ -30,6 +30,21 @@
     <ClCompile Include="cKeyboard.cpp" />
     <ClCompile Include="cMain.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Grid\Cold.bmp" />
+    <Image Include="Resources\Grid\Hot.bmp" />
+    <Image Include="Resources\Grid\Marked.bmp" />
+    <Image Include="Resources\Grid\Unmarked.bmp" />
+    <Image Include="Resources\Grid\Warm.bmp" />
+    <Image Include="Resources\Keys\Almost.bmp" />
+    <Image Include="Resources\Keys\BigButton.bmp" />
+    <Image Include="Resources\Keys\Correct.bmp" />
+    <Image Include="Resources\Keys\Unused.bmp" />
+    <Image Include="Resources\Keys\Used.bmp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
