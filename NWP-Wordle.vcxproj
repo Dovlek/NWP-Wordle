@@ -45,6 +45,9 @@
     <Image Include="Resources\Keys\Unused.bmp" />
     <Image Include="Resources\Keys\Used.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\WordsENG.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
