@@ -97,6 +97,8 @@ void cMain::ProcessKey(const wxString& key)
     {
         if (currentCol == cgrid->GetWidth() && currentRow < cgrid->GetHeight() - 1)
         {
+            prevRow = currentRow;
+            prevCol = currentCol - 1;
             currentRow++;
             currentCol = 0;
         }
@@ -105,14 +107,20 @@ void cMain::ProcessKey(const wxString& key)
     {
         if (currentCol > 0)
         {
+            prevRow = currentRow;
+            prevCol = currentCol;
             currentCol--;
+            cgrid->UpdateActiveCell(prevRow, prevCol, currentRow, currentCol, false);
             cgrid->SetLetter(currentRow, currentCol, "");
         }
     }
     else if (key.Length() == 1 && currentCol < cgrid->GetWidth() && currentRow < cgrid->GetHeight())
     {
         cgrid->SetLetter(currentRow, currentCol, key.Upper());
+        prevRow = currentRow;
+        prevCol = currentCol;
         currentCol++;
+        cgrid->UpdateActiveCell(prevRow, prevCol, currentRow, currentCol, true);
     }
 }
 

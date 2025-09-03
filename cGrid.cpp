@@ -39,7 +39,6 @@ wxGridSizer* cGrid::CreateGrid(wxWindow* parent)
 			grid->Add(gridButton[x * nFieldWidth + y], 1, wxALL, 2);
 		}
 	}
-
 	return grid;
 }
 
@@ -56,6 +55,14 @@ void cGrid::SetLetter(int row, int col, const wxString& letter)
 bool cGrid::IsValidPosition(int row, int col) const
 {
     return row >= 0 && row < nFieldHeight && col >= 0 && col < nFieldWidth;
+}
+
+void cGrid::UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol, bool forward)
+{
+    if (IsValidPosition(prevRow, prevCol) && forward)
+        gridButton[prevRow * nFieldWidth + prevCol]->SetBitmap(bitmapsGrid.at(1));
+    if (IsValidPosition(currRow, currCol) && !forward)
+        gridButton[currRow * nFieldWidth + currCol]->SetBitmap(bitmapsGrid.at(0));
 }
 
 cGrid::~cGrid()

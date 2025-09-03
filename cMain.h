@@ -14,6 +14,8 @@ private:
     cKeyboardENG* ckeyboard_eng;
     int currentRow = 0;
     int currentCol = 0;
+    int prevRow = 0;
+    int prevCol = 0;
     void OnKeyboardButtonClicked(wxCommandEvent& evt);
     void OnKeyboardButtonPressed(wxKeyEvent& evt);
     void ProcessKey(const wxString& key);

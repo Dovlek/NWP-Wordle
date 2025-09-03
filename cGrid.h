@@ -14,6 +14,8 @@ public:
 	int GetWidth() const { return nFieldWidth; }
 	int GetHeight() const { return nFieldHeight; }
 
+	void UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol, bool forward);
+
 private:
 	int nFieldWidth;
 	int nFieldHeight;
