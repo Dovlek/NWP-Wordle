@@ -1,3 +1,5 @@
+#include "resource.h"
+
 IDB_UNMARKED   BITMAP   "Resources/Grid/Unmarked.bmp"
 IDB_MARKED     BITMAP   "Resources/Grid/Marked.bmp"
 IDB_COLD       BITMAP   "Resources/Grid/Cold.bmp"
@@ -8,3 +10,4 @@ IDB_BIGBUTTON  BITMAP   "Resources/Keys/BigButton.bmp"
 IDB_CORRECT    BITMAP   "Resources/Keys/Correct.bmp"
 IDB_UNUSED     BITMAP   "Resources/Keys/Unused.bmp"
 IDB_USED       BITMAP   "Resources/Keys/Used.bmp"
+IDR_WORDSENG   RCDATA   "Resources/WordsENG.txt"

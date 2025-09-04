@@ -27,6 +27,12 @@
     <ClInclude Include="cGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WordSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cApp.cpp">
@@ -41,5 +47,50 @@
     <ClCompile Include="cGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WordSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Grid\Cold.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Grid\Hot.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Grid\Marked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Grid\Unmarked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Grid\Warm.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Keys\Almost.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Keys\BigButton.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Keys\Correct.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Keys\Unused.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Keys\Used.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\WordsENG.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -23,12 +23,15 @@
     <ClInclude Include="cGrid.h" />
     <ClInclude Include="cKeyboard.h" />
     <ClInclude Include="cMain.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="WordSelector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cApp.cpp" />
     <ClCompile Include="cGrid.cpp" />
     <ClCompile Include="cKeyboard.cpp" />
     <ClCompile Include="cMain.cpp" />
+    <ClCompile Include="WordSelector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources.rc" />
