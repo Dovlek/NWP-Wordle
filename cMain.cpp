@@ -42,6 +42,10 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
 	// Bind keyboard events to both panel and frame
 	panel->Bind(wxEVT_CHAR_HOOK, &cMain::OnKeyboardButtonPressed, this);
 	this->Bind(wxEVT_CHAR_HOOK, &cMain::OnKeyboardButtonPressed, this);
+
+    wordSelector = new WordSelector();
+    targetWord = wordSelector->GetRandomWord();
+    wxLogMessage("Target word: %s", targetWord);
 }
 
 // TODO: Fix Enter key not bypassing button focus
@@ -128,4 +132,5 @@ cMain::~cMain()
 {
     delete cgrid;
     delete ckeyboard_eng;
+    delete wordSelector;
 }

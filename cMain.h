@@ -2,6 +2,7 @@
 #include "wx/wx.h"
 #include "cKeyboard.h"
 #include "cGrid.h"
+#include "WordSelector.h"
 
 class cMain : public wxFrame
 {
@@ -19,5 +20,7 @@ private:
     void OnKeyboardButtonClicked(wxCommandEvent& evt);
     void OnKeyboardButtonPressed(wxKeyEvent& evt);
     void ProcessKey(const wxString& key);
+    WordSelector* wordSelector;
+    wxString targetWord;
 };
 
