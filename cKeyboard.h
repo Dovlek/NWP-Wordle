@@ -14,6 +14,7 @@ public:
 	wxVector<wxBitmap> bitmapsKeys;
 
 	virtual wxBoxSizer* CreateKeyboard(wxWindow* parent) = 0;
+	void OnKeyLabelClicked(wxMouseEvent& event);
 };
 
 class cKeyboardENG : public cKeyboard
@@ -23,5 +24,4 @@ public:
 	~cKeyboardENG();
 	
 	wxBoxSizer* CreateKeyboard(wxWindow* parent);
-	void OnKeyLabelClicked(wxMouseEvent& event);
 };
