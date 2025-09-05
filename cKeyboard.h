@@ -15,6 +15,7 @@ public:
 
 	virtual wxBoxSizer* CreateKeyboard(wxWindow* parent) = 0;
 	void OnKeyLabelClicked(wxMouseEvent& event);
+	void UpdateKeyboardColors(const wxString& guess, const std::vector<int>& states);
 };
 
 class cKeyboardENG : public cKeyboard

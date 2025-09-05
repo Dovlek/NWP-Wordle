@@ -15,6 +15,48 @@ void cKeyboard::OnKeyLabelClicked(wxMouseEvent& event)
     }
 }
 
+void cKeyboard::UpdateKeyboardColors(const wxString& guess, const std::vector<int>& states)
+{
+    for (int i = 0; i < states.size(); i++)
+    {
+        wxString letter = wxString(guess[i]).Upper();
+        
+        for (int keyIndex = 0; keyIndex < keyboardSize + 2; keyIndex++)
+        {
+            if (keyLabel[keyIndex]->GetLabel() == letter)
+            {
+                // Don't downgrade colors
+                wxColor currentBg = keyLabel[keyIndex]->GetBackgroundColour();
+                wxColor correctColor(83, 141, 78);
+                wxColor wrongPosColor(181, 159, 59);
+                wxColor wrongColor(58, 58, 60);
+                
+                if (currentBg == correctColor) 
+                    continue;
+                
+                if (states[i] == 2) // CORRECT
+                {
+                    gridKey[keyIndex]->SetBitmap(bitmapsKeys[4]);
+                    keyLabel[keyIndex]->SetBackgroundColour(correctColor);
+                }
+                else if (states[i] == 1 && currentBg != correctColor) // WRONG_POSITION
+                {
+                    gridKey[keyIndex]->SetBitmap(bitmapsKeys[3]);
+                    keyLabel[keyIndex]->SetBackgroundColour(wrongPosColor);
+                }
+                else if (states[i] == 0 && currentBg != correctColor && currentBg != wrongPosColor) // WRONG
+                {
+                    gridKey[keyIndex]->SetBitmap(bitmapsKeys[2]);
+                    keyLabel[keyIndex]->SetBackgroundColour(wrongColor);
+                }
+                
+                keyLabel[keyIndex]->Refresh();
+                break;
+            }
+        }
+    }
+}
+
 cKeyboardENG::cKeyboardENG()
 {
 	keyboardString = wxT("QWERTYUIOPASDFGHJKLZXCVBNM");
@@ -26,6 +68,9 @@ cKeyboardENG::cKeyboardENG()
 	keyLabel = new wxStaticText * [keyboardSize + 2];
 	bitmapsKeys.push_back(wxBitmap(wxT("IDB_UNUSED"), wxBITMAP_TYPE_BMP_RESOURCE));
 	bitmapsKeys.push_back(wxBitmap(wxT("IDB_BIGBUTTON"), wxBITMAP_TYPE_BMP_RESOURCE));
+	bitmapsKeys.push_back(wxBitmap(wxT("IDB_USED"), wxBITMAP_TYPE_BMP_RESOURCE));
+	bitmapsKeys.push_back(wxBitmap(wxT("IDB_ALMOST"), wxBITMAP_TYPE_BMP_RESOURCE));
+	bitmapsKeys.push_back(wxBitmap(wxT("IDB_CORRECT"), wxBITMAP_TYPE_BMP_RESOURCE));
 }
 
 wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)

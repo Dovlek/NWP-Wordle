@@ -180,6 +180,7 @@ void cMain::CheckGuess(const wxString& guess, int row)
     }
     
     cgrid->UpdateCellColors(row, intStates);
+    ckeyboard_eng->UpdateKeyboardColors(guess, intStates);
     
     bool allCorrect = true;
     for (const auto& state : states)
