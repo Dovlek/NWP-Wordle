@@ -75,6 +75,38 @@ void cGrid::UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol,
         gridButton[currRow * nFieldWidth + currCol]->SetBitmap(bitmapsGrid.at(0));
 }
 
+void cGrid::UpdateCellColors(int row, const std::vector<int>& states)
+{
+    for (int col = 0; col < nFieldWidth; ++col)
+    {
+        int index = row * nFieldWidth + col;
+        int bitmapIndex = 0;
+        wxColor textBackgroundColor = wxColor(18, 18, 19);
+        
+        switch (states[col])
+        {
+        case 0: // WRONG
+            bitmapIndex = 2; // IDB_COLD
+            textBackgroundColor = wxColor(58, 58, 60);
+            break;
+        case 1: // WRONG_POSITION  
+            bitmapIndex = 3; // IDB_WARM
+            textBackgroundColor = wxColor(181, 159, 59);
+            break;
+        case 2: // CORRECT
+            bitmapIndex = 4; // IDB_HOT
+            textBackgroundColor = wxColor(83, 141, 78);
+            break;
+        default:
+            break;
+        }
+        
+        gridButton[index]->SetBitmap(bitmapsGrid.at(bitmapIndex));
+        gridText[index]->SetBackgroundColour(textBackgroundColor);
+        gridText[index]->Refresh();
+    }
+}
+
 cGrid::~cGrid()
 {
 	delete[]gridButton;

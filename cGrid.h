@@ -16,6 +16,7 @@ public:
 	int GetHeight() const { return nFieldHeight; }
 
 	void UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol, bool forward);
+	void UpdateCellColors(int row, const std::vector<int>& states);
 
 private:
 	int nFieldWidth;

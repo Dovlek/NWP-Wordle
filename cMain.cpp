@@ -173,6 +173,14 @@ void cMain::CheckGuess(const wxString& guess, int row)
 {
     std::vector<LetterState> states = CompareWords(guess, targetWord);
     
+    std::vector<int> intStates;
+    for (const auto& state : states)
+    {
+        intStates.push_back(static_cast<int>(state));
+    }
+    
+    cgrid->UpdateCellColors(row, intStates);
+    
     bool allCorrect = true;
     for (const auto& state : states)
     {
