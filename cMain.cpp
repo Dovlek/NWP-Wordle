@@ -99,10 +99,17 @@ void cMain::ProcessKey(const wxString& key)
 {
     if (key == "ENTER")
     {
-        if (currentCol == cgrid->GetWidth() && currentRow < cgrid->GetHeight() - 1)
+        if (currentCol == cgrid->GetWidth() && currentRow < cgrid->GetHeight())
         {
+            wxString currentGuess = "";
+            for (int i = 0; i < cgrid->GetWidth(); i++)
+            {
+                currentGuess += cgrid->GetLetter(currentRow, i);
+            }
+            
+            CheckGuess(currentGuess, currentRow);
             prevRow = currentRow;
-            prevCol = currentCol - 1;
+            prevCol = currentCol;
             currentRow++;
             currentCol = 0;
         }
@@ -125,6 +132,64 @@ void cMain::ProcessKey(const wxString& key)
         prevCol = currentCol;
         currentCol++;
         cgrid->UpdateActiveCell(prevRow, prevCol, currentRow, currentCol, true);
+    }
+}
+
+std::vector<cMain::LetterState> cMain::CompareWords(const wxString& guess, const wxString& target)
+{
+    std::vector<LetterState> states(5, LetterState::WRONG);
+    wxString targetCopy = target;
+    wxString guessCopy = guess;
+    
+    // First pass: mark correct positions
+    for (int i = 0; i < 5; i++)
+    {
+        if (guessCopy[i] == targetCopy[i])
+        {
+            states[i] = LetterState::CORRECT;
+            targetCopy[i] = '*';
+            guessCopy[i] = '*';
+        }
+    }
+    
+    // Second pass: mark wrong positions
+    for (int i = 0; i < 5; i++)
+    {
+        if (states[i] == LetterState::WRONG)
+        {
+            int pos = targetCopy.Find(guessCopy[i]);
+            if (pos != wxNOT_FOUND)
+            {
+                states[i] = LetterState::WRONG_POSITION;
+                targetCopy[pos] = '*';
+            }
+        }
+    }
+    
+    return states;
+}
+
+void cMain::CheckGuess(const wxString& guess, int row)
+{
+    std::vector<LetterState> states = CompareWords(guess, targetWord);
+    
+    bool allCorrect = true;
+    for (const auto& state : states)
+    {
+        if (state != LetterState::CORRECT)
+        {
+            allCorrect = false;
+            break;
+        }
+    }
+    
+    if (allCorrect)
+    {
+        wxMessageBox("Congratulations! You won!", "Victory", wxOK | wxICON_INFORMATION);
+    }
+    else if (currentRow >= cgrid->GetHeight() - 1)
+    {
+        wxMessageBox(wxString::Format("Game Over! The word was: %s", targetWord), "Game Over", wxOK | wxICON_INFORMATION);
     }
 }
 

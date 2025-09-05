@@ -52,6 +52,16 @@ void cGrid::SetLetter(int row, int col, const wxString& letter)
     gridText[index]->CenterOnParent();
 }
 
+wxString cGrid::GetLetter(int row, int col) const
+{
+    if (!IsValidPosition(row, col))
+        return wxEmptyString;
+    
+    int index = row * nFieldWidth + col;
+
+    return gridText[index]->GetLabel();
+}
+
 bool cGrid::IsValidPosition(int row, int col) const
 {
     return row >= 0 && row < nFieldHeight && col >= 0 && col < nFieldWidth;

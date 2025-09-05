@@ -22,5 +22,15 @@ private:
     void ProcessKey(const wxString& key);
     WordSelector* wordSelector;
     wxString targetWord;
+
+    enum class LetterState
+    {
+        WRONG,
+        WRONG_POSITION,
+        CORRECT
+    };
+
+    void CheckGuess(const wxString& guess, int row);
+    std::vector<LetterState> CompareWords(const wxString& guess, const wxString& target);
 };
 

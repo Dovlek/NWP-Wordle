@@ -9,6 +9,7 @@ public:
 	wxGridSizer* CreateGrid(wxWindow* parent);
 
 	void SetLetter(int row, int col, const wxString& letter);
+	wxString GetLetter(int row, int col) const;
 	bool IsValidPosition(int row, int col) const;
 
 	int GetWidth() const { return nFieldWidth; }
