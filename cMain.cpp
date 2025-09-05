@@ -155,7 +155,7 @@ std::vector<cMain::LetterState> cMain::CompareWords(const wxString& guess, const
     // Second pass: mark wrong positions
     for (int i = 0; i < 5; i++)
     {
-        if (states[i] == LetterState::WRONG)
+        if (states[i] == LetterState::WRONG && guessCopy[i] != '*')
         {
             int pos = targetCopy.Find(guessCopy[i]);
             if (pos != wxNOT_FOUND)
