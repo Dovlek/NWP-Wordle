@@ -14,4 +14,5 @@ public:
     bool LoadWordsFromResource();
     wxString GetRandomWord();
     size_t GetWordCount() const { return words.size(); }
+    bool IsValidWord(const wxString& word) const;
 };

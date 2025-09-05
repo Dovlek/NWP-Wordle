@@ -1,4 +1,4 @@
-﻿#include "cMain.h"
+﻿    #include "cMain.h"
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxSize(800, 600))
 {
@@ -105,6 +105,12 @@ void cMain::ProcessKey(const wxString& key)
             for (int i = 0; i < cgrid->GetWidth(); i++)
             {
                 currentGuess += cgrid->GetLetter(currentRow, i);
+            }
+            
+            if (!wordSelector->IsValidWord(currentGuess))
+            {
+                wxMessageBox("Word not in word list!", "Invalid Word", wxOK | wxICON_WARNING);
+                return;
             }
             
             CheckGuess(currentGuess, currentRow);

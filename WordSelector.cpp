@@ -58,3 +58,13 @@ wxString WordSelector::GetRandomWord()
     
     return words[randomIndex].Upper();
 }
+
+bool WordSelector::IsValidWord(const wxString& word) const
+{
+    for (const auto& validWord : words)
+    {
+        if (validWord.Upper() == word.Upper())
+            return true;
+    }
+    return false;
+}
