@@ -1,11 +1,11 @@
-﻿    #include "cMain.h"
+﻿#include "cMain.h"
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxSize(800, 600))
 {
 	wxPanel* panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
 	panel->SetBackgroundColour(wxColor(20, 20, 20));
 
-	wxBoxSizer* gameSizer = new wxBoxSizer(wxVERTICAL);
+	gameSizer = new wxBoxSizer(wxVERTICAL);
 	wxGridSizer* gridSizer = new wxGridSizer(0, 0, wxSize(0, 0));
 	wxBoxSizer* keyboardSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -13,6 +13,11 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
 	title->SetBackgroundColour(wxColor(20, 20, 20));
 	title->SetForegroundColour(wxColor(*wxWHITE));
 	title->SetFont(wxFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
+
+    statusMessage = new wxStaticText(panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
+	statusMessage->SetBackgroundColour(wxColor(20, 20, 20));
+    statusMessage->SetForegroundColour(wxColor(*wxWHITE));
+	statusMessage->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
 	// Create Grid
 	cgrid = new cGrid(5, 6);
@@ -32,13 +37,14 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
 
 	// Set Sizers
 	gameSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 25));
+    gameSizer->Add(statusMessage, wxSizerFlags().CenterHorizontal().Border(wxALL, 2));
 	gameSizer->Add(gridSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 10));
 	gameSizer->Add(keyboardSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 25));
 	gameSizer->AddStretchSpacer();
 	panel->SetSizer(gameSizer);
 	gameSizer->SetSizeHints(this);
 	panel->SetFocus();
-	
+
 	// Bind keyboard events to both panel and frame
 	panel->Bind(wxEVT_CHAR_HOOK, &cMain::OnKeyboardButtonPressed, this);
 	this->Bind(wxEVT_CHAR_HOOK, &cMain::OnKeyboardButtonPressed, this);
@@ -46,6 +52,9 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     wordSelector = new WordSelector();
     targetWord = wordSelector->GetRandomWord();
     wxLogMessage("Target word: %s", targetWord);
+
+	statusTimer = new wxTimer(this);
+	this->Bind(wxEVT_TIMER, &cMain::HideStatusMessage, this);
 }
 
 // TODO: Fix Enter key not bypassing button focus
@@ -95,6 +104,21 @@ void cMain::OnKeyboardButtonClicked(wxCommandEvent& evt)
     evt.Skip();
 }
 
+void cMain::ShowStatusMessage(const wxString& message, const wxColor& color)
+{
+    statusMessage->SetLabel(message);
+    statusMessage->SetForegroundColour(color);
+    gameSizer->Layout();
+    
+    statusTimer->StartOnce(2000);
+}
+
+void cMain::HideStatusMessage(wxTimerEvent& evt)
+{
+    statusMessage->SetLabel(wxEmptyString);
+    gameSizer->Layout();
+}
+
 void cMain::ProcessKey(const wxString& key)
 {
     if (key == "ENTER")
@@ -109,7 +133,7 @@ void cMain::ProcessKey(const wxString& key)
             
             if (!wordSelector->IsValidWord(currentGuess))
             {
-                wxMessageBox("Word not in word list!", "Invalid Word", wxOK | wxICON_WARNING);
+                ShowStatusMessage("Not in word list", wxColor(255, 100, 100));
                 return;
             }
             
@@ -200,11 +224,11 @@ void cMain::CheckGuess(const wxString& guess, int row)
     
     if (allCorrect)
     {
-        wxMessageBox("Congratulations! You won!", "Victory", wxOK | wxICON_INFORMATION);
+        ShowStatusMessage("Congratulations! You won!", wxColor(100, 255, 100));
     }
     else if (currentRow >= cgrid->GetHeight() - 1)
     {
-        wxMessageBox(wxString::Format("Game Over! The word was: %s", targetWord), "Game Over", wxOK | wxICON_INFORMATION);
+        ShowStatusMessage(wxString::Format("Game Over! The word was: %s", targetWord), wxColor(255, 100, 100));
     }
 }
 
@@ -213,4 +237,5 @@ cMain::~cMain()
     delete cgrid;
     delete ckeyboard_eng;
     delete wordSelector;
+    delete statusTimer;
 }

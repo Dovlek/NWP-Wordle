@@ -13,6 +13,7 @@ public:
 private:
     cGrid* cgrid;
     cKeyboardENG* ckeyboard_eng;
+    wxBoxSizer* gameSizer;
     int currentRow = 0;
     int currentCol = 0;
     int prevRow = 0;
@@ -32,5 +33,11 @@ private:
 
     void CheckGuess(const wxString& guess, int row);
     std::vector<LetterState> CompareWords(const wxString& guess, const wxString& target);
+
+    wxStaticText* statusMessage;
+    wxTimer* statusTimer;
+
+    void ShowStatusMessage(const wxString& message, const wxColor& color = wxColor(*wxWHITE));
+    void HideStatusMessage(wxTimerEvent& evt);
 };
 
