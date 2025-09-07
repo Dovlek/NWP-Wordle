@@ -25,10 +25,11 @@ private:
     void OnButtonLeave(wxMouseEvent& evt);
     void OnButtonSetFocus(wxFocusEvent& evt);
     void OnButtonKillFocus(wxFocusEvent& evt);
-    
+    wxButton* GetButtonById(int id);
+
     enum
     {
-        ID_CONTINUE,
+        ID_CONTINUE = 1000,
         ID_NEW_GAME,
         ID_SAVE_LOAD,
         ID_OPTIONS,
