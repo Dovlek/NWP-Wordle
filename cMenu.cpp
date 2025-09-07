@@ -24,14 +24,19 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     // Style buttons
     continueButton->SetBackgroundColour(wxColor(60, 60, 60));
     continueButton->SetForegroundColour(wxColor(*wxWHITE));
+    continueButton->SetCursor(wxCursor(wxCURSOR_HAND));
     newGameButton->SetBackgroundColour(wxColor(60, 60, 60));
     newGameButton->SetForegroundColour(wxColor(*wxWHITE));
+    newGameButton->SetCursor(wxCursor(wxCURSOR_HAND));
     saveLoadButton->SetBackgroundColour(wxColor(60, 60, 60));
     saveLoadButton->SetForegroundColour(wxColor(*wxWHITE));
+    saveLoadButton->SetCursor(wxCursor(wxCURSOR_HAND));
     optionsButton->SetBackgroundColour(wxColor(60, 60, 60));
     optionsButton->SetForegroundColour(wxColor(*wxWHITE));
+    optionsButton->SetCursor(wxCursor(wxCURSOR_HAND));
     exitButton->SetBackgroundColour(wxColor(60, 60, 60));
     exitButton->SetForegroundColour(wxColor(*wxWHITE));
+    exitButton->SetCursor(wxCursor(wxCURSOR_HAND));
     
     // Bind button events
     continueButton->Bind(wxEVT_BUTTON, &cMenu::OnContinueClicked, this);
@@ -51,6 +56,18 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     optionsButton->Bind(wxEVT_LEAVE_WINDOW, &cMenu::OnButtonLeave, this);
     exitButton->Bind(wxEVT_ENTER_WINDOW, &cMenu::OnButtonEnter, this);
     exitButton->Bind(wxEVT_LEAVE_WINDOW, &cMenu::OnButtonLeave, this);
+    
+    // Bind focus events
+    continueButton->Bind(wxEVT_SET_FOCUS, &cMenu::OnButtonSetFocus, this);
+    continueButton->Bind(wxEVT_KILL_FOCUS, &cMenu::OnButtonKillFocus, this);
+    newGameButton->Bind(wxEVT_SET_FOCUS, &cMenu::OnButtonSetFocus, this);
+    newGameButton->Bind(wxEVT_KILL_FOCUS, &cMenu::OnButtonKillFocus, this);
+    saveLoadButton->Bind(wxEVT_SET_FOCUS, &cMenu::OnButtonSetFocus, this);
+    saveLoadButton->Bind(wxEVT_KILL_FOCUS, &cMenu::OnButtonKillFocus, this);
+    optionsButton->Bind(wxEVT_SET_FOCUS, &cMenu::OnButtonSetFocus, this);
+    optionsButton->Bind(wxEVT_KILL_FOCUS, &cMenu::OnButtonKillFocus, this);
+    exitButton->Bind(wxEVT_SET_FOCUS, &cMenu::OnButtonSetFocus, this);
+    exitButton->Bind(wxEVT_KILL_FOCUS, &cMenu::OnButtonKillFocus, this);
     
     // Set up layout
     wxBoxSizer* menuSizer = new wxBoxSizer(wxVERTICAL);
@@ -116,6 +133,8 @@ void cMenu::OnExitClicked(wxCommandEvent& evt)
 void cMenu::OnButtonEnter(wxMouseEvent& evt)
 {
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
+
+    // Set to mouse highlight color
     button->SetBackgroundColour(wxColor(129, 131, 132));
     button->Refresh();
     evt.Skip();
@@ -124,6 +143,28 @@ void cMenu::OnButtonEnter(wxMouseEvent& evt)
 void cMenu::OnButtonLeave(wxMouseEvent& evt)
 {
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
+
+    // Reset to the original background color
+    button->SetBackgroundColour(wxColor(58, 58, 60));
+    button->Refresh();
+    evt.Skip();
+}
+
+void cMenu::OnButtonSetFocus(wxFocusEvent& evt)
+{
+    wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
+    
+    // Set to tab highlight color
+    button->SetBackgroundColour(wxColor(86, 87, 88));
+    button->Refresh();
+    evt.Skip();
+}
+
+void cMenu::OnButtonKillFocus(wxFocusEvent& evt)
+{
+    wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
+    
+    // Reset to the original background color
     button->SetBackgroundColour(wxColor(58, 58, 60));
     button->Refresh();
     evt.Skip();

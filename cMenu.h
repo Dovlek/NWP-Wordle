@@ -23,6 +23,8 @@ private:
     void OnExitClicked(wxCommandEvent& evt);
     void OnButtonEnter(wxMouseEvent& evt);
     void OnButtonLeave(wxMouseEvent& evt);
+    void OnButtonSetFocus(wxFocusEvent& evt);
+    void OnButtonKillFocus(wxFocusEvent& evt);
     
     enum
     {
