@@ -10,6 +10,7 @@ public:
     cMain();
     ~cMain();
     
+    void SwitchPageToMenu();
     void SwitchPageToWordle();
 
 private:
@@ -17,6 +18,6 @@ private:
     cWordle* wordlePanel;
     cMenu* menuPanel;
     
+    void OnSwitchToMenu(wxCommandEvent& evt);
     void OnSwitchToGame(wxCommandEvent& evt);
 };
-

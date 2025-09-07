@@ -41,15 +41,17 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     gameSizer->SetSizeHints(this);
 
     // Set up accelerator table
-    wxAcceleratorEntry entries[2];
+    wxAcceleratorEntry entries[3];
     entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, ID_ACCEL_ENTER);
     entries[1].Set(wxACCEL_NORMAL, WXK_BACK, ID_ACCEL_BACKSPACE);
-    wxAcceleratorTable accelTable(2, entries);
+    entries[2].Set(wxACCEL_NORMAL, WXK_ESCAPE, ID_ACCEL_ESCAPE);
+    wxAcceleratorTable accelTable(3, entries);
     SetAcceleratorTable(accelTable);
 
     // Bind accelerator events
     Bind(wxEVT_COMMAND_MENU_SELECTED, &cWordle::OnAcceleratorPressed, this, ID_ACCEL_ENTER);
     Bind(wxEVT_COMMAND_MENU_SELECTED, &cWordle::OnAcceleratorPressed, this, ID_ACCEL_BACKSPACE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED, &cWordle::OnAcceleratorPressed, this, ID_ACCEL_ESCAPE);
 
     // Bind keyboard events
     Bind(wxEVT_CHAR_HOOK, &cWordle::OnKeyboardButtonPressed, this);
@@ -73,6 +75,18 @@ void cWordle::OnAcceleratorPressed(wxCommandEvent& evt)
     else if (id == ID_ACCEL_BACKSPACE)
     {
         ProcessKey("backspace");
+    }
+    else if (id == ID_ACCEL_ESCAPE)
+    {
+        wxCommandEvent switchEvent(wxEVT_SWITCH_TO_MENU);
+        switchEvent.SetEventObject(this);
+        
+        wxWindow* parent = GetParent();
+        while (parent && !parent->IsTopLevel())
+            parent = parent->GetParent();
+
+        if (parent)
+            wxPostEvent(parent, switchEvent);
     }
 
     SetFocus();

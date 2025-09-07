@@ -4,6 +4,8 @@
 #include "cGrid.h"
 #include "WordSelector.h"
 
+wxDECLARE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
+
 class cWordle : public wxPanel
 {
 public:
@@ -45,7 +47,8 @@ private:
     enum
     {
         ID_ACCEL_ENTER,
-        ID_ACCEL_BACKSPACE
+        ID_ACCEL_BACKSPACE,
+        ID_ACCEL_ESCAPE
     };
 
     void OnAcceleratorPressed(wxCommandEvent& evt);
