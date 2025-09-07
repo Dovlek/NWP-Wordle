@@ -16,6 +16,7 @@ private:
     cGrid* cgrid;
     cKeyboardENG* ckeyboard_eng;
     wxBoxSizer* gameSizer;
+    wxButton* backButton;
     int currentRow = 0;
     int currentCol = 0;
     int prevRow = 0;
@@ -52,4 +53,5 @@ private:
     };
 
     void OnAcceleratorPressed(wxCommandEvent& evt);
+    void OnBackButtonClicked(wxCommandEvent& evt);
 };

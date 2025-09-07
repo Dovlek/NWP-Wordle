@@ -31,7 +31,15 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
         ckeyboard_eng->gridKey[i]->Bind(wxEVT_BUTTON, &cWordle::OnKeyboardButtonClicked, this);
     }
 
+    // Create back button
+    backButton = new wxButton(this, wxID_ANY, wxT("menu"), wxDefaultPosition, wxSize(40, 40));
+    backButton->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Material Symbols Outlined")));
+    backButton->SetBackgroundColour(wxColor(20, 20, 20));
+    backButton->SetForegroundColour(wxColor(*wxWHITE));
+    backButton->Bind(wxEVT_BUTTON, &cWordle::OnBackButtonClicked, this);
+
     // Set Sizers
+    gameSizer->Add(backButton, wxSizerFlags().Align(wxALIGN_LEFT).Border(wxALL, 10));
     gameSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 25));
     gameSizer->Add(statusMessage, wxSizerFlags().CenterHorizontal().Border(wxALL, 2));
     gameSizer->Add(gridSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 10));
@@ -90,6 +98,19 @@ void cWordle::OnAcceleratorPressed(wxCommandEvent& evt)
     }
 
     SetFocus();
+}
+
+void cWordle::OnBackButtonClicked(wxCommandEvent& evt)
+{
+    wxCommandEvent switchEvent(wxEVT_SWITCH_TO_MENU);
+    switchEvent.SetEventObject(this);
+
+    wxWindow* parent = GetParent();
+    while (parent && !parent->IsTopLevel())
+        parent = parent->GetParent();
+
+    if (parent)
+        wxPostEvent(parent, switchEvent);
 }
 
 void cWordle::OnKeyboardButtonPressed(wxKeyEvent& evt)
