@@ -23,6 +23,7 @@
     <ClInclude Include="cGrid.h" />
     <ClInclude Include="cKeyboard.h" />
     <ClInclude Include="cMain.h" />
+    <ClInclude Include="cWordle.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="WordSelector.h" />
   </ItemGroup>
@@ -31,6 +32,7 @@
     <ClCompile Include="cGrid.cpp" />
     <ClCompile Include="cKeyboard.cpp" />
     <ClCompile Include="cMain.cpp" />
+    <ClCompile Include="cWordle.cpp" />
     <ClCompile Include="WordSelector.cpp" />
   </ItemGroup>
   <ItemGroup>
