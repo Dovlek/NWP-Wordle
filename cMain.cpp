@@ -1,5 +1,8 @@
 ﻿#include "cMain.h"
 
+// Define custom event
+wxDEFINE_EVENT(wxEVT_SWITCH_TO_GAME, wxCommandEvent);
+
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxSize(800, 600))
 {
     wxPanel* mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
@@ -15,6 +18,9 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     wordlePanel = new cWordle(cSimplebook);
     cSimplebook->AddPage(wordlePanel, "Wordle", false);
     
+    // Bind custom event
+    Bind(wxEVT_SWITCH_TO_GAME, &cMain::OnSwitchToGame, this);
+    
     // Set up the main sizer
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     mainSizer->Add(cSimplebook, wxSizerFlags().Expand());
@@ -25,4 +31,15 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
 
 cMain::~cMain()
 {
+}
+
+void cMain::SwitchPageToWordle()
+{
+    if (cSimplebook)
+        cSimplebook->SetSelection(1);
+}
+
+void cMain::OnSwitchToGame(wxCommandEvent& evt)
+{
+    SwitchPageToWordle();
 }

@@ -68,9 +68,17 @@ void cMenu::OnContinueClicked(wxCommandEvent& evt)
 {
 }
 
-// TODO: Implement new game functionality
 void cMenu::OnNewGameClicked(wxCommandEvent& evt)
 {
+    wxCommandEvent switchEvent(wxEVT_SWITCH_TO_GAME);
+    switchEvent.SetEventObject(this);
+    
+    wxWindow* parent = GetParent();
+    while (parent && !parent->IsTopLevel())
+        parent = parent->GetParent();
+    
+    if (parent)
+        wxPostEvent(parent, switchEvent);
 }
 
 // TODO: Implement save/load game functionality
@@ -86,9 +94,9 @@ void cMenu::OnOptionsClicked(wxCommandEvent& evt)
 void cMenu::OnExitClicked(wxCommandEvent& evt)
 {
     wxWindow* topWindow = this;
+    
     while (topWindow->GetParent())
-    {
         topWindow = topWindow->GetParent();
-    }
+
     topWindow->Close();
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include "wx/wx.h"
 
+wxDECLARE_EVENT(wxEVT_SWITCH_TO_GAME, wxCommandEvent);
+
 class cMenu : public wxPanel
 {
 public:

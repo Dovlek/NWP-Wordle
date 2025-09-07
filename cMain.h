@@ -9,10 +9,14 @@ class cMain : public wxFrame
 public:
     cMain();
     ~cMain();
+    
+    void SwitchPageToWordle();
 
 private:
     wxSimplebook* cSimplebook;
     cWordle* wordlePanel;
     cMenu* menuPanel;
+    
+    void OnSwitchToGame(wxCommandEvent& evt);
 };
 
