@@ -4,21 +4,21 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
 {
     SetBackgroundColour(wxColor(20, 20, 20));
     
-    wxStaticText* title = new wxStaticText(this, wxID_ANY, "Welcome to WORDLE!", wxDefaultPosition, wxDefaultSize);
+    wxStaticText* title = new wxStaticText(this, wxID_ANY, "Let's play WORDLE!", wxDefaultPosition, wxDefaultSize);
     title->SetBackgroundColour(wxColor(20, 20, 20));
     title->SetForegroundColour(wxColor(*wxWHITE));
     title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
     
     wxFont buttonFont(18, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
-    continueButton = new wxButton(this, ID_CONTINUE, "Continue", wxDefaultPosition, wxSize(350, 80));
+    continueButton = new wxButton(this, ID_CONTINUE, "Continue", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
     continueButton->SetFont(buttonFont);
-    newGameButton = new wxButton(this, ID_NEW_GAME, "New Game", wxDefaultPosition, wxSize(350, 80));
+    newGameButton = new wxButton(this, ID_NEW_GAME, "New Game", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
     newGameButton->SetFont(buttonFont);
-    saveLoadButton = new wxButton(this, ID_SAVE_LOAD, "Save/Load game", wxDefaultPosition, wxSize(350, 80));
+    saveLoadButton = new wxButton(this, ID_SAVE_LOAD, "Save/Load game", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
     saveLoadButton->SetFont(buttonFont);
-    optionsButton = new wxButton(this, ID_OPTIONS, "Options", wxDefaultPosition, wxSize(350, 80));
+    optionsButton = new wxButton(this, ID_OPTIONS, "Options", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
     optionsButton->SetFont(buttonFont);
-    exitButton = new wxButton(this, ID_EXIT, "Exit", wxDefaultPosition, wxSize(350, 80));
+    exitButton = new wxButton(this, ID_EXIT, "Exit", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
     exitButton->SetFont(buttonFont);
     
     // Style buttons
@@ -39,12 +39,24 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     saveLoadButton->Bind(wxEVT_BUTTON, &cMenu::OnSaveLoadClicked, this);
     optionsButton->Bind(wxEVT_BUTTON, &cMenu::OnOptionsClicked, this);
     exitButton->Bind(wxEVT_BUTTON, &cMenu::OnExitClicked, this);
+
+    // Bind mouse events
+    continueButton->Bind(wxEVT_ENTER_WINDOW, &cMenu::OnButtonEnter, this);
+    continueButton->Bind(wxEVT_LEAVE_WINDOW, &cMenu::OnButtonLeave, this);
+    newGameButton->Bind(wxEVT_ENTER_WINDOW, &cMenu::OnButtonEnter, this);
+    newGameButton->Bind(wxEVT_LEAVE_WINDOW, &cMenu::OnButtonLeave, this);
+    saveLoadButton->Bind(wxEVT_ENTER_WINDOW, &cMenu::OnButtonEnter, this);
+    saveLoadButton->Bind(wxEVT_LEAVE_WINDOW, &cMenu::OnButtonLeave, this);
+    optionsButton->Bind(wxEVT_ENTER_WINDOW, &cMenu::OnButtonEnter, this);
+    optionsButton->Bind(wxEVT_LEAVE_WINDOW, &cMenu::OnButtonLeave, this);
+    exitButton->Bind(wxEVT_ENTER_WINDOW, &cMenu::OnButtonEnter, this);
+    exitButton->Bind(wxEVT_LEAVE_WINDOW, &cMenu::OnButtonLeave, this);
     
     // Set up layout
     wxBoxSizer* menuSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxVERTICAL);
     
-    menuSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 30));
+    menuSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 40));
     
     buttonSizer->Add(continueButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
     buttonSizer->Add(newGameButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
@@ -99,4 +111,20 @@ void cMenu::OnExitClicked(wxCommandEvent& evt)
         topWindow = topWindow->GetParent();
 
     topWindow->Close();
+}
+
+void cMenu::OnButtonEnter(wxMouseEvent& evt)
+{
+    wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
+    button->SetBackgroundColour(wxColor(129, 131, 132));
+    button->Refresh();
+    evt.Skip();
+}
+
+void cMenu::OnButtonLeave(wxMouseEvent& evt)
+{
+    wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
+    button->SetBackgroundColour(wxColor(58, 58, 60));
+    button->Refresh();
+    evt.Skip();
 }

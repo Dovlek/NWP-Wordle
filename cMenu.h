@@ -21,6 +21,8 @@ private:
     void OnSaveLoadClicked(wxCommandEvent& evt);
     void OnOptionsClicked(wxCommandEvent& evt);
     void OnExitClicked(wxCommandEvent& evt);
+    void OnButtonEnter(wxMouseEvent& evt);
+    void OnButtonLeave(wxMouseEvent& evt);
     
     enum
     {
