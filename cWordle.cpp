@@ -32,14 +32,15 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     }
 
     // Create back button
-    backButton = new wxButton(this, wxID_ANY, wxT("menu"), wxDefaultPosition, wxSize(40, 40));
-    backButton->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Material Symbols Outlined")));
+    backButton = new wxButton(this, wxID_ANY, wxT("menu"), wxDefaultPosition, wxSize(50, 50), wxBORDER_NONE);
+    backButton->SetFont(wxFont(20, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Material Symbols Outlined")));
     backButton->SetBackgroundColour(wxColor(20, 20, 20));
     backButton->SetForegroundColour(wxColor(*wxWHITE));
+    backButton->SetCursor(wxCursor(wxCURSOR_HAND));
     backButton->Bind(wxEVT_BUTTON, &cWordle::OnBackButtonClicked, this);
 
     // Set Sizers
-    gameSizer->Add(backButton, wxSizerFlags().Align(wxALIGN_LEFT).Border(wxALL, 10));
+    gameSizer->Add(backButton, wxSizerFlags().Align(wxALIGN_LEFT).Border(wxLEFT | wxTOP, 5));
     gameSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 25));
     gameSizer->Add(statusMessage, wxSizerFlags().CenterHorizontal().Border(wxALL, 2));
     gameSizer->Add(gridSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 10));
@@ -63,6 +64,10 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
 
     // Bind keyboard events
     Bind(wxEVT_CHAR_HOOK, &cWordle::OnKeyboardButtonPressed, this);
+
+    // Bind mouse events
+    backButton->Bind(wxEVT_ENTER_WINDOW, &cWordle::OnBackButtonEnter, this);
+    backButton->Bind(wxEVT_LEAVE_WINDOW, &cWordle::OnBackButtonLeave, this);
 
     wordSelector = new WordSelector();
     targetWord = wordSelector->GetRandomWord();
@@ -111,6 +116,20 @@ void cWordle::OnBackButtonClicked(wxCommandEvent& evt)
 
     if (parent)
         wxPostEvent(parent, switchEvent);
+}
+
+void cWordle::OnBackButtonEnter(wxMouseEvent& evt)
+{
+    backButton->SetBackgroundColour(wxColor(58, 58, 60));
+    backButton->Refresh();
+    evt.Skip();
+}
+
+void cWordle::OnBackButtonLeave(wxMouseEvent& evt)
+{
+    backButton->SetBackgroundColour(wxColor(20, 20, 20));
+    backButton->Refresh();
+    evt.Skip();
 }
 
 void cWordle::OnKeyboardButtonPressed(wxKeyEvent& evt)

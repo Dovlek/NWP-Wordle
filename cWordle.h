@@ -54,4 +54,6 @@ private:
 
     void OnAcceleratorPressed(wxCommandEvent& evt);
     void OnBackButtonClicked(wxCommandEvent& evt);
+    void OnBackButtonEnter(wxMouseEvent& evt);
+    void OnBackButtonLeave(wxMouseEvent& evt);
 };
