@@ -40,6 +40,17 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     this->SetSizer(gameSizer);
     gameSizer->SetSizeHints(this);
 
+    // Set up accelerator table
+    wxAcceleratorEntry entries[2];
+    entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, ID_ACCEL_ENTER);
+    entries[1].Set(wxACCEL_NORMAL, WXK_BACK, ID_ACCEL_BACKSPACE);
+    wxAcceleratorTable accelTable(2, entries);
+    SetAcceleratorTable(accelTable);
+
+    // Bind accelerator events
+    Bind(wxEVT_COMMAND_MENU_SELECTED, &cWordle::OnAcceleratorPressed, this, ID_ACCEL_ENTER);
+    Bind(wxEVT_COMMAND_MENU_SELECTED, &cWordle::OnAcceleratorPressed, this, ID_ACCEL_BACKSPACE);
+
     // Bind keyboard events
     Bind(wxEVT_CHAR_HOOK, &cWordle::OnKeyboardButtonPressed, this);
 
@@ -51,7 +62,22 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     Bind(wxEVT_TIMER, &cWordle::HideStatusMessage, this);
 }
 
-// TODO: Fix Enter key not bypassing button focus
+void cWordle::OnAcceleratorPressed(wxCommandEvent& evt)
+{
+    int id = evt.GetId();
+
+    if (id == ID_ACCEL_ENTER)
+    {
+        ProcessKey("ENTER");
+    }
+    else if (id == ID_ACCEL_BACKSPACE)
+    {
+        ProcessKey("backspace");
+    }
+
+    SetFocus();
+}
+
 void cWordle::OnKeyboardButtonPressed(wxKeyEvent& evt)
 {
     int keyCode = evt.GetKeyCode();
@@ -61,10 +87,6 @@ void cWordle::OnKeyboardButtonPressed(wxKeyEvent& evt)
         key = wxString(static_cast<char>(keyCode));
     else if (keyCode >= 'a' && keyCode <= 'z')
         key = wxString(static_cast<char>(keyCode - 32));
-    else if (keyCode == WXK_RETURN || keyCode == WXK_NUMPAD_ENTER || keyCode == 13)
-        key = "ENTER";
-    else if (keyCode == WXK_BACK)
-        key = "backspace";
 
     if (!key.IsEmpty())
     {

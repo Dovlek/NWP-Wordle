@@ -41,4 +41,12 @@ private:
 
     void ShowStatusMessage(const wxString& message, const wxColor& color = wxColor(*wxWHITE));
     void HideStatusMessage(wxTimerEvent& evt);
+
+    enum
+    {
+        ID_ACCEL_ENTER,
+        ID_ACCEL_BACKSPACE
+    };
+
+    void OnAcceleratorPressed(wxCommandEvent& evt);
 };
