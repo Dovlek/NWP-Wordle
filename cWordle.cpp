@@ -56,7 +56,7 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
 
     wordSelector = new WordSelector();
     targetWord = wordSelector->GetRandomWord();
-    wxLogMessage("Target word: %s", targetWord);
+    //wxLogMessage("Target word: %s", targetWord);
 
     statusTimer = new wxTimer(this);
     Bind(wxEVT_TIMER, &cWordle::HideStatusMessage, this);

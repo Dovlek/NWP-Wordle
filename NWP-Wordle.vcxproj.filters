@@ -36,6 +36,9 @@
     <ClInclude Include="cWordle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cApp.cpp">
@@ -54,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cWordle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

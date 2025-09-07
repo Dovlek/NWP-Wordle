@@ -7,9 +7,13 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     
     cSimplebook = new wxSimplebook(mainPanel, wxID_ANY);
     
-    // Create and add the Wordle game panel as the first page
+    // Create and add the menu panel as the first Simplebook page
+    menuPanel = new cMenu(cSimplebook);
+    cSimplebook->AddPage(menuPanel, "Menu", true);
+    
+    // Create and add the Wordle game panel as the second Simplebook page
     wordlePanel = new cWordle(cSimplebook);
-    cSimplebook->AddPage(wordlePanel, "Wordle", true);
+    cSimplebook->AddPage(wordlePanel, "Wordle", false);
     
     // Set up the main sizer
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
