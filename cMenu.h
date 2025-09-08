@@ -15,13 +15,15 @@ public:
 private:
     wxButton* continueButton;
     wxButton* newGameButton;
-    wxButton* saveLoadButton;
+    wxButton* saveButton;
+    wxButton* loadButton;
     wxButton* optionsButton;
     wxButton* exitButton;
     
     void OnContinueClicked(wxCommandEvent& evt);
     void OnNewGameClicked(wxCommandEvent& evt);
-    void OnSaveLoadClicked(wxCommandEvent& evt);
+    void OnSaveClicked(wxCommandEvent& evt);
+    void OnLoadClicked(wxCommandEvent& evt);
     void OnOptionsClicked(wxCommandEvent& evt);
     void OnExitClicked(wxCommandEvent& evt);
     void OnButtonEnter(wxMouseEvent& evt);
@@ -34,7 +36,8 @@ private:
     {
         ID_CONTINUE = 1000,
         ID_NEW_GAME,
-        ID_SAVE_LOAD,
+        ID_SAVE,
+        ID_LOAD,
         ID_OPTIONS,
         ID_EXIT
     };

@@ -11,7 +11,8 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     
     continueButton = new wxButton(this, ID_CONTINUE, "Continue", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
     newGameButton = new wxButton(this, ID_NEW_GAME, "New Game", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
-    saveLoadButton = new wxButton(this, ID_SAVE_LOAD, "Save/Load game", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
+    saveButton = new wxButton(this, ID_SAVE, "Save Game", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
+    loadButton = new wxButton(this, ID_LOAD, "Load Game", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
     optionsButton = new wxButton(this, ID_OPTIONS, "Options", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
     exitButton = new wxButton(this, ID_EXIT, "Exit", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
     
@@ -36,7 +37,8 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     // Bind button events
     continueButton->Bind(wxEVT_BUTTON, &cMenu::OnContinueClicked, this);
     newGameButton->Bind(wxEVT_BUTTON, &cMenu::OnNewGameClicked, this);
-    saveLoadButton->Bind(wxEVT_BUTTON, &cMenu::OnSaveLoadClicked, this);
+    saveButton->Bind(wxEVT_BUTTON, &cMenu::OnSaveClicked, this);
+    loadButton->Bind(wxEVT_BUTTON, &cMenu::OnLoadClicked, this);
     optionsButton->Bind(wxEVT_BUTTON, &cMenu::OnOptionsClicked, this);
     exitButton->Bind(wxEVT_BUTTON, &cMenu::OnExitClicked, this);
     
@@ -65,12 +67,13 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     // Set up layout
     wxBoxSizer* menuSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxVERTICAL);
-    
+
     menuSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 40));
     
     buttonSizer->Add(continueButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
     buttonSizer->Add(newGameButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
-    buttonSizer->Add(saveLoadButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
+    buttonSizer->Add(saveButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
+    buttonSizer->Add(loadButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
     buttonSizer->Add(optionsButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
     buttonSizer->Add(exitButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
     
@@ -126,8 +129,13 @@ void cMenu::OnNewGameClicked(wxCommandEvent& evt)
         wxPostEvent(parent, switchEvent);
 }
 
-// TODO: Implement save/load game functionality
-void cMenu::OnSaveLoadClicked(wxCommandEvent& evt)
+// TODO: Implement save game functionality
+void cMenu::OnSaveClicked(wxCommandEvent& evt)
+{
+}
+
+// TODO: Implement load game functionality
+void cMenu::OnLoadClicked(wxCommandEvent& evt)
 {
 }
 
@@ -194,8 +202,10 @@ wxButton* cMenu::GetButtonById(int id)
         return continueButton;
     case ID_NEW_GAME:
         return newGameButton;
-    case ID_SAVE_LOAD:
-        return saveLoadButton;
+    case ID_SAVE:
+        return saveButton;
+    case ID_LOAD:
+        return loadButton;
     case ID_OPTIONS:
         return optionsButton;
     case ID_EXIT:
