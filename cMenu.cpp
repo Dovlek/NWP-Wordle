@@ -68,6 +68,7 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     wxBoxSizer* menuSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxVERTICAL);
 
+    menuSizer->AddStretchSpacer();
     menuSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 40));
     
     buttonSizer->Add(continueButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));

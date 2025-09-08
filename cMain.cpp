@@ -48,7 +48,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     
     // Set up the main sizer
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
-    mainSizer->Add(cSimplebook, wxSizerFlags().Expand());
+    mainSizer->Add(cSimplebook, 1, wxEXPAND);
     mainPanel->SetSizer(mainSizer);
     mainSizer->SetSizeHints(this);
     mainPanel->SetFocus();
