@@ -20,4 +20,5 @@ private:
     
     void OnSwitchToMenu(wxCommandEvent& evt);
     void OnSwitchToGame(wxCommandEvent& evt);
+    void OnStartNewGame(wxCommandEvent& evt);
 };

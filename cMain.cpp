@@ -8,6 +8,7 @@
 // Define custom events
 wxDEFINE_EVENT(wxEVT_SWITCH_TO_GAME, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_START_NEW_GAME, wxCommandEvent);
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxSize(800, 600))
 {
@@ -43,6 +44,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     // Bind custom events
     Bind(wxEVT_SWITCH_TO_MENU, &cMain::OnSwitchToMenu, this);
     Bind(wxEVT_SWITCH_TO_GAME, &cMain::OnSwitchToGame, this);
+    Bind(wxEVT_START_NEW_GAME, &cMain::OnStartNewGame, this);
     
     // Set up the main sizer
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -75,5 +77,13 @@ void cMain::OnSwitchToMenu(wxCommandEvent& evt)
 
 void cMain::OnSwitchToGame(wxCommandEvent& evt)
 {
+    SwitchPageToWordle();
+}
+
+void cMain::OnStartNewGame(wxCommandEvent& evt)
+{
+    if (wordlePanel)
+        wordlePanel->StartNewRound();
+    
     SwitchPageToWordle();
 }

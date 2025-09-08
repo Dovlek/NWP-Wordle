@@ -88,7 +88,7 @@ void cMenu::OnContinueClicked(wxCommandEvent& evt)
 
 void cMenu::OnNewGameClicked(wxCommandEvent& evt)
 {
-    wxCommandEvent switchEvent(wxEVT_SWITCH_TO_GAME);
+    wxCommandEvent switchEvent(wxEVT_START_NEW_GAME);
     switchEvent.SetEventObject(this);
     
     wxWindow* parent = GetParent();

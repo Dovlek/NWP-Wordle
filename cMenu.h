@@ -2,6 +2,7 @@
 #include "wx/wx.h"
 
 wxDECLARE_EVENT(wxEVT_SWITCH_TO_GAME, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_START_NEW_GAME, wxCommandEvent);
 
 class cMenu : public wxPanel
 {
