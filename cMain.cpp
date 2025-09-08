@@ -1,4 +1,9 @@
 ﻿#include "cMain.h"
+#ifdef __WXMSW__
+    #include <windows.h>
+    #include <dwmapi.h>
+    #pragma comment(lib, "dwmapi.lib")
+#endif
 
 // Define custom events
 wxDEFINE_EVENT(wxEVT_SWITCH_TO_GAME, wxCommandEvent);
@@ -6,6 +11,16 @@ wxDEFINE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxSize(800, 600))
 {
+    // Enable dark title bar on Windows (Windows 10 build 18362+)
+    #ifdef __WXMSW__
+        HWND hwnd = GetHWND();
+        if (hwnd)
+        {
+            BOOL value = TRUE;
+            DwmSetWindowAttribute(hwnd, 20, &value, sizeof(value));
+        }
+    #endif
+
     wxPanel* mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
     mainPanel->SetBackgroundColour(wxColor(20, 20, 20));
     
