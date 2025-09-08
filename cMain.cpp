@@ -11,6 +11,12 @@ wxDEFINE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxSize(800, 600))
 {
+    // Set the application icon
+    wxIcon appIcon;
+    appIcon.LoadFile(wxT("IDI_ICON"));
+    if (appIcon.IsOk())
+        SetIcon(appIcon);
+
     // Enable dark title bar on Windows (Windows 10 build 18362+)
     #ifdef __WXMSW__
         HWND hwnd = GetHWND();

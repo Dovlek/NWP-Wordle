@@ -1,5 +1,6 @@
 #include "resource.h"
 
+IDI_ICON       ICON     "Resources/wIcon.ico"
 IDB_UNMARKED   BITMAP   "Resources/Grid/Unmarked.bmp"
 IDB_MARKED     BITMAP   "Resources/Grid/Marked.bmp"
 IDB_COLD       BITMAP   "Resources/Grid/Cold.bmp"
