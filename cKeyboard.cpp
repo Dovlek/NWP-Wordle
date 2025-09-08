@@ -57,6 +57,23 @@ void cKeyboard::UpdateKeyboardColors(const wxString& guess, const std::vector<in
     }
 }
 
+void cKeyboard::ResetKeyboard()
+{
+    for (int keyIndex = 0; keyIndex < keyboardSize + 2; keyIndex++)
+    {
+        wxString keyLabelText = keyLabel[keyIndex]->GetLabel();
+        
+        if (keyLabelText == "ENTER" || keyLabelText == "backspace")
+            gridKey[keyIndex]->SetBitmap(bitmapsKeys[1]); // IDB_BIGBUTTON
+        else
+            gridKey[keyIndex]->SetBitmap(bitmapsKeys[0]); // IDB_UNUSED
+        
+        keyLabel[keyIndex]->SetBackgroundColour(wxColor(129, 131, 132));
+        keyLabel[keyIndex]->Refresh();
+        gridKey[keyIndex]->Refresh();
+    }
+}
+
 cKeyboardENG::cKeyboardENG()
 {
 	keyboardString = wxT("QWERTYUIOPASDFGHJKLZXCVBNM");
