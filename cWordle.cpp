@@ -185,18 +185,20 @@ void cWordle::ProcessKey(const wxString& key)
             {
                 currentGuess += cgrid->GetLetter(currentRow, i);
             }
-            
+
             if (!wordSelector->IsValidWord(currentGuess))
             {
                 ShowStatusMessage("Not in word list", wxColor(255, 100, 100));
                 return;
             }
-            
-            CheckGuess(currentGuess, currentRow);
+
+            int guessRow = currentRow;
             prevRow = currentRow;
             prevCol = currentCol;
             currentRow++;
             currentCol = 0;
+
+            CheckGuess(currentGuess, guessRow);
         }
     }
     else if (key == "backspace")
@@ -257,16 +259,16 @@ std::vector<cWordle::LetterState> cWordle::CompareWords(const wxString& guess, c
 void cWordle::CheckGuess(const wxString& guess, int row)
 {
     std::vector<LetterState> states = CompareWords(guess, targetWord);
-    
+
     std::vector<int> intStates;
     for (const auto& state : states)
     {
         intStates.push_back(static_cast<int>(state));
     }
-    
+
     cgrid->UpdateCellColors(row, intStates);
     ckeyboard_eng->UpdateKeyboardColors(guess, intStates);
-    
+
     bool allCorrect = true;
     for (const auto& state : states)
     {
@@ -276,12 +278,12 @@ void cWordle::CheckGuess(const wxString& guess, int row)
             break;
         }
     }
-    
+
     if (allCorrect)
     {
         ShowGameEndDialog(true);
     }
-    else if (currentRow >= cgrid->GetHeight() - 1)
+    else if (row >= cgrid->GetHeight() - 1)
     {
         ShowGameEndDialog(false);
     }
