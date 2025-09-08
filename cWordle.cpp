@@ -82,8 +82,8 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     topBarSizer->Add(statsSizer, wxSizerFlags().Align(wxALIGN_TOP).Border(wxRIGHT | wxTOP, 5));
 
     gameSizer->Add(topBarSizer, wxSizerFlags().Expand());
-    gameSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 25));
-    gameSizer->Add(statusMessage, wxSizerFlags().CenterHorizontal().Border(wxALL, 2));
+    gameSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxTOP | wxLEFT | wxRIGHT, 25));
+    gameSizer->Add(statusMessage, wxSizerFlags().CenterHorizontal().Border(wxTOP | wxLEFT | wxRIGHT, 10));
     gameSizer->Add(gridSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 10));
     gameSizer->Add(keyboardPanel, wxSizerFlags().CenterHorizontal().Border(wxALL, 25));
     gameSizer->AddStretchSpacer();
