@@ -58,9 +58,11 @@ private:
     wxStaticText* winsText;
     wxStaticText* lossesText;
     wxStaticText* streakText;
+    wxStaticText* maxStreakText;
     int wins = 0;
     int losses = 0;
     int streak = 0;
+    int maxStreak = 0;
     void UpdateStatsUI();
 
     void ShowStatusMessage(const wxString& message, const wxColor& color = wxColor(*wxWHITE));
