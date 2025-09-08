@@ -13,14 +13,16 @@ public:
     ~cWordle();
 
     void StartNewRound();
+    void ContinueFromFinishedGame();
     bool IsGameInProgress() const;
     void ResetStats();
-
+    
     enum class GameState
     {
         NOT_STARTED,
         ACTIVE,
-        COMPLETED
+        COMPLETED,
+        COMPLETED_AWAITING_CONTINUE
     };
 
 private:

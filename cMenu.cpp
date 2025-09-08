@@ -102,15 +102,15 @@ void cMenu::SetContinueButtonEnabled(bool enabled)
 
 void cMenu::OnContinueClicked(wxCommandEvent& evt)
 {
-    wxCommandEvent switchEvent(wxEVT_SWITCH_TO_GAME);
-    switchEvent.SetEventObject(this);
+    wxCommandEvent continueEvent(wxEVT_CONTINUE_GAME);
+    continueEvent.SetEventObject(this);
     
     wxWindow* parent = GetParent();
     while (parent && !parent->IsTopLevel())
         parent = parent->GetParent();
     
     if (parent)
-        wxPostEvent(parent, switchEvent);
+        wxPostEvent(parent, continueEvent);
 }
 
 void cMenu::OnNewGameClicked(wxCommandEvent& evt)

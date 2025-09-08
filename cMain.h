@@ -19,7 +19,7 @@ private:
     cMenu* menuPanel;
     
     void OnSwitchToMenu(wxCommandEvent& evt);
-    void OnSwitchToGame(wxCommandEvent& evt);
     void OnStartNewGame(wxCommandEvent& evt);
+    void OnContinueGame(wxCommandEvent& evt);
     void UpdateMenuState();
 };

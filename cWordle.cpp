@@ -355,6 +355,8 @@ void cWordle::ShowGameEndDialog(bool won)
     }
     else
     {
+        gameState = GameState::COMPLETED_AWAITING_CONTINUE;
+        
         wxCommandEvent switchEvent(wxEVT_SWITCH_TO_MENU);
         switchEvent.SetEventObject(this);
         
@@ -387,9 +389,15 @@ void cWordle::StartNewRound()
     SetFocus();
 }
 
+void cWordle::ContinueFromFinishedGame()
+{
+    if (gameState == GameState::COMPLETED_AWAITING_CONTINUE)
+        StartNewRound();
+}
+
 bool cWordle::IsGameInProgress() const
 {
-    return gameState == GameState::ACTIVE;
+    return gameState == GameState::ACTIVE || gameState == GameState::COMPLETED_AWAITING_CONTINUE;
 }
 
 void cWordle::ShowStatusMessage(const wxString& message, const wxColor& color)
