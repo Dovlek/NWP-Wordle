@@ -14,6 +14,7 @@ public:
 
     void StartNewRound();
     bool IsGameInProgress() const;
+    void ResetStats();
 
     enum class GameState
     {

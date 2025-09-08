@@ -94,7 +94,10 @@ void cMain::OnSwitchToGame(wxCommandEvent& evt)
 void cMain::OnStartNewGame(wxCommandEvent& evt)
 {
     if (wordlePanel)
+    {
+        wordlePanel->ResetStats();
         wordlePanel->StartNewRound();
+    }
     
     SwitchPageToWordle();
 }

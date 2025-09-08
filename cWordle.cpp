@@ -415,6 +415,14 @@ void cWordle::UpdateStatsUI()
     gameSizer->Layout();
 }
 
+void cWordle::ResetStats()
+{
+    wins = 0;
+    losses = 0;
+    streak = 0;
+    UpdateStatsUI();
+}
+
 cWordle::~cWordle()
 {
     delete cgrid;
