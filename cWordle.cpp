@@ -279,12 +279,65 @@ void cWordle::CheckGuess(const wxString& guess, int row)
     
     if (allCorrect)
     {
-        ShowStatusMessage("Congratulations! You won!", wxColor(100, 255, 100));
+        ShowGameEndDialog(true);
     }
     else if (currentRow >= cgrid->GetHeight() - 1)
     {
-        ShowStatusMessage(wxString::Format("Game Over! The word was: %s", targetWord), wxColor(255, 100, 100));
+        ShowGameEndDialog(false);
     }
+}
+
+void cWordle::ShowGameEndDialog(bool won)
+{
+    wxString message;
+    if (won)
+        message = wxString::Format("Congratulations! You won!\n\nStart new round?");
+    else
+        message = wxString::Format("Game Over! The word was: %s\n\nStart new round?", targetWord);
+    
+    wxMessageDialog dialog(this, message, "Game Over", wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION);
+    
+    dialog.SetYesNoLabels("New Round", "Back to Menu");
+    
+    int result = dialog.ShowModal();
+    
+    if (result == wxID_YES)
+    {
+        StartNewRound();
+    }
+    else
+    {
+        wxCommandEvent switchEvent(wxEVT_SWITCH_TO_MENU);
+        switchEvent.SetEventObject(this);
+        
+        wxWindow* parent = GetParent();
+        while (parent && !parent->IsTopLevel())
+            parent = parent->GetParent();
+
+        if (parent)
+            wxPostEvent(parent, switchEvent);
+    }
+}
+
+void cWordle::StartNewRound()
+{
+    currentRow = 0;
+    currentCol = 0;
+    prevRow = 0;
+    prevCol = 0;
+    
+    targetWord = wordSelector->GetRandomWord();
+    
+    // TODO: Clear the grid
+    //cgrid->ResetGrid();
+    
+    // TODO: Reset keyboard colors
+    //ckeyboard_eng->ResetKeyboard();
+    
+    statusMessage->SetLabel(wxEmptyString);
+    gameSizer->Layout();
+    
+    SetFocus();
 }
 
 void cWordle::ShowStatusMessage(const wxString& message, const wxColor& color)

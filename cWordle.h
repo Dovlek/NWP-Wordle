@@ -44,6 +44,8 @@ private:
 
     void ShowStatusMessage(const wxString& message, const wxColor& color = wxColor(*wxWHITE));
     void HideStatusMessage(wxTimerEvent& evt);
+    void ShowGameEndDialog(bool won);
+    void StartNewRound();
 
     enum
     {
