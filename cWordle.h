@@ -13,6 +13,14 @@ public:
     ~cWordle();
 
     void StartNewRound();
+    bool IsGameInProgress() const;
+
+    enum class GameState
+    {
+        NOT_STARTED,
+        ACTIVE,
+        COMPLETED
+    };
 
 private:
     cGrid* cgrid;
@@ -23,6 +31,7 @@ private:
     int currentCol = 0;
     int prevRow = 0;
     int prevCol = 0;
+    GameState gameState = GameState::NOT_STARTED;
     
     void OnKeyboardButtonClicked(wxCommandEvent& evt);
     void OnKeyboardButtonPressed(wxKeyEvent& evt);

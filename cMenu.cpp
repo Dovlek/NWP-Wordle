@@ -29,6 +29,10 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
         }
     }
 
+    // Initially disable continue button
+    continueButton->SetBackgroundColour(wxColor(35, 35, 35));
+    continueButton->Enable(false);
+
     // Bind button events
     continueButton->Bind(wxEVT_BUTTON, &cMenu::OnContinueClicked, this);
     newGameButton->Bind(wxEVT_BUTTON, &cMenu::OnNewGameClicked, this);
@@ -79,6 +83,21 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
 
 cMenu::~cMenu()
 {
+}
+
+void cMenu::SetContinueButtonEnabled(bool enabled)
+{
+    if (enabled)
+    {
+        continueButton->Enable(enabled);
+        continueButton->SetBackgroundColour(wxColor(58, 58, 60));
+    }  
+    else
+    {
+        continueButton->SetBackgroundColour(wxColor(35, 35, 35));
+        continueButton->Enable(enabled);
+    }
+    continueButton->Refresh();
 }
 
 void cMenu::OnContinueClicked(wxCommandEvent& evt)

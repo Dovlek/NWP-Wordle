@@ -70,9 +70,7 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     backButton->Bind(wxEVT_LEAVE_WINDOW, &cWordle::OnBackButtonLeave, this);
 
     wordSelector = new WordSelector();
-    targetWord = wordSelector->GetRandomWord();
-    //wxLogMessage("Target word: %s", targetWord);
-
+    
     statusTimer = new wxTimer(this);
     Bind(wxEVT_TIMER, &cWordle::HideStatusMessage, this);
 }
@@ -176,6 +174,10 @@ void cWordle::OnKeyboardButtonClicked(wxCommandEvent& evt)
 
 void cWordle::ProcessKey(const wxString& key)
 {
+    // Don't process keys if game is not active
+    if (gameState != GameState::ACTIVE)
+        return;
+
     if (key == "ENTER")
     {
         if (currentCol == cgrid->GetWidth() && currentRow < cgrid->GetHeight())
@@ -281,10 +283,12 @@ void cWordle::CheckGuess(const wxString& guess, int row)
 
     if (allCorrect)
     {
+        gameState = GameState::COMPLETED;
         ShowGameEndDialog(true);
     }
     else if (row >= cgrid->GetHeight() - 1)
     {
+        gameState = GameState::COMPLETED;
         ShowGameEndDialog(false);
     }
 }
@@ -327,8 +331,10 @@ void cWordle::StartNewRound()
     currentCol = 0;
     prevRow = 0;
     prevCol = 0;
+    gameState = GameState::ACTIVE;
     
     targetWord = wordSelector->GetRandomWord();
+    //wxLogMessage("Target word: %s", targetWord);
  
     cgrid->ResetGrid();
     ckeyboard_eng->ResetKeyboard();
@@ -337,6 +343,11 @@ void cWordle::StartNewRound()
     gameSizer->Layout();
     
     SetFocus();
+}
+
+bool cWordle::IsGameInProgress() const
+{
+    return gameState == GameState::ACTIVE;
 }
 
 void cWordle::ShowStatusMessage(const wxString& message, const wxColor& color)

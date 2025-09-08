@@ -9,6 +9,8 @@ class cMenu : public wxPanel
 public:
     cMenu(wxWindow* parent);
     ~cMenu();
+    
+    void SetContinueButtonEnabled(bool enabled);
 
 private:
     wxButton* continueButton;

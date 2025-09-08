@@ -62,12 +62,23 @@ void cMain::SwitchPageToMenu()
 {
     if (cSimplebook)
         cSimplebook->SetSelection(0);
+    
+    UpdateMenuState();
 }
 
 void cMain::SwitchPageToWordle()
 {
     if (cSimplebook)
         cSimplebook->SetSelection(1);
+}
+
+void cMain::UpdateMenuState()
+{
+    if (menuPanel && wordlePanel)
+    {
+        bool gameInProgress = wordlePanel->IsGameInProgress();
+        menuPanel->SetContinueButtonEnabled(gameInProgress);
+    }
 }
 
 void cMain::OnSwitchToMenu(wxCommandEvent& evt)
