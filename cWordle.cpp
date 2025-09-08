@@ -327,12 +327,9 @@ void cWordle::StartNewRound()
     prevCol = 0;
     
     targetWord = wordSelector->GetRandomWord();
-    
-    // TODO: Clear the grid
-    //cgrid->ResetGrid();
-    
-    // TODO: Reset keyboard colors
-    //ckeyboard_eng->ResetKeyboard();
+ 
+    cgrid->ResetGrid();
+    ckeyboard_eng->ResetKeyboard();
     
     statusMessage->SetLabel(wxEmptyString);
     gameSizer->Layout();

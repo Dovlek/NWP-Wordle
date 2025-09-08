@@ -107,6 +107,24 @@ void cGrid::UpdateCellColors(int row, const std::vector<int>& states)
     }
 }
 
+void cGrid::ResetGrid()
+{
+    for (int x = 0; x < nFieldHeight; x++)
+    {
+        for (int y = 0; y < nFieldWidth; y++)
+        {
+            int index = x * nFieldWidth + y;
+            
+            gridText[index]->SetLabel(wxEmptyString);
+            gridText[index]->SetBackgroundColour(wxColor(18, 18, 19));
+            gridButton[index]->SetBitmap(bitmapsGrid.at(0)); // IDB_UNMARKED
+            
+            gridText[index]->Refresh();
+            gridButton[index]->Refresh();
+        }
+    }
+}
+
 cGrid::~cGrid()
 {
 	delete[]gridButton;
