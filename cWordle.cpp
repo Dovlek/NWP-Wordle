@@ -39,8 +39,36 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     backButton->SetCursor(wxCursor(wxCURSOR_HAND));
     backButton->Bind(wxEVT_BUTTON, &cWordle::OnBackButtonClicked, this);
 
+    // Stats labels
+    wxFont statsFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+    winsText = new wxStaticText(this, wxID_ANY, "Wins: 0", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+    winsText->SetBackgroundColour(wxColor(20, 20, 20));
+    winsText->SetForegroundColour(wxColor(*wxWHITE));
+    winsText->SetFont(statsFont);
+
+    lossesText = new wxStaticText(this, wxID_ANY, "Loses: 0", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+    lossesText->SetBackgroundColour(wxColor(20, 20, 20));
+    lossesText->SetForegroundColour(wxColor(*wxWHITE));
+    lossesText->SetFont(statsFont);
+
+    streakText = new wxStaticText(this, wxID_ANY, "Streak: 0", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+    streakText->SetBackgroundColour(wxColor(20, 20, 20));
+    streakText->SetForegroundColour(wxColor(*wxWHITE));
+    streakText->SetFont(statsFont);
+
+    wxBoxSizer* topBarSizer = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* statsSizer = new wxBoxSizer(wxVERTICAL);
+
     // Set Sizers
-    gameSizer->Add(backButton, wxSizerFlags().Align(wxALIGN_LEFT).Border(wxLEFT | wxTOP, 5));
+    statsSizer->Add(winsText, wxSizerFlags().Expand().Border(wxRIGHT, 5));
+    statsSizer->Add(lossesText, wxSizerFlags().Expand().Border(wxTOP | wxRIGHT, 5));
+    statsSizer->Add(streakText, wxSizerFlags().Expand().Border(wxTOP | wxRIGHT, 5));
+
+    topBarSizer->Add(backButton, wxSizerFlags().Align(wxALIGN_TOP).Border(wxLEFT | wxTOP, 5));
+    topBarSizer->AddStretchSpacer();
+    topBarSizer->Add(statsSizer, wxSizerFlags().Align(wxALIGN_TOP).Border(wxRIGHT | wxTOP, 5));
+
+    gameSizer->Add(topBarSizer, wxSizerFlags().Expand());
     gameSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 25));
     gameSizer->Add(statusMessage, wxSizerFlags().CenterHorizontal().Border(wxALL, 2));
     gameSizer->Add(gridSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 10));
@@ -73,6 +101,8 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     
     statusTimer = new wxTimer(this);
     Bind(wxEVT_TIMER, &cWordle::HideStatusMessage, this);
+
+    UpdateStatsUI();
 }
 
 void cWordle::OnAcceleratorPressed(wxCommandEvent& evt)
@@ -295,6 +325,18 @@ void cWordle::CheckGuess(const wxString& guess, int row)
 
 void cWordle::ShowGameEndDialog(bool won)
 {
+    if (won)
+    {
+        wins++;
+        streak++;
+    }
+    else
+    {
+        losses++;
+        streak = 0;
+    }
+    UpdateStatsUI();
+
     wxString message;
     if (won)
         message = wxString::Format("Congratulations! You won!\n\nStart new round?");
@@ -334,7 +376,7 @@ void cWordle::StartNewRound()
     gameState = GameState::ACTIVE;
     
     targetWord = wordSelector->GetRandomWord();
-    //wxLogMessage("Target word: %s", targetWord);
+    wxLogMessage("Target word: %s", targetWord);
  
     cgrid->ResetGrid();
     ckeyboard_eng->ResetKeyboard();
@@ -362,6 +404,14 @@ void cWordle::ShowStatusMessage(const wxString& message, const wxColor& color)
 void cWordle::HideStatusMessage(wxTimerEvent& evt)
 {
     statusMessage->SetLabel(wxEmptyString);
+    gameSizer->Layout();
+}
+
+void cWordle::UpdateStatsUI()
+{
+    winsText->SetLabel(wxString::Format("Wins: %d", wins));
+    lossesText->SetLabel(wxString::Format("Losses: %d", losses));
+    streakText->SetLabel(wxString::Format("Streak: %d", streak));
     gameSizer->Layout();
 }
 

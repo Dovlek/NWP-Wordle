@@ -52,6 +52,13 @@ private:
 
     wxStaticText* statusMessage;
     wxTimer* statusTimer;
+    wxStaticText* winsText;
+    wxStaticText* lossesText;
+    wxStaticText* streakText;
+    int wins = 0;
+    int losses = 0;
+    int streak = 0;
+    void UpdateStatsUI();
 
     void ShowStatusMessage(const wxString& message, const wxColor& color = wxColor(*wxWHITE));
     void HideStatusMessage(wxTimerEvent& evt);
