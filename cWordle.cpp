@@ -56,19 +56,26 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     streakText->SetForegroundColour(wxColor(*wxWHITE));
     streakText->SetFont(statsFont);
 
-    maxStreakText = new wxStaticText(this, wxID_ANY, "Best: 0", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+    maxStreakText = new wxStaticText(this, wxID_ANY, "Best streak: 0", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
     maxStreakText->SetBackgroundColour(wxColor(20, 20, 20));
     maxStreakText->SetForegroundColour(wxColor(*wxWHITE));
     maxStreakText->SetFont(statsFont);
 
     wxBoxSizer* topBarSizer = new wxBoxSizer(wxHORIZONTAL);
-    wxBoxSizer* statsSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* statsSizer = new wxBoxSizer(wxHORIZONTAL);
+    
+    wxBoxSizer* firstColumnSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* secondColumnSizer = new wxBoxSizer(wxVERTICAL);
 
-    // Set Sizers
-    statsSizer->Add(winsText, wxSizerFlags().Expand().Border(wxRIGHT, 5));
-    statsSizer->Add(lossesText, wxSizerFlags().Expand().Border(wxTOP | wxRIGHT, 5));
-    statsSizer->Add(streakText, wxSizerFlags().Expand().Border(wxTOP | wxRIGHT, 5));
-    statsSizer->Add(maxStreakText, wxSizerFlags().Expand().Border(wxTOP | wxRIGHT, 5));
+    // Set sizers
+    firstColumnSizer->Add(winsText, wxSizerFlags().Expand());
+    firstColumnSizer->Add(streakText, wxSizerFlags().Expand().Border(wxTOP, 5));
+    
+    secondColumnSizer->Add(lossesText, wxSizerFlags().Expand());
+    secondColumnSizer->Add(maxStreakText, wxSizerFlags().Expand().Border(wxTOP, 5));
+    
+    statsSizer->Add(firstColumnSizer, wxSizerFlags().Expand().Border(wxRIGHT, 15));
+    statsSizer->Add(secondColumnSizer, wxSizerFlags().Expand().Border(wxRIGHT, 5));
 
     topBarSizer->Add(backButton, wxSizerFlags().Align(wxALIGN_TOP).Border(wxLEFT | wxTOP, 5));
     topBarSizer->AddStretchSpacer();
@@ -428,7 +435,7 @@ void cWordle::UpdateStatsUI()
     winsText->SetLabel(wxString::Format("Wins: %d", wins));
     lossesText->SetLabel(wxString::Format("Losses: %d", losses));
     streakText->SetLabel(wxString::Format("Streak: %d", streak));
-    maxStreakText->SetLabel(wxString::Format("Best: %d", maxStreak));
+    maxStreakText->SetLabel(wxString::Format("Best streak: %d", maxStreak));
     gameSizer->Layout();
 }
 
