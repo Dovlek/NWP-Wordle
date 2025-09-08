@@ -245,6 +245,10 @@ void cWordle::ProcessKey(const wxString& key)
 
             CheckGuess(currentGuess, guessRow);
         }
+        else if (currentCol < cgrid->GetWidth() && currentRow < cgrid->GetHeight())
+        {
+            ShowStatusMessage("Not enough letters", wxColor(255, 100, 100));
+        }
     }
     else if (key == "backspace")
     {
