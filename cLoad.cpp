@@ -72,6 +72,15 @@ cLoad::cLoad(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
         }
     }
 
+    // Set up accelerator table
+    wxAcceleratorEntry entries[1];
+    entries[0].Set(wxACCEL_NORMAL, WXK_ESCAPE, ID_ACCEL_ESCAPE);
+    wxAcceleratorTable accelTable(1, entries);
+    SetAcceleratorTable(accelTable);
+
+    // Bind accelerator events
+    Bind(wxEVT_COMMAND_MENU_SELECTED, &cLoad::OnAcceleratorPressed, this, ID_ACCEL_ESCAPE);
+
     // Set up layout
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* listSizer = new wxBoxSizer(wxVERTICAL);
@@ -100,6 +109,26 @@ cLoad::cLoad(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
 
 cLoad::~cLoad()
 {
+}
+
+void cLoad::OnAcceleratorPressed(wxCommandEvent& evt)
+{
+    int id = evt.GetId();
+
+    if (id == ID_ACCEL_ESCAPE)
+    {
+        wxCommandEvent switchEvent(wxEVT_SWITCH_TO_MENU);
+        switchEvent.SetEventObject(this);
+
+        wxWindow* parent = GetParent();
+        while (parent && !parent->IsTopLevel())
+            parent = parent->GetParent();
+
+        if (parent)
+            wxPostEvent(parent, switchEvent);
+    }
+
+    SetFocus();
 }
 
 wxString cLoad::GetSavesDirectory()

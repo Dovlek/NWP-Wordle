@@ -25,6 +25,7 @@ private:
     void OnButtonLeave(wxMouseEvent& evt);
     void OnButtonSetFocus(wxFocusEvent& evt);
     void OnButtonKillFocus(wxFocusEvent& evt);
+    void OnAcceleratorPressed(wxCommandEvent& evt);
 
     void UpdateButtonStates();
     wxButton* GetButtonById(int id);
@@ -36,6 +37,7 @@ private:
     {
         ID_LOAD_BUTTON = 3000,
         ID_BACK_BUTTON_LOAD,
-        ID_SAVE_FILES_LIST_LOAD
+        ID_SAVE_FILES_LIST_LOAD,
+        ID_ACCEL_ESCAPE
     };
 };
