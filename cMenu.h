@@ -13,6 +13,7 @@ public:
     ~cMenu();
     
     void SetContinueButtonEnabled(bool enabled);
+    void SetNewGameButtonFocus();
 
 private:
     wxButton* continueButton;

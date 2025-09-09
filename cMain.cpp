@@ -63,7 +63,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     mainSizer->Add(cSimplebook, 1, wxEXPAND);
     mainPanel->SetSizer(mainSizer);
     mainSizer->SetSizeHints(this);
-    mainPanel->SetFocus();
+    menuPanel->SetNewGameButtonFocus();
 }
 
 cMain::~cMain()

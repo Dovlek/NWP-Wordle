@@ -211,6 +211,12 @@ void cMenu::OnButtonKillFocus(wxFocusEvent& evt)
     evt.Skip();
 }
 
+void cMenu::SetNewGameButtonFocus()
+{
+    if (newGameButton)
+        newGameButton->SetFocus();
+}
+
 wxButton* cMenu::GetButtonById(int id)
 {
     switch (id)
