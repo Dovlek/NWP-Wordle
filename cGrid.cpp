@@ -67,6 +67,19 @@ bool cGrid::IsValidPosition(int row, int col) const
     return row >= 0 && row < nFieldHeight && col >= 0 && col < nFieldWidth;
 }
 
+void cGrid::UpdateActiveRowCells(int row)
+{
+    if (row < 0 || row >= nFieldHeight)
+        return;
+
+    for (int col = 0; col < nFieldWidth; ++col)
+    {
+        int index = row * nFieldWidth + col;
+        if (!gridText[index]->GetLabel().IsEmpty())
+            gridButton[index]->SetBitmap(bitmapsGrid.at(1));
+    }
+}
+
 void cGrid::UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol, bool forward)
 {
     if (IsValidPosition(prevRow, prevCol) && forward)

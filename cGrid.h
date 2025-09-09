@@ -15,10 +15,11 @@ public:
 	int GetWidth() const { return nFieldWidth; }
 	int GetHeight() const { return nFieldHeight; }
 
+	void UpdateActiveRowCells(int row);
 	void UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol, bool forward);
 	void UpdateCellColors(int row, const std::vector<int>& states);
 	void ResetGrid();
-
+	
 private:
 	int nFieldWidth;
 	int nFieldHeight;

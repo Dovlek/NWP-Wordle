@@ -591,11 +591,15 @@ bool cWordle::SetGameStateData(const wxString& data)
             ckeyboard_eng->UpdateKeyboardColors(guess, intStates);
         }
     }
-    
+
+    // Mark active row cells that already have letters
+    if (currentRow >= 0 && currentRow < cgrid->GetHeight())
+        cgrid->UpdateActiveRowCells(currentRow);
+
     UpdateStatsUI();
     statusMessage->SetLabel(wxEmptyString);
     gameSizer->Layout();
-    
+
     return true;
 }
 
