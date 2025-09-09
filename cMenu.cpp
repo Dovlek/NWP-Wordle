@@ -130,17 +130,25 @@ void cMenu::OnNewGameClicked(wxCommandEvent& evt)
         wxPostEvent(parent, switchEvent);
 }
 
-// TODO: Implement save game functionality
 void cMenu::OnSaveClicked(wxCommandEvent& evt)
 {
+    wxCommandEvent switchEvent(wxEVT_SWITCH_TO_SAVE);
+    switchEvent.SetEventObject(this);
+    
+    wxWindow* parent = GetParent();
+    while (parent && !parent->IsTopLevel())
+        parent = parent->GetParent();
+    
+    if (parent)
+        wxPostEvent(parent, switchEvent);
 }
 
-// TODO: Implement load game functionality
+// TODO: Implement load game panel
 void cMenu::OnLoadClicked(wxCommandEvent& evt)
 {
 }
 
-// TODO: Implement options functionality
+// TODO: Implement options panel
 void cMenu::OnOptionsClicked(wxCommandEvent& evt)
 {
 }

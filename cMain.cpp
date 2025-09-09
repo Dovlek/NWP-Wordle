@@ -9,6 +9,7 @@
 wxDEFINE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_START_NEW_GAME, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CONTINUE_GAME, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_SWITCH_TO_SAVE, wxCommandEvent);
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxSize(800, 600))
 {
@@ -41,10 +42,15 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     wordlePanel = new cWordle(cSimplebook);
     cSimplebook->AddPage(wordlePanel, "Wordle", false);
     
+    // Create and add the save panel as the third Simplebook page
+    savePanel = new cSave(cSimplebook);
+    cSimplebook->AddPage(savePanel, "Save", false);
+    
     // Bind custom events
     Bind(wxEVT_SWITCH_TO_MENU, &cMain::OnSwitchToMenu, this);
     Bind(wxEVT_START_NEW_GAME, &cMain::OnStartNewGame, this);
     Bind(wxEVT_CONTINUE_GAME, &cMain::OnContinueGame, this);
+    Bind(wxEVT_SWITCH_TO_SAVE, &cMain::OnSwitchToSave, this);
     
     // Set up the main sizer
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -70,6 +76,12 @@ void cMain::SwitchPageToWordle()
 {
     if (cSimplebook)
         cSimplebook->SetSelection(1);
+}
+
+void cMain::SwitchPageToSave()
+{
+    if (cSimplebook)
+        cSimplebook->SetSelection(2);
 }
 
 void cMain::UpdateMenuState()
@@ -104,4 +116,10 @@ void cMain::OnContinueGame(wxCommandEvent& evt)
         wordlePanel->ContinueFromFinishedGame();
     
     SwitchPageToWordle();
+}
+
+void cMain::OnSwitchToSave(wxCommandEvent& evt)
+{
+    if (savePanel)
+        SwitchPageToSave();
 }
