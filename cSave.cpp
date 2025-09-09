@@ -167,18 +167,28 @@ void cSave::OnAcceleratorPressed(wxCommandEvent& evt)
 void cSave::OnKeyboardPressed(wxKeyEvent& evt)
 {
     int keyCode = evt.GetKeyCode();
+    wxWindow* focusedWindow = FindFocus();
 
     // Handle Delete key when not in text input
     if (keyCode == WXK_DELETE)
     {
-        wxWindow* focusedWindow = FindFocus();
-        
         if (focusedWindow != saveNameInput && deleteButton->IsEnabled())
         {
             wxCommandEvent deleteEvent(wxEVT_BUTTON, ID_DELETE_BUTTON);
             deleteEvent.SetEventObject(deleteButton);
             OnDeleteClicked(deleteEvent);
             SetFocus();
+            return;
+        }
+    }
+    // Handle Enter key when saveFilesList has focus
+    else if (keyCode == WXK_RETURN || keyCode == WXK_NUMPAD_ENTER)
+    {
+        if (focusedWindow == saveFilesList && saveButton->IsEnabled())
+        {
+            wxCommandEvent saveEvent(wxEVT_BUTTON, ID_SAVE_BUTTON);
+            saveEvent.SetEventObject(saveButton);
+            OnSaveClicked(saveEvent);
             return;
         }
     }
