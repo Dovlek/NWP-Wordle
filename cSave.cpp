@@ -26,6 +26,7 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     saveNameInput->SetBackgroundColour(wxColor(58, 58, 60));
     saveNameInput->SetForegroundColour(wxColor(*wxWHITE));
     saveNameInput->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
+    saveNameInput->SetMaxLength(25);
 
     // Existing saves list
     wxStaticText* listLabel = new wxStaticText(this, wxID_ANY, "Existing Saves:", wxDefaultPosition, wxDefaultSize);
@@ -276,7 +277,7 @@ void cSave::OnSaveClicked(wxCommandEvent& evt)
     // Verify the file was created
     if (wxFile::Exists(fullPath))
     {
-        wxMessageBox("Game saved as: " + saveName, "Save Successful", wxOK | wxICON_INFORMATION);
+        //wxMessageBox("Game saved as: " + saveName, "Save Successful", wxOK | wxICON_INFORMATION);
         RefreshSaveFilesList();
         saveNameInput->Clear();
         UpdateButtonStates();
