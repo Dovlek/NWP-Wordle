@@ -315,7 +315,7 @@ void cSave::OnDeleteClicked(wxCommandEvent& evt)
         {
             if (wxRemoveFile(fullPath))
             {
-                wxMessageBox("Save file deleted: " + fileName, "Delete Successful", wxOK | wxICON_INFORMATION);
+                //wxMessageBox("Save file deleted: " + fileName, "Delete Successful", wxOK | wxICON_INFORMATION);
                 RefreshSaveFilesList();
                 UpdateButtonStates();
             }
@@ -420,6 +420,10 @@ void cSave::RefreshSaveFilesList()
         saveFilesList->Append(displayName);
         cont = dir.GetNext(&filename);
     }
+
+    saveNameInput->SetValue(wxEmptyString);
+    saveNameInput->SetFocus();
+    UpdateButtonStates();
 }
 
 void cSave::UpdateButtonStates()

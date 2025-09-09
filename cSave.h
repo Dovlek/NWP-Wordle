@@ -9,6 +9,8 @@ public:
     cSave(wxWindow* parent);
     ~cSave();
 
+    void RefreshSaveFilesList();
+
 private:
     wxTextCtrl* saveNameInput;
     wxListBox* saveFilesList;
@@ -29,7 +31,6 @@ private:
     void OnAcceleratorPressed(wxCommandEvent& evt);
     void OnKeyboardPressed(wxKeyEvent& evt);
     
-    void RefreshSaveFilesList();
     void UpdateButtonStates();
     wxButton* GetButtonById(int id);
 

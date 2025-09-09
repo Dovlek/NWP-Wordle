@@ -133,7 +133,10 @@ void cMain::OnContinueGame(wxCommandEvent& evt)
 void cMain::OnSwitchToSave(wxCommandEvent& evt)
 {
     if (savePanel)
+    {
+        savePanel->RefreshSaveFilesList();
         SwitchPageToSave();
+    }
 }
 
 void cMain::OnSwitchToLoad(wxCommandEvent& evt)

@@ -318,6 +318,13 @@ void cLoad::RefreshSaveFilesList()
         saveFilesList->Append(displayName);
         cont = dir.GetNext(&filename);
     }
+
+    if (saveFilesList->GetCount() > 0 && saveFilesList->GetSelection() == wxNOT_FOUND)
+    {
+        saveFilesList->SetSelection(0);
+        saveFilesList->SetFocus();
+    }
+    UpdateButtonStates();
 }
 
 void cLoad::UpdateButtonStates()

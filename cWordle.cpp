@@ -361,9 +361,9 @@ void cWordle::ShowGameEndDialog(bool won)
     if (won)
         message = wxString::Format("Congratulations! You won!\n\nStart new round?");
     else
-        message = wxString::Format("Game Over! The word was: %s\n\nStart new round?", targetWord);
+        message = wxString::Format("You lost! The word was: %s\n\nStart new round?", targetWord);
 
-    wxMessageDialog dialog(this, message, "Game Over", wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION);
+    wxMessageDialog dialog(this, message, "Round Finished!", wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION);
 
     dialog.SetYesNoLabels("New Round", "Back to Menu");
 
