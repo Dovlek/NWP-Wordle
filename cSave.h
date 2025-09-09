@@ -17,6 +17,7 @@ private:
     wxButton* backButton;
 
     void OnSaveClicked(wxCommandEvent& evt);
+    void OnSaveNameEnter(wxCommandEvent& evt);
     void OnDeleteClicked(wxCommandEvent& evt);
     void OnBackClicked(wxCommandEvent& evt);
     void OnSaveNameChanged(wxCommandEvent& evt);
@@ -25,7 +26,7 @@ private:
     void OnButtonLeave(wxMouseEvent& evt);
     void OnButtonSetFocus(wxFocusEvent& evt);
     void OnButtonKillFocus(wxFocusEvent& evt);
-
+    
     void RefreshSaveFilesList();
     void UpdateButtonStates();
     wxButton* GetButtonById(int id);

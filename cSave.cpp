@@ -22,7 +22,7 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     nameLabel->SetForegroundColour(wxColor(*wxWHITE));
     nameLabel->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
-    saveNameInput = new wxTextCtrl(this, ID_SAVE_NAME_INPUT, "", wxDefaultPosition, wxSize(400, 25));
+    saveNameInput = new wxTextCtrl(this, ID_SAVE_NAME_INPUT, "", wxDefaultPosition, wxSize(400, 25), wxTE_PROCESS_ENTER);
     saveNameInput->SetBackgroundColour(wxColor(58, 58, 60));
     saveNameInput->SetForegroundColour(wxColor(*wxWHITE));
     saveNameInput->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
@@ -63,6 +63,7 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     saveButton->Bind(wxEVT_BUTTON, &cSave::OnSaveClicked, this);
     deleteButton->Bind(wxEVT_BUTTON, &cSave::OnDeleteClicked, this);
     backButton->Bind(wxEVT_BUTTON, &cSave::OnBackClicked, this);
+    saveNameInput->Bind(wxEVT_TEXT_ENTER, &cSave::OnSaveNameEnter, this);
 
     // Bind mouse events for buttons
     for (int buttonId = ID_SAVE_BUTTON; buttonId <= ID_BACK_BUTTON; buttonId++)
@@ -217,6 +218,16 @@ void cSave::OnSaveClicked(wxCommandEvent& evt)
     }
     else
         wxMessageBox("Save file was not created successfully.", "Error", wxOK | wxICON_ERROR);
+}
+
+void cSave::OnSaveNameEnter(wxCommandEvent& evt)
+{
+    if (saveButton->IsEnabled())
+    {
+        wxCommandEvent saveEvent(wxEVT_BUTTON, ID_SAVE_BUTTON);
+        saveEvent.SetEventObject(saveButton);
+        OnSaveClicked(saveEvent);
+    }
 }
 
 void cSave::OnDeleteClicked(wxCommandEvent& evt)
