@@ -10,6 +10,7 @@ wxDEFINE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_START_NEW_GAME, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CONTINUE_GAME, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SWITCH_TO_SAVE, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_SWITCH_TO_LOAD, wxCommandEvent);
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxSize(800, 600))
 {
@@ -46,11 +47,16 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     savePanel = new cSave(cSimplebook);
     cSimplebook->AddPage(savePanel, "Save", false);
     
+    // Create and add the load panel as the fourth Simplebook page
+    loadPanel = new cLoad(cSimplebook);
+    cSimplebook->AddPage(loadPanel, "Load", false);
+    
     // Bind custom events
     Bind(wxEVT_SWITCH_TO_MENU, &cMain::OnSwitchToMenu, this);
     Bind(wxEVT_START_NEW_GAME, &cMain::OnStartNewGame, this);
     Bind(wxEVT_CONTINUE_GAME, &cMain::OnContinueGame, this);
     Bind(wxEVT_SWITCH_TO_SAVE, &cMain::OnSwitchToSave, this);
+    Bind(wxEVT_SWITCH_TO_LOAD, &cMain::OnSwitchToLoad, this);
     
     // Set up the main sizer
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -82,6 +88,12 @@ void cMain::SwitchPageToSave()
 {
     if (cSimplebook)
         cSimplebook->SetSelection(2);
+}
+
+void cMain::SwitchPageToLoad()
+{
+    if (cSimplebook)
+        cSimplebook->SetSelection(3);
 }
 
 void cMain::UpdateMenuState()
@@ -122,4 +134,10 @@ void cMain::OnSwitchToSave(wxCommandEvent& evt)
 {
     if (savePanel)
         SwitchPageToSave();
+}
+
+void cMain::OnSwitchToLoad(wxCommandEvent& evt)
+{
+    if (loadPanel)
+        SwitchPageToLoad();
 }

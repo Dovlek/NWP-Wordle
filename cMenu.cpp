@@ -143,9 +143,17 @@ void cMenu::OnSaveClicked(wxCommandEvent& evt)
         wxPostEvent(parent, switchEvent);
 }
 
-// TODO: Implement load game panel
 void cMenu::OnLoadClicked(wxCommandEvent& evt)
 {
+    wxCommandEvent switchEvent(wxEVT_SWITCH_TO_LOAD);
+    switchEvent.SetEventObject(this);
+    
+    wxWindow* parent = GetParent();
+    while (parent && !parent->IsTopLevel())
+        parent = parent->GetParent();
+    
+    if (parent)
+        wxPostEvent(parent, switchEvent);
 }
 
 // TODO: Implement options panel

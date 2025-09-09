@@ -22,6 +22,7 @@
     <ClInclude Include="cApp.h" />
     <ClInclude Include="cGrid.h" />
     <ClInclude Include="cKeyboard.h" />
+    <ClInclude Include="cLoad.h" />
     <ClInclude Include="cMain.h" />
     <ClInclude Include="cMenu.h" />
     <ClInclude Include="cSave.h" />
@@ -33,6 +34,7 @@
     <ClCompile Include="cApp.cpp" />
     <ClCompile Include="cGrid.cpp" />
     <ClCompile Include="cKeyboard.cpp" />
+    <ClCompile Include="cLoad.cpp" />
     <ClCompile Include="cMain.cpp" />
     <ClCompile Include="cMenu.cpp" />
     <ClCompile Include="cSave.cpp" />
