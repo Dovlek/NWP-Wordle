@@ -47,6 +47,7 @@ cLoad::cLoad(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
 
     // Bind events
     saveFilesList->Bind(wxEVT_LISTBOX, &cLoad::OnSaveFileSelected, this);
+    saveFilesList->Bind(wxEVT_CHAR_HOOK, &cLoad::OnKeyboardPressed, this);
     loadButton->Bind(wxEVT_BUTTON, &cLoad::OnLoadClicked, this);
     backButton->Bind(wxEVT_BUTTON, &cLoad::OnBackClicked, this);
 
@@ -129,6 +130,24 @@ void cLoad::OnAcceleratorPressed(wxCommandEvent& evt)
     }
 
     SetFocus();
+}
+
+void cLoad::OnKeyboardPressed(wxKeyEvent& evt)
+{
+    int keyCode = evt.GetKeyCode();
+
+    if (keyCode == WXK_RETURN || keyCode == WXK_NUMPAD_ENTER)
+    {
+        if (loadButton->IsEnabled())
+        {
+            wxCommandEvent loadEvent(wxEVT_BUTTON, ID_LOAD_BUTTON);
+            loadEvent.SetEventObject(loadButton);
+            OnLoadClicked(loadEvent);
+            return;
+        }
+    }
+
+    evt.Skip();
 }
 
 wxString cLoad::GetSavesDirectory()

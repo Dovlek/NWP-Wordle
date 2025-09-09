@@ -26,6 +26,7 @@ private:
     void OnButtonSetFocus(wxFocusEvent& evt);
     void OnButtonKillFocus(wxFocusEvent& evt);
     void OnAcceleratorPressed(wxCommandEvent& evt);
+    void OnKeyboardPressed(wxKeyEvent& evt);
 
     void UpdateButtonStates();
     wxButton* GetButtonById(int id);
