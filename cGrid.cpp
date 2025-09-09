@@ -127,6 +127,8 @@ void cGrid::ResetGrid()
 
 cGrid::~cGrid()
 {
-	delete[]gridButton;
-	delete[]gridText;
+    delete[] gridButton;
+    delete[] gridText;
+    gridButton = nullptr;
+    gridText = nullptr;
 }
