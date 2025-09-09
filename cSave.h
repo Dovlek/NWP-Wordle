@@ -1,8 +1,6 @@
 #pragma once
 #include "wx/wx.h"
 
-wxDECLARE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
-
 class cWordle;
 
 class cSave : public wxPanel

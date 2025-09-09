@@ -17,6 +17,7 @@ public:
     bool IsGameInProgress() const;
     void ResetStats();
     wxString GetGameStateData() const;
+    bool SetGameStateData(const wxString& data);
 
     enum class GameState
     {

@@ -1,4 +1,5 @@
 #include "cWordle.h"
+#include <wx/tokenzr.h>
 
 cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {
@@ -484,6 +485,118 @@ wxString cWordle::GetGameStateData() const
     }
 
     return data;
+}
+
+bool cWordle::SetGameStateData(const wxString& data)
+{
+    wxStringTokenizer tokenizer(data, "\n");
+    
+    cgrid->ResetGrid();
+    ckeyboard_eng->ResetKeyboard();
+    
+    // Parse each line
+    bool inGridData = false;
+    int gridRow = 0;
+    
+    while (tokenizer.HasMoreTokens())
+    {
+        wxString line = tokenizer.GetNextToken().Trim().Trim(false);
+        
+        if (line.IsEmpty())
+            continue;
+            
+        if (line == "GRID_DATA=")
+        {
+            inGridData = true;
+            gridRow = 0;
+            continue;
+        }
+        
+        if (inGridData)
+        {
+            // Process grid row data
+            if (gridRow < cgrid->GetHeight())
+            {
+                for (int col = 0; col < cgrid->GetWidth() && col < line.Length(); col++)
+                {
+                    wxString letter = wxString(line[col]);
+                    if (letter != "_")
+                        cgrid->SetLetter(gridRow, col, letter);
+                }
+                gridRow++;
+            }
+        }
+        else
+        {
+            // Process key-value pairs
+            int equalPos = line.Find('=');
+            if (equalPos == wxNOT_FOUND)
+                continue;
+                
+            wxString key = line.SubString(0, equalPos - 1);
+            wxString value = line.SubString(equalPos + 1, line.Length() - 1);
+            
+            if (key == "TARGET_WORD")
+                targetWord = value;
+            else if (key == "CURRENT_ROW")
+                currentRow = wxAtoi(value);
+            else if (key == "CURRENT_COL")
+                currentCol = wxAtoi(value);
+            else if (key == "GAME_STATE")
+                gameState = static_cast<GameState>(wxAtoi(value));
+            else if (key == "WINS")
+                wins = wxAtoi(value);
+            else if (key == "LOSSES")
+                losses = wxAtoi(value);
+            else if (key == "STREAK")
+                streak = wxAtoi(value);
+            else if (key == "MAX_STREAK")
+                maxStreak = wxAtoi(value);
+        }
+    }
+    
+    if (targetWord.IsEmpty())
+    {
+        wxLogError("Invalid save data: missing target word");
+        return false;
+    }
+    
+    // Recreate the visual state of completed rows
+    for (int row = 0; row < currentRow && row < cgrid->GetHeight(); row++)
+    {
+        wxString guess;
+        bool hasCompleteRow = true;
+        
+        // Get guess from grid
+        for (int col = 0; col < cgrid->GetWidth(); col++)
+        {
+            wxString letter = cgrid->GetLetter(row, col);
+            if (letter.IsEmpty())
+            {
+                hasCompleteRow = false;
+                break;
+            }
+            guess += letter;
+        }
+        
+        // Update colors on completed row
+        if (hasCompleteRow && guess.Length() == cgrid->GetWidth())
+        {
+            std::vector<LetterState> states = CompareWords(guess, targetWord);
+            std::vector<int> intStates;
+            for (const auto& state : states)
+                intStates.push_back(static_cast<int>(state));
+            
+            cgrid->UpdateCellColors(row, intStates);
+            ckeyboard_eng->UpdateKeyboardColors(guess, intStates);
+        }
+    }
+    
+    UpdateStatsUI();
+    statusMessage->SetLabel(wxEmptyString);
+    gameSizer->Layout();
+    
+    return true;
 }
 
 cWordle::~cWordle()

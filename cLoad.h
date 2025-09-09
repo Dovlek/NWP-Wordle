@@ -1,7 +1,7 @@
 #pragma once
 #include "wx/wx.h"
 
-wxDECLARE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_CONTINUE_GAME, wxCommandEvent);
 
 class cWordle;
 

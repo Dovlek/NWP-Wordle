@@ -172,7 +172,23 @@ void cLoad::OnLoadClicked(wxCommandEvent& evt)
         return;
     }
 
-    // TODO: SetGameStateData
+    if (wordlePanel->SetGameStateData(gameStateData))
+    {
+        //wxMessageBox("Game loaded: " + fileName, "Load Successful", wxOK | wxICON_INFORMATION);
+        
+        // Switch to game panel
+        wxCommandEvent switchEvent(wxEVT_CONTINUE_GAME);
+        switchEvent.SetEventObject(this);
+        
+        wxWindow* parent = GetParent();
+        while (parent && !parent->IsTopLevel())
+            parent = parent->GetParent();
+        
+        if (parent)
+            wxPostEvent(parent, switchEvent);
+    }
+    else
+        wxMessageBox("Failed to load game. The save file may be corrupted or incompatible.", "Error", wxOK | wxICON_ERROR);
 }
 
 void cLoad::OnBackClicked(wxCommandEvent& evt)
