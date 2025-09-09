@@ -27,6 +27,7 @@ private:
     void OnButtonSetFocus(wxFocusEvent& evt);
     void OnButtonKillFocus(wxFocusEvent& evt);
     void OnAcceleratorPressed(wxCommandEvent& evt);
+    void OnKeyboardPressed(wxKeyEvent& evt);
     
     void RefreshSaveFilesList();
     void UpdateButtonStates();
@@ -42,6 +43,7 @@ private:
         ID_BACK_BUTTON,
         ID_SAVE_NAME_INPUT,
         ID_SAVE_FILES_LIST,
-        ID_ACCEL_ESCAPE
+        ID_ACCEL_ESCAPE,
+        ID_ACCEL_DELETE
     };
 };

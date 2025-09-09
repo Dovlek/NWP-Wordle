@@ -88,13 +88,18 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     }
 
     // Set up accelerator table
-    wxAcceleratorEntry entries[1];
+    wxAcceleratorEntry entries[2];
     entries[0].Set(wxACCEL_NORMAL, WXK_ESCAPE, ID_ACCEL_ESCAPE);
-    wxAcceleratorTable accelTable(1, entries);
+    entries[1].Set(wxACCEL_NORMAL, WXK_DELETE, ID_ACCEL_DELETE);
+    wxAcceleratorTable accelTable(2, entries);
     SetAcceleratorTable(accelTable);
 
     // Bind accelerator events
     Bind(wxEVT_COMMAND_MENU_SELECTED, &cSave::OnAcceleratorPressed, this, ID_ACCEL_ESCAPE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED, &cSave::OnAcceleratorPressed, this, ID_ACCEL_DELETE);
+
+    // Bind keyboard events
+    Bind(wxEVT_CHAR_HOOK, &cSave::OnKeyboardPressed, this);
 
     // Set up layout
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -145,8 +150,39 @@ void cSave::OnAcceleratorPressed(wxCommandEvent& evt)
         if (parent)
             wxPostEvent(parent, switchEvent);
     }
+    else if (id == ID_ACCEL_DELETE)
+    {
+        if (deleteButton->IsEnabled())
+        {
+            wxCommandEvent deleteEvent(wxEVT_BUTTON, ID_DELETE_BUTTON);
+            deleteEvent.SetEventObject(deleteButton);
+            OnDeleteClicked(deleteEvent);
+        }
+    }
 
     SetFocus();
+}
+
+void cSave::OnKeyboardPressed(wxKeyEvent& evt)
+{
+    int keyCode = evt.GetKeyCode();
+
+    // Handle Delete key when not in text input
+    if (keyCode == WXK_DELETE)
+    {
+        wxWindow* focusedWindow = FindFocus();
+        
+        if (focusedWindow != saveNameInput && deleteButton->IsEnabled())
+        {
+            wxCommandEvent deleteEvent(wxEVT_BUTTON, ID_DELETE_BUTTON);
+            deleteEvent.SetEventObject(deleteButton);
+            OnDeleteClicked(deleteEvent);
+            SetFocus();
+            return;
+        }
+    }
+
+    evt.Skip();
 }
 
 wxString cSave::GetSavesDirectory()
