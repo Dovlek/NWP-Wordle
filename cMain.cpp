@@ -139,5 +139,8 @@ void cMain::OnSwitchToSave(wxCommandEvent& evt)
 void cMain::OnSwitchToLoad(wxCommandEvent& evt)
 {
     if (loadPanel)
+    {
+        loadPanel->RefreshSaveFilesList();
         SwitchPageToLoad();
+    }
 }

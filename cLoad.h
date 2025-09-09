@@ -11,6 +11,8 @@ public:
     cLoad(wxWindow* parent);
     ~cLoad();
 
+    void RefreshSaveFilesList();
+
 private:
     wxListBox* saveFilesList;
     wxButton* loadButton;
@@ -24,7 +26,6 @@ private:
     void OnButtonSetFocus(wxFocusEvent& evt);
     void OnButtonKillFocus(wxFocusEvent& evt);
 
-    void RefreshSaveFilesList();
     void UpdateButtonStates();
     wxButton* GetButtonById(int id);
 
