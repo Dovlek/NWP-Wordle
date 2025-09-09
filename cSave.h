@@ -3,6 +3,8 @@
 
 wxDECLARE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
 
+class cWordle;
+
 class cSave : public wxPanel
 {
 public:
@@ -29,6 +31,9 @@ private:
     void RefreshSaveFilesList();
     void UpdateButtonStates();
     wxButton* GetButtonById(int id);
+
+    wxString GetSavesDirectory();
+    cWordle* GetWordlePanel();
 
     enum
     {

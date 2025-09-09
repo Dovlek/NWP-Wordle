@@ -3,7 +3,7 @@
 cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {
     SetBackgroundColour(wxColor(20, 20, 20));
-    
+
     gameSizer = new wxBoxSizer(wxVERTICAL);
     wxGridSizer* gridSizer = new wxGridSizer(0, 0, wxSize(0, 0));
 
@@ -24,7 +24,7 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     // Create keyboard Grid
     ckeyboard_eng = new cKeyboardENG();
     wxBoxSizer* keyboardPanel = ckeyboard_eng->CreateKeyboard(this);
-    
+
     // Bind keyboard buttons
     for (int i = 0; i < ckeyboard_eng->keyboardSize + 2; i++)
     {
@@ -63,17 +63,17 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
 
     wxBoxSizer* topBarSizer = new wxBoxSizer(wxHORIZONTAL);
     wxBoxSizer* statsSizer = new wxBoxSizer(wxHORIZONTAL);
-    
+
     wxBoxSizer* firstColumnSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* secondColumnSizer = new wxBoxSizer(wxVERTICAL);
 
     // Set sizers
     firstColumnSizer->Add(winsText, wxSizerFlags().Expand());
     firstColumnSizer->Add(streakText, wxSizerFlags().Expand().Border(wxTOP, 5));
-    
+
     secondColumnSizer->Add(lossesText, wxSizerFlags().Expand());
     secondColumnSizer->Add(maxStreakText, wxSizerFlags().Expand().Border(wxTOP, 5));
-    
+
     statsSizer->Add(firstColumnSizer, wxSizerFlags().Expand().Border(wxRIGHT, 15));
     statsSizer->Add(secondColumnSizer, wxSizerFlags().Expand().Border(wxRIGHT, 5));
 
@@ -111,7 +111,7 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     backButton->Bind(wxEVT_LEAVE_WINDOW, &cWordle::OnBackButtonLeave, this);
 
     wordSelector = new WordSelector();
-    
+
     statusTimer = new wxTimer(this);
     Bind(wxEVT_TIMER, &cWordle::HideStatusMessage, this);
 
@@ -134,7 +134,7 @@ void cWordle::OnAcceleratorPressed(wxCommandEvent& evt)
     {
         wxCommandEvent switchEvent(wxEVT_SWITCH_TO_MENU);
         switchEvent.SetEventObject(this);
-        
+
         wxWindow* parent = GetParent();
         while (parent && !parent->IsTopLevel())
             parent = parent->GetParent();
@@ -187,7 +187,7 @@ void cWordle::OnKeyboardButtonPressed(wxKeyEvent& evt)
     {
         ProcessKey(key);
         SetFocus();
-    }   
+    }
     else
         evt.Skip();
 }
@@ -276,7 +276,7 @@ std::vector<cWordle::LetterState> cWordle::CompareWords(const wxString& guess, c
     std::vector<LetterState> states(5, LetterState::WRONG);
     wxString targetCopy = target;
     wxString guessCopy = guess;
-    
+
     // First pass: mark correct positions
     for (int i = 0; i < 5; i++)
     {
@@ -287,7 +287,7 @@ std::vector<cWordle::LetterState> cWordle::CompareWords(const wxString& guess, c
             guessCopy[i] = '*';
         }
     }
-    
+
     // Second pass: mark wrong positions
     for (int i = 0; i < 5; i++)
     {
@@ -301,7 +301,7 @@ std::vector<cWordle::LetterState> cWordle::CompareWords(const wxString& guess, c
             }
         }
     }
-    
+
     return states;
 }
 
@@ -361,13 +361,13 @@ void cWordle::ShowGameEndDialog(bool won)
         message = wxString::Format("Congratulations! You won!\n\nStart new round?");
     else
         message = wxString::Format("Game Over! The word was: %s\n\nStart new round?", targetWord);
-    
+
     wxMessageDialog dialog(this, message, "Game Over", wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION);
-    
+
     dialog.SetYesNoLabels("New Round", "Back to Menu");
-    
+
     int result = dialog.ShowModal();
-    
+
     if (result == wxID_YES)
     {
         StartNewRound();
@@ -375,10 +375,10 @@ void cWordle::ShowGameEndDialog(bool won)
     else
     {
         gameState = GameState::COMPLETED_AWAITING_CONTINUE;
-        
+
         wxCommandEvent switchEvent(wxEVT_SWITCH_TO_MENU);
         switchEvent.SetEventObject(this);
-        
+
         wxWindow* parent = GetParent();
         while (parent && !parent->IsTopLevel())
             parent = parent->GetParent();
@@ -395,16 +395,16 @@ void cWordle::StartNewRound()
     prevRow = 0;
     prevCol = 0;
     gameState = GameState::ACTIVE;
-    
+
     targetWord = wordSelector->GetRandomWord();
     wxLogMessage("Target word: %s", targetWord);
- 
+
     cgrid->ResetGrid();
     ckeyboard_eng->ResetKeyboard();
-    
+
     statusMessage->SetLabel(wxEmptyString);
     gameSizer->Layout();
-    
+
     SetFocus();
 }
 
@@ -450,6 +450,40 @@ void cWordle::ResetStats()
     streak = 0;
     maxStreak = 0;
     UpdateStatsUI();
+}
+
+wxString cWordle::GetGameStateData() const
+{
+    wxString data;
+
+    // Save game metadata
+    data += wxString::Format("VERSION=In-progress\n"); // No version number yet
+    data += wxString::Format("TARGET_WORD=%s\n", targetWord);
+    data += wxString::Format("CURRENT_ROW=%d\n", currentRow);
+    data += wxString::Format("CURRENT_COL=%d\n", currentCol);
+    data += wxString::Format("GAME_STATE=%d\n", static_cast<int>(gameState));
+
+    // Save stats
+    data += wxString::Format("WINS=%d\n", wins);
+    data += wxString::Format("LOSSES=%d\n", losses);
+    data += wxString::Format("STREAK=%d\n", streak);
+    data += wxString::Format("MAX_STREAK=%d\n", maxStreak);
+
+    // Save grid state
+    data += "GRID_DATA=\n";
+    for (int row = 0; row < cgrid->GetHeight(); row++)
+    {
+        for (int col = 0; col < cgrid->GetWidth(); col++)
+        {
+            wxString letter = cgrid->GetLetter(row, col);
+            if (letter.IsEmpty())
+                letter = "_";
+            data += letter;
+        }
+        data += "\n";
+    }
+
+    return data;
 }
 
 cWordle::~cWordle()

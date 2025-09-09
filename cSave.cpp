@@ -1,6 +1,10 @@
 #include "cSave.h"
+#include "cWordle.h"
 #include <wx/dir.h>
 #include <wx/filename.h>
+#include <wx/stdpaths.h>
+#include <wx/tokenzr.h>
+#include <wx/simplebook.h>
 
 cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {
@@ -115,6 +119,30 @@ cSave::~cSave()
 {
 }
 
+wxString cSave::GetSavesDirectory()
+{
+    wxStandardPaths& stdPaths = wxStandardPaths::Get();
+    wxString appDataDir = stdPaths.GetUserDataDir();
+
+    wxString savesDir = appDataDir + wxFileName::GetPathSeparator() + "Saves";
+
+    // Create saves directory if it doesn't exist
+    if (!wxDir::Exists(savesDir))
+        if (!wxFileName::Mkdir(savesDir, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL))
+            wxLogError("Failed to create saves directory: %s", savesDir);
+
+    return savesDir;
+}
+
+cWordle* cSave::GetWordlePanel()
+{
+    wxSimplebook* simplebook = dynamic_cast<wxSimplebook*>(wxWindow::GetParent());
+    if (simplebook && simplebook->GetPageCount() >= 1)
+        return dynamic_cast<cWordle*>(simplebook->GetPage(1));
+    
+    return nullptr;
+}
+
 void cSave::OnSaveClicked(wxCommandEvent& evt)
 {
     wxString saveName = saveNameInput->GetValue().Trim();
@@ -124,12 +152,71 @@ void cSave::OnSaveClicked(wxCommandEvent& evt)
         return;
     }
 
-    // TODO: Implement save functionality
-    wxMessageBox("Game saved as: " + saveName, "Save Successful", wxOK | wxICON_INFORMATION);
+    // Get current game state from Wordle panel
+    cWordle* wordlePanel = GetWordlePanel();
+    if (!wordlePanel)
+    {
+        wxMessageBox("Cannot access game data.", "Error", wxOK | wxICON_ERROR);
+        return;
+    }
 
-    RefreshSaveFilesList();
-    saveNameInput->Clear();
-    UpdateButtonStates();
+    if (!wordlePanel->IsGameInProgress())
+    {
+        wxMessageBox("No game in progress to save.", "Error", wxOK | wxICON_ERROR);
+        return;
+    }
+
+    // Create save file path
+    wxString savesDir = GetSavesDirectory();
+    wxString fileName = saveName + ".sav";
+    wxString fullPath = savesDir + wxFileName::GetPathSeparator() + fileName;
+
+    // Check if file already exists
+    if (wxFile::Exists(fullPath))
+    {
+        int result = wxMessageBox("A save file with this name already exists. Overwrite?",
+            "File Exists", wxYES_NO | wxICON_QUESTION);
+        if (result != wxYES)
+            return;
+    }
+
+    // Get game state data
+    wxString gameStateData = wordlePanel->GetGameStateData();
+
+    if (gameStateData.IsEmpty())
+    {
+        wxMessageBox("No game data to save.", "Error", wxOK | wxICON_ERROR);
+        return;
+    }
+
+    // Create save file
+    wxFile saveFile;
+    if (!saveFile.Create(fullPath, true))
+    {
+        wxMessageBox("Failed to create save file.\nPath: " + fullPath, "Error", wxOK | wxICON_ERROR);
+        return;
+    }
+
+    // Write the data
+    if (!saveFile.Write(gameStateData))
+    {
+        wxMessageBox("Failed to write game data to file.", "Error", wxOK | wxICON_ERROR);
+        saveFile.Close();
+        return;
+    }
+
+    saveFile.Close();
+
+    // Verify the file was created
+    if (wxFile::Exists(fullPath))
+    {
+        wxMessageBox("Game saved as: " + saveName, "Save Successful", wxOK | wxICON_INFORMATION);
+        RefreshSaveFilesList();
+        saveNameInput->Clear();
+        UpdateButtonStates();
+    }
+    else
+        wxMessageBox("Save file was not created successfully.", "Error", wxOK | wxICON_ERROR);
 }
 
 void cSave::OnDeleteClicked(wxCommandEvent& evt)
@@ -144,10 +231,25 @@ void cSave::OnDeleteClicked(wxCommandEvent& evt)
 
     if (result == wxYES)
     {
-        // TODO: Implement deleting save files
-        wxMessageBox("Save file deleted: " + fileName, "Delete Successful", wxOK | wxICON_INFORMATION);
-        RefreshSaveFilesList();
-        UpdateButtonStates();
+        wxString savesDir = GetSavesDirectory();
+        wxString fullPath = savesDir + wxFileName::GetPathSeparator() + fileName + ".sav";
+
+        if (wxFile::Exists(fullPath))
+        {
+            if (wxRemoveFile(fullPath))
+            {
+                wxMessageBox("Save file deleted: " + fileName, "Delete Successful", wxOK | wxICON_INFORMATION);
+                RefreshSaveFilesList();
+                UpdateButtonStates();
+            }
+            else
+                wxMessageBox("Failed to delete save file.", "Error", wxOK | wxICON_ERROR);
+        }
+        else
+        {
+            wxMessageBox("Save file not found.", "Error", wxOK | wxICON_ERROR);
+            RefreshSaveFilesList();
+        }
     }
 }
 
@@ -220,7 +322,27 @@ void cSave::RefreshSaveFilesList()
 {
     saveFilesList->Clear();
 
-    // TODO: Scan for save files in saves directory
+    wxString savesDir = GetSavesDirectory();
+
+    if (!wxDir::Exists(savesDir))
+        return;
+
+    wxDir dir(savesDir);
+    if (!dir.IsOpened())
+        return;
+
+    wxString filename;
+    bool cont = dir.GetFirst(&filename, "*.sav", wxDIR_FILES);
+
+    while (cont)
+    {
+        wxString displayName = filename;
+        if (displayName.EndsWith(".sav"))
+            displayName = displayName.SubString(0, displayName.Length() - 5);
+
+        saveFilesList->Append(displayName);
+        cont = dir.GetNext(&filename);
+    }
 }
 
 void cSave::UpdateButtonStates()

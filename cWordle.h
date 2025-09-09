@@ -16,7 +16,8 @@ public:
     void ContinueFromFinishedGame();
     bool IsGameInProgress() const;
     void ResetStats();
-    
+    wxString GetGameStateData() const;
+
     enum class GameState
     {
         NOT_STARTED,
@@ -35,11 +36,11 @@ private:
     int prevRow = 0;
     int prevCol = 0;
     GameState gameState = GameState::NOT_STARTED;
-    
+
     void OnKeyboardButtonClicked(wxCommandEvent& evt);
     void OnKeyboardButtonPressed(wxKeyEvent& evt);
     void ProcessKey(const wxString& key);
-    
+
     WordSelector* wordSelector;
     wxString targetWord;
 
