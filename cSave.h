@@ -28,6 +28,7 @@ private:
     void OnButtonLeave(wxMouseEvent& evt);
     void OnButtonSetFocus(wxFocusEvent& evt);
     void OnButtonKillFocus(wxFocusEvent& evt);
+    void OnSaveFilesListSetFocus(wxFocusEvent& evt);
     void OnAcceleratorPressed(wxCommandEvent& evt);
     void OnKeyboardPressed(wxKeyEvent& evt);
     

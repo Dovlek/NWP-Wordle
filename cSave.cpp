@@ -66,6 +66,9 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     backButton->Bind(wxEVT_BUTTON, &cSave::OnBackClicked, this);
     saveNameInput->Bind(wxEVT_TEXT_ENTER, &cSave::OnSaveNameEnter, this);
 
+    // Bind focus events
+    saveFilesList->Bind(wxEVT_SET_FOCUS, &cSave::OnSaveFilesListSetFocus, this);
+
     // Bind mouse events for buttons
     for (int buttonId = ID_SAVE_BUTTON; buttonId <= ID_BACK_BUTTON; buttonId++)
     {
@@ -189,6 +192,32 @@ void cSave::OnKeyboardPressed(wxKeyEvent& evt)
             wxCommandEvent saveEvent(wxEVT_BUTTON, ID_SAVE_BUTTON);
             saveEvent.SetEventObject(saveButton);
             OnSaveClicked(saveEvent);
+            return;
+        }
+    }
+    // Handle Down arrow key when saveNameInput has focus
+    else if (keyCode == WXK_DOWN)
+    {
+        if (focusedWindow == saveNameInput && saveFilesList->GetCount() > 0)
+        {
+            saveFilesList->SetSelection(0);
+
+            wxCommandEvent selectionEvent(wxEVT_LISTBOX, ID_SAVE_FILES_LIST);
+            selectionEvent.SetEventObject(saveFilesList);
+            OnSaveFileSelected(selectionEvent);
+
+            saveFilesList->SetFocus();
+            return;
+        }
+    }
+    // Handle Up arrow key when saveNameInput has focus
+    else if (keyCode == WXK_UP)
+    {
+        if (focusedWindow == saveFilesList && saveFilesList->GetCount() > 0 && saveFilesList->GetSelection() == 0)
+        {
+            saveFilesList->SetSelection(wxNOT_FOUND);
+            saveNameInput->SetFocus();
+            saveNameInput->SelectAll();
             return;
         }
     }
@@ -402,6 +431,20 @@ void cSave::OnButtonKillFocus(wxFocusEvent& evt)
     // Reset to the original background color
     button->SetBackgroundColour(wxColor(58, 58, 60));
     button->Refresh();
+    evt.Skip();
+}
+
+void cSave::OnSaveFilesListSetFocus(wxFocusEvent& evt)
+{
+    if (saveFilesList->GetCount() > 0 && saveFilesList->GetSelection() == wxNOT_FOUND)
+    {
+        saveFilesList->SetSelection(0);
+
+        wxCommandEvent selectionEvent(wxEVT_LISTBOX, ID_SAVE_FILES_LIST);
+        selectionEvent.SetEventObject(saveFilesList);
+        OnSaveFileSelected(selectionEvent);
+    }
+
     evt.Skip();
 }
 
