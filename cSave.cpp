@@ -34,7 +34,7 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     listLabel->SetForegroundColour(wxColor(*wxWHITE));
     listLabel->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
-    saveFilesList = new wxListBox(this, ID_SAVE_FILES_LIST, wxDefaultPosition, wxSize(400, 400));
+    saveFilesList = new wxListBox(this, ID_SAVE_FILES_LIST, wxDefaultPosition, wxSize(400, 425));
     saveFilesList->SetBackgroundColour(wxColor(58, 58, 60));
     saveFilesList->SetForegroundColour(wxColor(*wxWHITE));
     saveFilesList->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
@@ -120,7 +120,6 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
 
     buttonSizer->Add(saveButton, wxSizerFlags().Border(wxALL, 5));
     buttonSizer->Add(deleteButton, wxSizerFlags().Border(wxALL, 5));
-    buttonSizer->AddStretchSpacer();
     buttonSizer->Add(backButton, wxSizerFlags().Border(wxALL, 5));
 
     mainSizer->Add(inputSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));

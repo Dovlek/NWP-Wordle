@@ -94,7 +94,6 @@ cLoad::cLoad(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     listSizer->Add(saveFilesList, wxSizerFlags().Expand().Border(wxALL, 10));
 
     buttonSizer->Add(loadButton, wxSizerFlags().Border(wxALL, 5));
-    buttonSizer->AddStretchSpacer();
     buttonSizer->Add(backButton, wxSizerFlags().Border(wxALL, 5));
 
     mainSizer->Add(listSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
