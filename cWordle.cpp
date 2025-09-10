@@ -359,10 +359,16 @@ void cWordle::ShowGameEndDialog(bool won)
 
     wxString message;
     if (won)
+    {
+        ShowStatusMessage("Congratulations! You won!", wxColor(100, 255, 100));
         message = wxString::Format("Congratulations! You won!\n\nStart new round?");
+    }
     else
+    {
+        ShowStatusMessage("You lost!", wxColor(255, 100, 100));
         message = wxString::Format("You lost! The word was: %s\n\nStart new round?", targetWord);
-
+    }
+        
     wxMessageDialog dialog(this, message, "Round Finished!", wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION);
 
     dialog.SetYesNoLabels("New Round", "Back to Menu");
@@ -398,7 +404,7 @@ void cWordle::StartNewRound()
     gameState = GameState::ACTIVE;
 
     targetWord = wordSelector->GetRandomWord();
-    wxLogMessage("Target word: %s", targetWord);
+    //wxLogMessage("Target word: %s", targetWord);
 
     cgrid->ResetGrid();
     ckeyboard_eng->ResetKeyboard();
