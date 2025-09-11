@@ -28,6 +28,7 @@
     <ClInclude Include="cSave.h" />
     <ClInclude Include="cWordle.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="UIScaler.h" />
     <ClInclude Include="WordSelector.h" />
   </ItemGroup>
   <ItemGroup>
@@ -39,6 +40,7 @@
     <ClCompile Include="cMenu.cpp" />
     <ClCompile Include="cSave.cpp" />
     <ClCompile Include="cWordle.cpp" />
+    <ClCompile Include="UIScaler.cpp" />
     <ClCompile Include="WordSelector.cpp" />
   </ItemGroup>
   <ItemGroup>
