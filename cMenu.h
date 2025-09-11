@@ -1,5 +1,6 @@
 #pragma once
 #include "wx/wx.h"
+#include "UIScaler.h"
 
 wxDECLARE_EVENT(wxEVT_START_NEW_GAME, wxCommandEvent);
 wxDECLARE_EVENT(wxEVT_CONTINUE_GAME, wxCommandEvent);
@@ -22,6 +23,7 @@ private:
     wxButton* loadButton;
     wxButton* optionsButton;
     wxButton* exitButton;
+    UIScaler& uiScaler;
     
     void OnContinueClicked(wxCommandEvent& evt);
     void OnNewGameClicked(wxCommandEvent& evt);

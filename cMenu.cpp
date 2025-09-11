@@ -1,23 +1,27 @@
 #include "cMenu.h"
+#include "UIScaler.h"
 
-cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
+cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS), uiScaler(UIScaler::GetInstance())
 {
     SetBackgroundColour(wxColor(20, 20, 20));
+    
+    UIScaler& scaler = uiScaler;
     
     wxStaticText* title = new wxStaticText(this, wxID_ANY, "Let's play WORDLE!", wxDefaultPosition, wxDefaultSize);
     title->SetBackgroundColour(wxColor(20, 20, 20));
     title->SetForegroundColour(wxColor(*wxWHITE));
-    title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
+    title->SetFont(wxFont(scaler.ScaledFontSize(24), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
     
-    continueButton = new wxButton(this, ID_CONTINUE, "Continue", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
-    newGameButton = new wxButton(this, ID_NEW_GAME, "New Game", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
-    saveButton = new wxButton(this, ID_SAVE, "Save Game", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
-    loadButton = new wxButton(this, ID_LOAD, "Load Game", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
-    optionsButton = new wxButton(this, ID_OPTIONS, "Options", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
-    exitButton = new wxButton(this, ID_EXIT, "Exit", wxDefaultPosition, wxSize(350, 80), wxBORDER_NONE);
+    wxSize buttonSize = scaler.ScaledSize(350, 80);
+    continueButton = new wxButton(this, ID_CONTINUE, "Continue", wxDefaultPosition, buttonSize, wxBORDER_NONE);
+    newGameButton = new wxButton(this, ID_NEW_GAME, "New Game", wxDefaultPosition, buttonSize, wxBORDER_NONE);
+    saveButton = new wxButton(this, ID_SAVE, "Save Game", wxDefaultPosition, buttonSize, wxBORDER_NONE);
+    loadButton = new wxButton(this, ID_LOAD, "Load Game", wxDefaultPosition, buttonSize, wxBORDER_NONE);
+    optionsButton = new wxButton(this, ID_OPTIONS, "Options", wxDefaultPosition, buttonSize, wxBORDER_NONE);
+    exitButton = new wxButton(this, ID_EXIT, "Exit", wxDefaultPosition, buttonSize, wxBORDER_NONE);
     
     // Style buttons
-    wxFont buttonFont(18, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+    wxFont buttonFont(scaler.ScaledFontSize(18), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
     for (int buttonId = ID_CONTINUE; buttonId <= ID_EXIT; buttonId++)
     {
         wxButton* button = GetButtonById(buttonId);
@@ -68,17 +72,20 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     wxBoxSizer* menuSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxVERTICAL);
 
+    int titleBorder = scaler.ScaledValue(40);
+    int buttonBorder = scaler.ScaledValue(15);
+    
     menuSizer->AddStretchSpacer();
-    menuSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 40));
+    menuSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, titleBorder));
     
-    buttonSizer->Add(continueButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 15));
-    buttonSizer->Add(newGameButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 15));
-    buttonSizer->Add(saveButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 15));
-    buttonSizer->Add(loadButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 15));
-    buttonSizer->Add(optionsButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 15));
-    buttonSizer->Add(exitButton, wxSizerFlags().CenterHorizontal().Border(wxALL, 15));
+    buttonSizer->Add(continueButton, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
+    buttonSizer->Add(newGameButton, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
+    buttonSizer->Add(saveButton, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
+    buttonSizer->Add(loadButton, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
+    buttonSizer->Add(optionsButton, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
+    buttonSizer->Add(exitButton, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
     
-    menuSizer->Add(buttonSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 15));
+    menuSizer->Add(buttonSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
     menuSizer->AddStretchSpacer();
     
     this->SetSizer(menuSizer);
