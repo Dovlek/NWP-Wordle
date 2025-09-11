@@ -10,42 +10,47 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
 {
     SetBackgroundColour(wxColor(20, 20, 20));
 
+    UIScaler& scaler = UIScaler::GetInstance();
+
     // Title
     wxStaticText* title = new wxStaticText(this, wxID_ANY, "Save Game", wxDefaultPosition, wxDefaultSize);
     title->SetBackgroundColour(wxColor(20, 20, 20));
     title->SetForegroundColour(wxColor(*wxWHITE));
-    title->SetFont(wxFont(24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
+    title->SetFont(wxFont(scaler.ScaledFontSize(24), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
     // Save name input
     wxStaticText* nameLabel = new wxStaticText(this, wxID_ANY, "Save Name:", wxDefaultPosition, wxDefaultSize);
     nameLabel->SetBackgroundColour(wxColor(20, 20, 20));
     nameLabel->SetForegroundColour(wxColor(*wxWHITE));
-    nameLabel->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
+    nameLabel->SetFont(wxFont(scaler.ScaledFontSize(14), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
-    saveNameInput = new wxTextCtrl(this, ID_SAVE_NAME_INPUT, "", wxDefaultPosition, wxSize(400, 25), wxTE_PROCESS_ENTER);
+    wxSize inputSize = scaler.ScaledSize(400, 25);
+    saveNameInput = new wxTextCtrl(this, ID_SAVE_NAME_INPUT, "", wxDefaultPosition, inputSize, wxTE_PROCESS_ENTER);
     saveNameInput->SetBackgroundColour(wxColor(58, 58, 60));
     saveNameInput->SetForegroundColour(wxColor(*wxWHITE));
-    saveNameInput->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
+    saveNameInput->SetFont(wxFont(scaler.ScaledFontSize(12), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
     saveNameInput->SetMaxLength(25);
 
     // Existing saves list
     wxStaticText* listLabel = new wxStaticText(this, wxID_ANY, "Existing Saves:", wxDefaultPosition, wxDefaultSize);
     listLabel->SetBackgroundColour(wxColor(20, 20, 20));
     listLabel->SetForegroundColour(wxColor(*wxWHITE));
-    listLabel->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
+    listLabel->SetFont(wxFont(scaler.ScaledFontSize(14), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
-    saveFilesList = new wxListBox(this, ID_SAVE_FILES_LIST, wxDefaultPosition, wxSize(400, 425));
+    wxSize listSize = scaler.ScaledSize(400, 425);
+    saveFilesList = new wxListBox(this, ID_SAVE_FILES_LIST, wxDefaultPosition, listSize);
     saveFilesList->SetBackgroundColour(wxColor(58, 58, 60));
     saveFilesList->SetForegroundColour(wxColor(*wxWHITE));
-    saveFilesList->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
+    saveFilesList->SetFont(wxFont(scaler.ScaledFontSize(12), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
     // Buttons
-    saveButton = new wxButton(this, ID_SAVE_BUTTON, "Save", wxDefaultPosition, wxSize(120, 40), wxBORDER_NONE);
-    deleteButton = new wxButton(this, ID_DELETE_BUTTON, "Delete", wxDefaultPosition, wxSize(120, 40), wxBORDER_NONE);
-    backButton = new wxButton(this, ID_BACK_BUTTON, "Back", wxDefaultPosition, wxSize(120, 40), wxBORDER_NONE);
+    wxSize buttonSize = scaler.ScaledSize(120, 40);
+    saveButton = new wxButton(this, ID_SAVE_BUTTON, "Save", wxDefaultPosition, buttonSize, wxBORDER_NONE);
+    deleteButton = new wxButton(this, ID_DELETE_BUTTON, "Delete", wxDefaultPosition, buttonSize, wxBORDER_NONE);
+    backButton = new wxButton(this, ID_BACK_BUTTON, "Back", wxDefaultPosition, buttonSize, wxBORDER_NONE);
 
     // Style buttons
-    wxFont buttonFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+    wxFont buttonFont(scaler.ScaledFontSize(14), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
     for (int buttonId = ID_SAVE_BUTTON; buttonId <= ID_BACK_BUTTON; buttonId++)
     {
         wxButton* button = GetButtonById(buttonId);
@@ -110,20 +115,26 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     wxBoxSizer* inputSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 
+    int titleBorder = scaler.ScaledValue(20);
+    int inputBorderSmall = scaler.ScaledValue(10);
+    int inputBorderLarge = scaler.ScaledValue(20);
+    int buttonBorderSmall = scaler.ScaledValue(5);
+    int buttonBorderLarge = scaler.ScaledValue(10);
+
     mainSizer->AddStretchSpacer();
-    mainSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
+    mainSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, titleBorder));
 
-    inputSizer->Add(nameLabel, wxSizerFlags().Left().Border(wxLEFT | wxRIGHT | wxTOP, 10));
-    inputSizer->Add(saveNameInput, wxSizerFlags().Expand().Border(wxALL, 10));
-    inputSizer->Add(listLabel, wxSizerFlags().Left().Border(wxLEFT | wxRIGHT | wxTOP, 10));
-    inputSizer->Add(saveFilesList, wxSizerFlags().Expand().Border(wxALL, 10));
+    inputSizer->Add(nameLabel, wxSizerFlags().Left().Border(wxLEFT | wxRIGHT | wxTOP, inputBorderSmall));
+    inputSizer->Add(saveNameInput, wxSizerFlags().Expand().Border(wxALL, inputBorderSmall));
+    inputSizer->Add(listLabel, wxSizerFlags().Left().Border(wxLEFT | wxRIGHT | wxTOP, inputBorderSmall));
+    inputSizer->Add(saveFilesList, wxSizerFlags().Expand().Border(wxALL, inputBorderSmall));
 
-    buttonSizer->Add(saveButton, wxSizerFlags().Border(wxALL, 5));
-    buttonSizer->Add(deleteButton, wxSizerFlags().Border(wxALL, 5));
-    buttonSizer->Add(backButton, wxSizerFlags().Border(wxALL, 5));
+    buttonSizer->Add(saveButton, wxSizerFlags().Border(wxALL, buttonBorderSmall));
+    buttonSizer->Add(deleteButton, wxSizerFlags().Border(wxALL, buttonBorderSmall));
+    buttonSizer->Add(backButton, wxSizerFlags().Border(wxALL, buttonBorderSmall));
 
-    mainSizer->Add(inputSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 20));
-    mainSizer->Add(buttonSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 10));
+    mainSizer->Add(inputSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, inputBorderLarge));
+    mainSizer->Add(buttonSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorderLarge));
     mainSizer->AddStretchSpacer();
 
     SetSizer(mainSizer);

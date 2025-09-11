@@ -23,7 +23,6 @@ private:
     wxButton* loadButton;
     wxButton* optionsButton;
     wxButton* exitButton;
-    UIScaler& uiScaler;
     
     void OnContinueClicked(wxCommandEvent& evt);
     void OnNewGameClicked(wxCommandEvent& evt);

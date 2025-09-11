@@ -1,11 +1,10 @@
 #include "cMenu.h"
-#include "UIScaler.h"
 
-cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS), uiScaler(UIScaler::GetInstance())
+cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {
     SetBackgroundColour(wxColor(20, 20, 20));
     
-    UIScaler& scaler = uiScaler;
+    UIScaler& scaler = UIScaler::GetInstance();
     
     wxStaticText* title = new wxStaticText(this, wxID_ANY, "Let's play WORDLE!", wxDefaultPosition, wxDefaultSize);
     title->SetBackgroundColour(wxColor(20, 20, 20));
