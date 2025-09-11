@@ -1,4 +1,5 @@
 #include "UIScaler.h"
+#include "NinePatchScaler.h"
 
 UIScaler::UIScaler()
 {
@@ -55,4 +56,5 @@ int UIScaler::ScaledValue(int baseValue) const
 void UIScaler::RecalculateScaleFactor()
 {
     calculateScaleFactor();
+    NinePatchScaler::GetInstance().ClearCache();
 }

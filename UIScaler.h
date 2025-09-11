@@ -5,8 +5,6 @@
 class UIScaler
 {
 public:
-    ~UIScaler() = default;
-    
     // Get the singleton instance
     static UIScaler& GetInstance();
     
@@ -21,6 +19,7 @@ public:
 
 private:
     UIScaler();
+    ~UIScaler() = default;
     double scaleFactor;
     void calculateScaleFactor();
 

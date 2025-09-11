@@ -1,4 +1,6 @@
 #include "cKeyboard.h"
+#include "NinePatchScaler.h"
+#include "UIScaler.h"
 
 void cKeyboard::OnKeyLabelClicked(wxMouseEvent& event)
 {
@@ -86,11 +88,25 @@ cKeyboardENG::cKeyboardENG()
     gridKeyRow2 = nullptr;
     gridKeyRow3 = nullptr;
 
-    bitmapsKeys.push_back(wxBitmap(wxT("IDB_UNUSED"), wxBITMAP_TYPE_BMP_RESOURCE));
-    bitmapsKeys.push_back(wxBitmap(wxT("IDB_BIGBUTTON"), wxBITMAP_TYPE_BMP_RESOURCE));
-    bitmapsKeys.push_back(wxBitmap(wxT("IDB_USED"), wxBITMAP_TYPE_BMP_RESOURCE));
-    bitmapsKeys.push_back(wxBitmap(wxT("IDB_ALMOST"), wxBITMAP_TYPE_BMP_RESOURCE));
-    bitmapsKeys.push_back(wxBitmap(wxT("IDB_CORRECT"), wxBITMAP_TYPE_BMP_RESOURCE));
+    // Load and scale bitmaps based on current resolution
+    UIScaler& uiScaler = UIScaler::GetInstance();
+    NinePatchScaler& ninePatchScaler = NinePatchScaler::GetInstance();
+    
+    // Base sizes for keyboard buttons
+    wxSize baseKeySize(44, 58);      // Regular key size
+    wxSize baseBigKeySize(66, 58);   // Enter/Backspace key size
+    
+    // Calculate scaled sizes
+    wxSize scaledKeySize = uiScaler.ScaledSize(baseKeySize.GetWidth(), baseKeySize.GetHeight());
+    wxSize scaledBigKeySize = uiScaler.ScaledSize(baseBigKeySize.GetWidth(), baseBigKeySize.GetHeight());
+    
+    // Load scaled bitmaps using nine-patch scaling
+    int borderSize = 4;
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_UNUSED"), baseKeySize, scaledKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_BIGBUTTON"), baseBigKeySize, scaledBigKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_USED"), baseKeySize, scaledKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_ALMOST"), baseKeySize, scaledKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_CORRECT"), baseKeySize, scaledKeySize, borderSize));
 }
 
 wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
@@ -103,7 +119,10 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
 
     wxBoxSizer* keyboard = new wxBoxSizer(wxVERTICAL);
     wxFont::AddPrivateFont("Resources/Fonts/material-symbols-outlined.ttf");
-    wxFont keyFont(18, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+    
+    UIScaler& scaler = UIScaler::GetInstance();
+    wxFont keyFont(scaler.ScaledFontSize(18), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+    int keyGap = scaler.ScaledValue(2);
 
     for (int x = 0; x < 10; x++)
     {
@@ -119,7 +138,7 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
         keyLabel[keyPosition]->Bind(wxEVT_LEFT_DOWN, &cKeyboard::OnKeyLabelClicked, this);
         keyLabel[keyPosition]->SetCursor(wxCursor(wxCURSOR_HAND));
 
-        gridKeyRow1->Add(gridKey[keyPosition], wxSizerFlags().Border(wxALL, 2));
+        gridKeyRow1->Add(gridKey[keyPosition], wxSizerFlags().Border(wxALL, keyGap));
         keyPosition++;
     }
 
@@ -137,7 +156,7 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
         keyLabel[keyPosition]->Bind(wxEVT_LEFT_DOWN, &cKeyboard::OnKeyLabelClicked, this);
         keyLabel[keyPosition]->SetCursor(wxCursor(wxCURSOR_HAND));
 
-        gridKeyRow2->Add(gridKey[keyPosition], wxSizerFlags().Border(wxALL, 2));
+        gridKeyRow2->Add(gridKey[keyPosition], wxSizerFlags().Border(wxALL, keyGap));
         keyPosition++;
     }
 
@@ -148,12 +167,12 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
     keyLabel[keyPosition] = new wxStaticText(gridKey[keyPosition], wxID_ANY, wxT("ENTER"), wxDefaultPosition, wxDefaultSize);
     keyLabel[keyPosition]->SetBackgroundColour(wxColor(129, 131, 132));
     keyLabel[keyPosition]->SetForegroundColour(wxColor(*wxWHITE));
-    keyLabel[keyPosition]->SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
+    keyLabel[keyPosition]->SetFont(wxFont(scaler.ScaledFontSize(9), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
     keyLabel[keyPosition]->CenterOnParent();
     keyLabel[keyPosition]->Bind(wxEVT_LEFT_DOWN, &cKeyboard::OnKeyLabelClicked, this);
     keyLabel[keyPosition]->SetCursor(wxCursor(wxCURSOR_HAND));
 
-    gridKeyRow3->Add(gridKey[keyPosition], wxSizerFlags().Border(wxALL, 2));
+    gridKeyRow3->Add(gridKey[keyPosition], wxSizerFlags().Border(wxALL, keyGap));
     keyPosition++;
 
     for (int x = 0; x < 7; x++)
@@ -170,7 +189,7 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
         keyLabel[keyPosition]->Bind(wxEVT_LEFT_DOWN, &cKeyboard::OnKeyLabelClicked, this);
         keyLabel[keyPosition]->SetCursor(wxCursor(wxCURSOR_HAND));
 
-        gridKeyRow3->Add(gridKey[keyPosition], wxSizerFlags().Border(wxALL, 2));
+        gridKeyRow3->Add(gridKey[keyPosition], wxSizerFlags().Border(wxALL, keyGap));
         keyPosition++;
     }
 
@@ -181,16 +200,17 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
     keyLabel[keyPosition] = new wxStaticText(gridKey[keyPosition], wxID_ANY, wxT("backspace"), wxDefaultPosition, wxDefaultSize);
     keyLabel[keyPosition]->SetBackgroundColour(wxColor(129, 131, 132));
     keyLabel[keyPosition]->SetForegroundColour(wxColor(*wxWHITE));
-    keyLabel[keyPosition]->SetFont(wxFont(20, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Material Symbols Outlined")));
+    keyLabel[keyPosition]->SetFont(wxFont(scaler.ScaledFontSize(20), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Material Symbols Outlined")));
     keyLabel[keyPosition]->CenterOnParent();
     keyLabel[keyPosition]->Bind(wxEVT_LEFT_DOWN, &cKeyboard::OnKeyLabelClicked, this);
     keyLabel[keyPosition]->SetCursor(wxCursor(wxCURSOR_HAND));
 
-    gridKeyRow3->Add(gridKey[keyPosition], wxSizerFlags().Border(wxALL, 2));
+    gridKeyRow3->Add(gridKey[keyPosition], wxSizerFlags().Border(wxALL, keyGap));
 
-    keyboard->Add(gridKeyRow1, wxSizerFlags().CenterHorizontal().Border(wxALL, 2));
-    keyboard->Add(gridKeyRow2, wxSizerFlags().CenterHorizontal().Border(wxALL, 2));
-    keyboard->Add(gridKeyRow3, wxSizerFlags().CenterHorizontal().Border(wxALL, 2));
+    int rowBorder = scaler.ScaledValue(2);
+    keyboard->Add(gridKeyRow1, wxSizerFlags().CenterHorizontal().Border(wxALL, rowBorder));
+    keyboard->Add(gridKeyRow2, wxSizerFlags().CenterHorizontal().Border(wxALL, rowBorder));
+    keyboard->Add(gridKeyRow3, wxSizerFlags().CenterHorizontal().Border(wxALL, rowBorder));
 
     return keyboard;
 }

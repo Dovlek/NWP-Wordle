@@ -3,6 +3,7 @@
 #include "cKeyboard.h"
 #include "cGrid.h"
 #include "WordSelector.h"
+#include "UIScaler.h"
 
 wxDECLARE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
 

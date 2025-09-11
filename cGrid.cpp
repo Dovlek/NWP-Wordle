@@ -1,4 +1,6 @@
 #include "cGrid.h"
+#include "NinePatchScaler.h"
+#include "UIScaler.h"
 
 cGrid::cGrid(int width, int height)
 {
@@ -8,17 +10,32 @@ cGrid::cGrid(int width, int height)
 	gridButton = new wxButton * [nFieldHeight * nFieldWidth];
 	gridText = new wxStaticText * [nFieldHeight * nFieldWidth];
 
-	bitmapsGrid.push_back(wxBitmap(wxT("IDB_UNMARKED"), wxBITMAP_TYPE_BMP_RESOURCE));
-	bitmapsGrid.push_back(wxBitmap(wxT("IDB_MARKED"), wxBITMAP_TYPE_BMP_RESOURCE));
-	bitmapsGrid.push_back(wxBitmap(wxT("IDB_COLD"), wxBITMAP_TYPE_BMP_RESOURCE));
-	bitmapsGrid.push_back(wxBitmap(wxT("IDB_WARM"), wxBITMAP_TYPE_BMP_RESOURCE));
-	bitmapsGrid.push_back(wxBitmap(wxT("IDB_HOT"), wxBITMAP_TYPE_BMP_RESOURCE));
+	// Load and scale bitmaps based on current resolution
+	UIScaler& uiScaler = UIScaler::GetInstance();
+	NinePatchScaler& ninePatchScaler = NinePatchScaler::GetInstance();
+	
+	// Base size for grid cells
+	wxSize baseGridSize(64, 64);
+	
+	// Calculate scaled size
+	wxSize scaledGridSize = uiScaler.ScaledSize(baseGridSize.GetWidth(), baseGridSize.GetHeight());
+	
+	// Load scaled bitmaps using nine-patch scaling
+    int borderSize = 4;
+	bitmapsGrid.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_UNMARKED"), baseGridSize, scaledGridSize, borderSize));
+	bitmapsGrid.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_MARKED"), baseGridSize, scaledGridSize, borderSize));
+	bitmapsGrid.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_COLD"), baseGridSize, scaledGridSize, borderSize));
+	bitmapsGrid.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_WARM"), baseGridSize, scaledGridSize, borderSize));
+	bitmapsGrid.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_HOT"), baseGridSize, scaledGridSize, borderSize));
 }
 
 wxGridSizer* cGrid::CreateGrid(wxWindow* parent)
 {
 	wxGridSizer* grid = new wxGridSizer(nFieldHeight, nFieldWidth, wxSize(0, 0));
-	wxFont gridFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+	
+	UIScaler& scaler = UIScaler::GetInstance();
+	wxFont gridFont(scaler.ScaledFontSize(22), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+    int gridGap = scaler.ScaledValue(2);
 
 	for (int x = 0; x < nFieldHeight; x++)
 	{
@@ -36,7 +53,7 @@ wxGridSizer* cGrid::CreateGrid(wxWindow* parent)
 			gridText[x * nFieldWidth + y]->CenterOnParent();
 
 			// Add Box with label to GridSizer
-			grid->Add(gridButton[x * nFieldWidth + y], 1, wxALL, 2);
+			grid->Add(gridButton[x * nFieldWidth + y], 1, wxALL, gridGap);
 		}
 	}
 	return grid;

@@ -5,18 +5,20 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
 {
     SetBackgroundColour(wxColor(20, 20, 20));
 
+    UIScaler& scaler = UIScaler::GetInstance();
+
     gameSizer = new wxBoxSizer(wxVERTICAL);
     wxGridSizer* gridSizer = new wxGridSizer(0, 0, wxSize(0, 0));
 
     wxStaticText* title = new wxStaticText(this, wxID_ANY, "WORDLE", wxDefaultPosition, wxDefaultSize);
     title->SetBackgroundColour(wxColor(20, 20, 20));
     title->SetForegroundColour(wxColor(*wxWHITE));
-    title->SetFont(wxFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
+    title->SetFont(wxFont(scaler.ScaledFontSize(22), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
     statusMessage = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
     statusMessage->SetBackgroundColour(wxColor(20, 20, 20));
     statusMessage->SetForegroundColour(wxColor(*wxWHITE));
-    statusMessage->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
+    statusMessage->SetFont(wxFont(scaler.ScaledFontSize(16), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
     // Create Grid
     cgrid = new cGrid(5, 6);
@@ -33,15 +35,15 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     }
 
     // Create back button
-    backButton = new wxButton(this, wxID_ANY, wxT("menu"), wxDefaultPosition, wxSize(50, 50), wxBORDER_NONE);
-    backButton->SetFont(wxFont(20, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Material Symbols Outlined")));
+    backButton = new wxButton(this, wxID_ANY, wxT("menu"), wxDefaultPosition, scaler.ScaledSize(50, 50), wxBORDER_NONE);
+    backButton->SetFont(wxFont(scaler.ScaledFontSize(20), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Material Symbols Outlined")));
     backButton->SetBackgroundColour(wxColor(20, 20, 20));
     backButton->SetForegroundColour(wxColor(*wxWHITE));
     backButton->SetCursor(wxCursor(wxCURSOR_HAND));
     backButton->Bind(wxEVT_BUTTON, &cWordle::OnBackButtonClicked, this);
 
     // Stats labels
-    wxFont statsFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+    wxFont statsFont(scaler.ScaledFontSize(14), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
     winsText = new wxStaticText(this, wxID_ANY, "Wins: 0", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
     winsText->SetBackgroundColour(wxColor(20, 20, 20));
     winsText->SetForegroundColour(wxColor(*wxWHITE));
@@ -70,23 +72,23 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
 
     // Set sizers
     firstColumnSizer->Add(winsText, wxSizerFlags().Expand());
-    firstColumnSizer->Add(streakText, wxSizerFlags().Expand().Border(wxTOP, 5));
+    firstColumnSizer->Add(streakText, wxSizerFlags().Expand().Border(wxTOP, scaler.ScaledValue(5)));
 
     secondColumnSizer->Add(lossesText, wxSizerFlags().Expand());
-    secondColumnSizer->Add(maxStreakText, wxSizerFlags().Expand().Border(wxTOP, 5));
+    secondColumnSizer->Add(maxStreakText, wxSizerFlags().Expand().Border(wxTOP, scaler.ScaledValue(5)));
 
-    statsSizer->Add(firstColumnSizer, wxSizerFlags().Expand().Border(wxRIGHT, 15));
-    statsSizer->Add(secondColumnSizer, wxSizerFlags().Expand().Border(wxRIGHT, 5));
+    statsSizer->Add(firstColumnSizer, wxSizerFlags().Expand().Border(wxRIGHT, scaler.ScaledValue(15)));
+    statsSizer->Add(secondColumnSizer, wxSizerFlags().Expand().Border(wxRIGHT, scaler.ScaledValue(5)));
 
-    topBarSizer->Add(backButton, wxSizerFlags().Align(wxALIGN_TOP).Border(wxLEFT | wxTOP, 5));
+    topBarSizer->Add(backButton, wxSizerFlags().Align(wxALIGN_TOP).Border(wxLEFT | wxTOP, scaler.ScaledValue(5)));
     topBarSizer->AddStretchSpacer();
-    topBarSizer->Add(statsSizer, wxSizerFlags().Align(wxALIGN_TOP).Border(wxRIGHT | wxTOP, 5));
+    topBarSizer->Add(statsSizer, wxSizerFlags().Align(wxALIGN_TOP).Border(wxRIGHT | wxTOP, scaler.ScaledValue(5)));
 
     gameSizer->Add(topBarSizer, wxSizerFlags().Expand());
-    gameSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxTOP | wxLEFT | wxRIGHT, 25));
-    gameSizer->Add(statusMessage, wxSizerFlags().CenterHorizontal().Border(wxTOP | wxLEFT | wxRIGHT, 10));
-    gameSizer->Add(gridSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 10));
-    gameSizer->Add(keyboardPanel, wxSizerFlags().CenterHorizontal().Border(wxALL, 25));
+    gameSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxTOP | wxLEFT | wxRIGHT, scaler.ScaledValue(25)));
+    gameSizer->Add(statusMessage, wxSizerFlags().CenterHorizontal().Border(wxTOP | wxLEFT | wxRIGHT, scaler.ScaledValue(10)));
+    gameSizer->Add(gridSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, scaler.ScaledValue(10)));
+    gameSizer->Add(keyboardPanel, wxSizerFlags().CenterHorizontal().Border(wxALL, scaler.ScaledValue(25)));
     gameSizer->AddStretchSpacer();
     this->SetSizer(gameSizer);
     gameSizer->SetSizeHints(this);
