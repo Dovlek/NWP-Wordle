@@ -1,6 +1,5 @@
 #pragma once
 #include "wx/wx.h"
-#include "UIScaler.h"
 
 wxDECLARE_EVENT(wxEVT_CONTINUE_GAME, wxCommandEvent);
 

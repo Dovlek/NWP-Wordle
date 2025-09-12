@@ -76,6 +76,12 @@ void cKeyboard::ResetKeyboard()
     }
 }
 
+void cKeyboard::BindKeyboardEvents(wxEvtHandler* handler, void (wxEvtHandler::* method)(wxCommandEvent&))
+{
+    for (int i = 0; i < keyboardSize + 2; i++)
+        gridKey[i]->Bind(wxEVT_BUTTON, method, handler);
+}
+
 cKeyboardENG::cKeyboardENG()
 {
     keyboardString = wxT("QWERTYUIOPASDFGHJKLZXCVBNM");

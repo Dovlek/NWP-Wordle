@@ -1,6 +1,5 @@
 #pragma once
 #include "wx/wx.h"
-#include "UIScaler.h"
 
 class cWordle;
 

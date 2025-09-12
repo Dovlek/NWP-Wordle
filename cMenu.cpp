@@ -1,4 +1,5 @@
 #include "cMenu.h"
+#include "UIScaler.h"
 
 cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {

@@ -1,5 +1,6 @@
 #include "cSave.h"
 #include "cWordle.h"
+#include "UIScaler.h"
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>

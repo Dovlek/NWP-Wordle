@@ -29,10 +29,7 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     wxBoxSizer* keyboardPanel = ckeyboard_eng->CreateKeyboard(this);
 
     // Bind keyboard buttons
-    for (int i = 0; i < ckeyboard_eng->keyboardSize + 2; i++)
-    {
-        ckeyboard_eng->gridKey[i]->Bind(wxEVT_BUTTON, &cWordle::OnKeyboardButtonClicked, this);
-    }
+    ckeyboard_eng->BindKeyboardEvents(this, static_cast<void (wxEvtHandler::*)(wxCommandEvent&)>(&cWordle::OnKeyboardButtonClicked));
 
     // Create back button
     backButton = new wxButton(this, wxID_ANY, wxT("menu"), wxDefaultPosition, scaler.ScaledSize(50, 50), wxBORDER_NONE);
