@@ -1,5 +1,6 @@
 #pragma once
 #include "wx/wx.h"
+#include <vector>
 
 class cGrid
 {
@@ -23,8 +24,8 @@ public:
 private:
 	int nFieldWidth;
 	int nFieldHeight;
-	wxButton** gridButton;
-	wxStaticText** gridText;
+	std::vector<wxButton*> gridButton;
+	std::vector<wxStaticText*> gridText;
 	wxVector<wxBitmap> bitmapsGrid;
 };
 

@@ -1,13 +1,14 @@
 #pragma once
 #include "wx/wx.h"
+#include <vector>
 
 class cKeyboard
 {
 protected:
 	int keyboardSize;
-	wxStaticText** keyLabel;
+	std::vector<wxStaticText*> keyLabel;
 	wxString keyboardString;
-	wxButton** gridKey;
+	std::vector<wxButton*> gridKey;
 	wxBoxSizer* gridKeyRow1;
 	wxBoxSizer* gridKeyRow2;
 	wxBoxSizer* gridKeyRow3;

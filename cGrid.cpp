@@ -7,8 +7,8 @@ cGrid::cGrid(int width, int height)
 	nFieldWidth = width;
 	nFieldHeight = height;
 
-	gridButton = new wxButton * [nFieldHeight * nFieldWidth];
-	gridText = new wxStaticText * [nFieldHeight * nFieldWidth];
+	gridButton.resize(nFieldHeight * nFieldWidth);
+	gridText.resize(nFieldHeight * nFieldWidth);
 
 	// Load and scale bitmaps based on current resolution
 	UIScaler& uiScaler = UIScaler::GetInstance();
@@ -41,19 +41,21 @@ wxGridSizer* cGrid::CreateGrid(wxWindow* parent)
 	{
 		for (int y = 0; y < nFieldWidth; y++)
 		{
+			int index = x * nFieldWidth + y;
+			
 			// Create letter box
-			gridButton[x * nFieldWidth + y] = new wxButton(parent, 10000 + (x * nFieldWidth + y), wxEmptyString, wxDefaultPosition, wxSize(bitmapsGrid.at(0).GetWidth(), bitmapsGrid.at(0).GetHeight()), wxBORDER_NONE | wxBU_NOTEXT);
-			gridButton[x * nFieldWidth + y]->SetBitmap(bitmapsGrid.at(0));
+			gridButton[index] = new wxButton(parent, 10000 + index, wxEmptyString, wxDefaultPosition, wxSize(bitmapsGrid.at(0).GetWidth(), bitmapsGrid.at(0).GetHeight()), wxBORDER_NONE | wxBU_NOTEXT);
+			gridButton[index]->SetBitmap(bitmapsGrid.at(0));
 
 			// Create label for letter box
-			gridText[x * nFieldWidth + y] = new wxStaticText(gridButton[x * nFieldWidth + y], wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
-			gridText[x * nFieldWidth + y]->SetBackgroundColour(wxColor(18, 18, 19));
-			gridText[x * nFieldWidth + y]->SetForegroundColour(wxColor(*wxWHITE));
-			gridText[x * nFieldWidth + y]->SetFont(gridFont);
-			gridText[x * nFieldWidth + y]->CenterOnParent();
+			gridText[index] = new wxStaticText(gridButton[index], wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
+			gridText[index]->SetBackgroundColour(wxColor(18, 18, 19));
+			gridText[index]->SetForegroundColour(wxColor(*wxWHITE));
+			gridText[index]->SetFont(gridFont);
+			gridText[index]->CenterOnParent();
 
 			// Add Box with label to GridSizer
-			grid->Add(gridButton[x * nFieldWidth + y], 1, wxALL, gridGap);
+			grid->Add(gridButton[index], 1, wxALL, gridGap);
 		}
 	}
 	return grid;
@@ -157,8 +159,4 @@ void cGrid::ResetGrid()
 
 cGrid::~cGrid()
 {
-    delete[] gridButton;
-    delete[] gridText;
-    gridButton = nullptr;
-    gridText = nullptr;
 }

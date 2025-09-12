@@ -87,8 +87,8 @@ cKeyboardENG::cKeyboardENG()
     keyboardString = wxT("QWERTYUIOPASDFGHJKLZXCVBNM");
     keyboardSize = keyboardString.Length();
 
-    gridKey = new wxButton*[keyboardSize + 2];
-    keyLabel = new wxStaticText*[keyboardSize + 2];
+    gridKey.resize(keyboardSize + 2);
+    keyLabel.resize(keyboardSize + 2);
 
     gridKeyRow1 = nullptr;
     gridKeyRow2 = nullptr;
@@ -223,10 +223,6 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
 
 cKeyboardENG::~cKeyboardENG()
 {
-    delete[] gridKey;
-    delete[] keyLabel;
-    gridKey = nullptr;
-    keyLabel = nullptr;
     gridKeyRow1 = nullptr;
     gridKeyRow2 = nullptr;
     gridKeyRow3 = nullptr;
