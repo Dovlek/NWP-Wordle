@@ -52,8 +52,8 @@ This project was made for a college assignment in Advanced Windows Programming.
 
 ### Prerequisites
 
-- Windows operating system (cross-platform support in the future)
-- No additional dependencies required for the executable
+- Windows operating system
+- Executable must be run in the same directory as the Resources folder
 
 ### Installation
 
@@ -64,20 +64,64 @@ This project was made for a college assignment in Advanced Windows Programming.
 ## 🔧 Building from Source
 
 ### Prerequisites for Building
-
-- **C++ Compiler** (GCC, Clang, or MSVC)
-- **wxWidgets** library (3.0 or later)
-- **CMake** (optional, depending on build system)
+- **Windows operating system**
+- **Visual Studio 2022** (Desktop development with C++)
+- **C++ standard: C++14**
+- **Git**
+-	**vcpkg** (for dependencies)
+- **wxWidgets** library (3.1.6 or later)
 
 ### Build Instructions
 
-1. **Clone the repository:**
-  ```
+1. **Clone the repository**
+```
 git clone https://github.com/Dovlek/NWP-Wordle.git cd NWP-Wordle
 ```
-3. **Install wxWidgets** (if not already installed)
-- Follow the [wxWidgets installation guide](https://docs.wxwidgets.org/3.2/overview_install.html) for your platform
-3. **Compile the project!**
+2. **Install wxWidgets**
+#### Installing wxWidgets manually:
+- [Download the wxWidgets ZIP or 7z file](https://wxwidgets.org/downloads/) for Windows
+- Extract the folder (preferably to path without spaces. Example: "C:\Libraries\wxWidgets-x.x.x")
+- Add the extracted path to your Environment Variables under the name **WXWIN**.
+- Navigate to "\build\msw" inside your wxWidgets folder
+- Open the latest solution for VS 2022 (wx_vc17.sln = VS 2022)
+- Set Platform to x64 and Configuration to Debug or Release.
+- Build via Build > Build Solution (Ctrl+Shift+B).
+- Do the same for the other Configuration
+- Repeat proccess for x32 Platform (optional)
+
+#### Installing wxWidgets via vcpkg:
+- If you don’t have vcpkg:
+```
+git clone https://github.com/microsoft/vcpkg %HOMEPATH%\vcpkg
+%HOMEPATH%\vcpkg\bootstrap-vcpkg.bat
+```
+- Install wxWidgets (x64 recommended):
+```
+%HOMEPATH%\vcpkg\vcpkg.exe install wxwidgets:x64-windows
+```
+- Optional: integrate MSBuild user-wide (helps VS discover vcpkg libs):
+```
+%HOMEPATH%\vcpkg\vcpkg.exe integrate install
+```
+
+3. **Setup Project**
+- Navigate to the NWP-Wordle project folder
+- Open the solution file (NWP-Wordle)
+- Open the Project Properties
+- Set Configuration to All Configurations and Platform to All Platforms
+- Navigate to the C/C++ page in the Properties sidebar
+- Click on Additional Include Directories, Edit, New Line
+- Add `(WXWIN)$\include` then do the same for `$(WXWIN)\include\msvc` and press OK
+- Navigate to Linker -> System in the Properties Sidebar
+- Make sure SubSystem is set to `Windows (/SUBSYSTEM:WINDOWS)`
+- Navigate to Linker -> General in the Properties Sidebar
+- Change Platform from All Platforms to x64
+- Add `$(WXWIN)\lib\vc_x64_lib` to Additional Library Directories
+- Change Platform to Win32
+- Add `$(WXWIN)\lib\vc_lib` to Additional Library Directories
+- Apply all settings
+
+4. **Compile the project!**
 
 ## 📝 License
 
