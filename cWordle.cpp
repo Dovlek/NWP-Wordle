@@ -1,7 +1,7 @@
 #include "cWordle.h"
 #include <wx/tokenzr.h>
 
-cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
+cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS), statusTimer(this)
 {
     SetBackgroundColour(wxColor(20, 20, 20));
 
@@ -110,10 +110,7 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     backButton->Bind(wxEVT_ENTER_WINDOW, &cWordle::OnBackButtonEnter, this);
     backButton->Bind(wxEVT_LEAVE_WINDOW, &cWordle::OnBackButtonLeave, this);
 
-    wordSelector = new WordSelector();
-
-    statusTimer = new wxTimer(this);
-    Bind(wxEVT_TIMER, &cWordle::HideStatusMessage, this);
+    Bind(wxEVT_TIMER, &cWordle::HideStatusMessage, this, statusTimer.GetId());
 
     UpdateStatsUI();
 }
@@ -231,7 +228,7 @@ void cWordle::ProcessKey(const wxString& key)
                 currentGuess += cgrid->GetLetter(currentRow, i);
             }
 
-            if (!wordSelector->IsValidWord(currentGuess))
+            if (!wordSelector.IsValidWord(currentGuess))
             {
                 ShowStatusMessage("Not in word list", wxColor(255, 100, 100));
                 return;
@@ -394,7 +391,7 @@ void cWordle::StartNewRound()
     prevCol = 0;
     gameState = GameState::ACTIVE;
 
-    targetWord = wordSelector->GetRandomWord();
+    targetWord = wordSelector.GetRandomWord();
     //wxLogMessage("Target word: %s", targetWord);
 
     cgrid->ResetGrid();
@@ -423,7 +420,7 @@ void cWordle::ShowStatusMessage(const wxString& message, const wxColor& color)
     statusMessage->SetForegroundColour(color);
     gameSizer->Layout();
 
-    statusTimer->StartOnce(2000);
+    statusTimer.StartOnce(2000);
 }
 
 void cWordle::HideStatusMessage(wxTimerEvent& evt)
@@ -604,6 +601,4 @@ cWordle::~cWordle()
 {
     delete cgrid;
     delete ckeyboard_eng;
-    delete wordSelector;
-    delete statusTimer;
 }

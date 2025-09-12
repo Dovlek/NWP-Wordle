@@ -43,7 +43,7 @@ private:
     void OnKeyboardButtonPressed(wxKeyEvent& evt);
     void ProcessKey(const wxString& key);
 
-    WordSelector* wordSelector;
+    WordSelector wordSelector;
     wxString targetWord;
 
     enum class LetterState
@@ -57,7 +57,7 @@ private:
     std::vector<LetterState> CompareWords(const wxString& guess, const wxString& target);
 
     wxStaticText* statusMessage;
-    wxTimer* statusTimer;
+    wxTimer statusTimer;
     wxStaticText* winsText;
     wxStaticText* lossesText;
     wxStaticText* streakText;
