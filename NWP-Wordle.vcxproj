@@ -63,6 +63,9 @@
   <ItemGroup>
     <Text Include="Resources\WordsENG.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".github\workflows\msbuild.yml" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

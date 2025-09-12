@@ -1,0 +1,164 @@
+﻿name: Build NWP-Wordle
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+        platform: [x64, x86]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Cache wxWidgets
+      id: cache-wxwidgets
+      uses: actions/cache@v4
+      with:
+        path: C:\Libraries\wxWidgets-3.3.1
+        key: wxwidgets-3.3.1-${{ matrix.platform }}-${{ matrix.configuration }}
+        
+    - name: Download and build wxWidgets
+      if: steps.cache-wxwidgets.outputs.cache-hit != 'true'
+      run: |
+        # Download wxWidgets 3.3.1
+        Write-Host "Downloading wxWidgets..."
+        Invoke-WebRequest -Uri "https://github.com/wxWidgets/wxWidgets/releases/download/v3.3.1/wxWidgets-3.3.1.zip" -OutFile "wxWidgets.zip"
+        
+        # Create the target directory and extract directly into it
+        Write-Host "Creating wxWidgets directory..."
+        New-Item -Path "C:\Libraries\wxWidgets-3.3.1" -ItemType Directory -Force
+        
+        Write-Host "Extracting wxWidgets to C:\Libraries\wxWidgets-3.3.1..."
+        Expand-Archive -Path "wxWidgets.zip" -DestinationPath "C:\Libraries\wxWidgets-3.3.1" -Force
+        
+        # Verify the extraction
+        Write-Host "Verifying extraction..."
+        if (Test-Path "C:\Libraries\wxWidgets-3.3.1\build\msw") {
+          Write-Host "✓ wxWidgets extracted successfully"
+          Write-Host "Contents of C:\Libraries\wxWidgets-3.3.1:"
+          Get-ChildItem "C:\Libraries\wxWidgets-3.3.1" | Select-Object Name -First 10
+        } else {
+          Write-Error "✗ wxWidgets extraction failed - build directory not found"
+          Write-Host "Contents of C:\Libraries\wxWidgets-3.3.1:"
+          Get-ChildItem "C:\Libraries\wxWidgets-3.3.1" | Select-Object Name
+          exit 1
+        }
+        
+        # Build wxWidgets for the current platform and configuration
+        Write-Host "Building wxWidgets for ${{ matrix.platform }} ${{ matrix.configuration }}"
+        Set-Location "C:\Libraries\wxWidgets-3.3.1\build\msw"
+        
+        if ("${{ matrix.platform }}" -eq "x64") {
+          msbuild wx_vc17.sln -p:Configuration=${{ matrix.configuration }} -p:Platform=x64 -m -verbosity:minimal
+        } else {
+          msbuild wx_vc17.sln -p:Configuration=${{ matrix.configuration }} -p:Platform=Win32 -m -verbosity:minimal
+        }
+        
+        # Verify build completed
+        if ("${{ matrix.platform }}" -eq "x64") {
+          $libPath = "C:\Libraries\wxWidgets-3.3.1\lib\vc_x64_lib"
+        } else {
+          $libPath = "C:\Libraries\wxWidgets-3.3.1\lib\vc_lib"
+        }
+        
+        if (Test-Path $libPath) {
+          Write-Host "✓ wxWidgets build completed successfully"
+        } else {
+          Write-Error "✗ wxWidgets build failed - library directory not created"
+          exit 1
+        }
+        
+    - name: Set WXWIN environment variable
+      run: |
+        echo "WXWIN=C:\Libraries\wxWidgets-3.3.1" >> $env:GITHUB_ENV
+        Write-Host "WXWIN set to C:\Libraries\wxWidgets-3.3.1"
+        
+    - name: Verify wxWidgets installation
+      run: |
+        Write-Host "WXWIN is set to: $env:WXWIN"
+        Write-Host "Checking library directories..."
+        
+        if ("${{ matrix.platform }}" -eq "x64") {
+          $libPath = "C:\Libraries\wxWidgets-3.3.1\lib\vc_x64_lib"
+        } else {
+          $libPath = "C:\Libraries\wxWidgets-3.3.1\lib\vc_lib"
+        }
+        
+        if (Test-Path $libPath) {
+          Write-Host "✓ Library path exists: $libPath"
+          $libCount = (Get-ChildItem $libPath -Filter "*.lib").Count
+          Write-Host "Found $libCount library files"
+        } else {
+          Write-Host "✗ Library path not found: $libPath"
+          Write-Host "Available library directories:"
+          Get-ChildItem "C:\Libraries\wxWidgets-3.3.1\lib" | Select-Object Name
+          exit 1
+        }
+        
+    - name: Build project
+      run: |
+        Write-Host "Building NWP-Wordle for ${{ matrix.platform }} ${{ matrix.configuration }}"
+        msbuild NWP-Wordle.sln -p:Configuration=${{ matrix.configuration }} -p:Platform=${{ matrix.platform }} -m -verbosity:minimal
+        
+    - name: Verify build output and copy to staging
+      run: |
+        # Set output path based on platform
+        if ("${{ matrix.platform }}" -eq "x64") {
+          $outputPath = "x64\${{ matrix.configuration }}"
+        } else {
+          $outputPath = "${{ matrix.configuration }}"
+        }
+        
+        Write-Host "Checking output path: $outputPath"
+        
+        if (Test-Path "$outputPath\NWP-Wordle.exe") {
+          Write-Host "✓ Build successful - executable created"
+          $fileSize = [math]::Round((Get-Item "$outputPath\NWP-Wordle.exe").Length / 1MB, 2)
+          Write-Host "Executable size: $fileSize MB"
+          
+          # Create staging directory and copy files to root level
+          Write-Host "Creating staging directory..."
+          New-Item -Path "staging" -ItemType Directory -Force
+          Copy-Item "$outputPath\NWP-Wordle.exe" "staging\"
+          Copy-Item "Resources" "staging\Resources" -Recurse
+          
+          Write-Host "Files staged for artifact upload:"
+          Get-ChildItem "staging" | Select-Object Name
+          
+        } else {
+          Write-Host "✗ Build failed - executable not found at: $outputPath"
+          Write-Host "Contents of expected output directory:"
+          if (Test-Path $outputPath) {
+            Get-ChildItem $outputPath | Select-Object Name
+          } else {
+            Write-Host "Output directory does not exist"
+          }
+          
+          Write-Host "Searching for executable in entire directory..."
+          $found = Get-ChildItem -Name "NWP-Wordle.exe" -Recurse -ErrorAction SilentlyContinue
+          if ($found) {
+            Write-Host "Found executable at: $found"
+          } else {
+            Write-Host "No executable found anywhere"
+          }
+          exit 1
+        }
+        
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: NWP-Wordle-${{ matrix.configuration }}-${{ matrix.platform }}
+        path: staging/
+        retention-days: 30
