@@ -310,23 +310,15 @@ void cWordle::CheckGuess(const wxString& guess, int row)
     std::vector<LetterState> states = CompareWords(guess, targetWord);
 
     std::vector<int> intStates;
+    intStates.reserve(states.size());
     for (const auto& state : states)
-    {
         intStates.push_back(static_cast<int>(state));
-    }
 
     cgrid->UpdateCellColors(row, intStates);
     ckeyboard_eng->UpdateKeyboardColors(guess, intStates);
 
-    bool allCorrect = true;
-    for (const auto& state : states)
-    {
-        if (state != LetterState::CORRECT)
-        {
-            allCorrect = false;
-            break;
-        }
-    }
+    bool allCorrect = std::all_of(states.begin(), states.end(),
+        [](LetterState state) { return state == LetterState::CORRECT; });
 
     if (allCorrect)
     {
