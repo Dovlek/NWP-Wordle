@@ -327,7 +327,7 @@ void cSave::OnSaveClicked(wxCommandEvent& evt)
     // Verify the file was created
     if (wxFile::Exists(fullPath))
     {
-        //wxMessageBox("Game saved as: " + saveName, "Save Successful", wxOK | wxICON_INFORMATION);
+        wxMessageBox("Game saved as: " + saveName + "\n\nSave path: " + fullPath, "Save Successful", wxOK | wxICON_INFORMATION);
         RefreshSaveFilesList();
         saveNameInput->Clear();
         UpdateButtonStates();
@@ -365,7 +365,7 @@ void cSave::OnDeleteClicked(wxCommandEvent& evt)
         {
             if (wxRemoveFile(fullPath))
             {
-                //wxMessageBox("Save file deleted: " + fileName, "Delete Successful", wxOK | wxICON_INFORMATION);
+                wxMessageBox("Save file deleted: " + fileName, "Delete Successful", wxOK | wxICON_INFORMATION);
                 RefreshSaveFilesList();
                 UpdateButtonStates();
             }

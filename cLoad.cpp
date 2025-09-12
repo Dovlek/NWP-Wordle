@@ -233,7 +233,7 @@ void cLoad::OnLoadClicked(wxCommandEvent& evt)
 
     if (wordlePanel->SetGameStateData(gameStateData))
     {
-        //wxMessageBox("Game loaded: " + fileName, "Load Successful", wxOK | wxICON_INFORMATION);
+        wxMessageBox("Game loaded: " + fileName, "Load Successful", wxOK | wxICON_INFORMATION);
         
         // Switch to game panel
         wxCommandEvent switchEvent(wxEVT_CONTINUE_GAME);

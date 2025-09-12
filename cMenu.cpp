@@ -166,6 +166,7 @@ void cMenu::OnLoadClicked(wxCommandEvent& evt)
 // TODO: Implement options panel
 void cMenu::OnOptionsClicked(wxCommandEvent& evt)
 {
+    wxMessageBox("Not implemented yet.", "Soon", wxOK | wxICON_INFORMATION);
 }
 
 void cMenu::OnExitClicked(wxCommandEvent& evt)
