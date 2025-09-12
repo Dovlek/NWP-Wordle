@@ -3,6 +3,7 @@
 #include <wx/msw/private.h>
 #include <sstream>
 #include <ctime>
+#include <algorithm>
 
 WordSelector::WordSelector() : rng(static_cast<unsigned int>(std::time(nullptr)))
 {
@@ -30,7 +31,7 @@ bool WordSelector::LoadWordsFromResource()
         return false;
     
     std::string fileContent(pData, dataSize);
-    
+
     std::istringstream stream(fileContent);
     std::string line;
     
@@ -41,7 +42,8 @@ bool WordSelector::LoadWordsFromResource()
         
         if (line.length() == 5)
         {
-            words.push_back(wxString(line.c_str(), wxConvUTF8));
+            wxString w(line.c_str(), wxConvUTF8);
+            words.push_back(w.Upper());
         }
     }
     
@@ -56,15 +58,13 @@ wxString WordSelector::GetRandomWord()
     std::uniform_int_distribution<size_t> dist(0, words.size() - 1);
     size_t randomIndex = dist(rng);
     
-    return words[randomIndex].Upper();
+    return words[randomIndex];
 }
 
 bool WordSelector::IsValidWord(const wxString& word) const
 {
-    for (const auto& validWord : words)
-    {
-        if (validWord.Upper() == word.Upper())
-            return true;
-    }
-    return false;
+    if (words.empty())
+        return false;
+
+    return std::find(words.begin(), words.end(), word) != words.end();
 }
