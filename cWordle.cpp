@@ -536,19 +536,19 @@ bool cWordle::SetGameStateData(const wxString& data)
             if (key == "TARGET_WORD")
                 targetWord = value;
             else if (key == "CURRENT_ROW")
-                currentRow = wxAtoi(value);
+                currentRow = std::stoi(value.ToStdString());
             else if (key == "CURRENT_COL")
-                currentCol = wxAtoi(value);
+                currentCol = std::stoi(value.ToStdString());
             else if (key == "GAME_STATE")
-                gameState = static_cast<GameState>(wxAtoi(value));
+                gameState = static_cast<GameState>(std::stoi(value.ToStdString()));
             else if (key == "WINS")
-                wins = wxAtoi(value);
+                wins = std::stoi(value.ToStdString());
             else if (key == "LOSSES")
-                losses = wxAtoi(value);
+                losses = std::stoi(value.ToStdString());
             else if (key == "STREAK")
-                streak = wxAtoi(value);
+                streak = std::stoi(value.ToStdString());
             else if (key == "MAX_STREAK")
-                maxStreak = wxAtoi(value);
+                maxStreak = std::stoi(value.ToStdString());
         }
     }
     
