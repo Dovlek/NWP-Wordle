@@ -105,21 +105,12 @@ git clone https://github.com/microsoft/vcpkg %HOMEPATH%\vcpkg
 ```
 
 3. **Setup Project**
-- Navigate to the NWP-Wordle project folder
-- Open the solution file (NWP-Wordle)
-- Open the Project Properties
-- Set Configuration to All Configurations and Platform to All Platforms
-- Navigate to the C/C++ page in the Properties sidebar
-- Click on Additional Include Directories, Edit, New Line
-- Add `(WXWIN)$\include` then do the same for `$(WXWIN)\include\msvc` and press OK
-- Navigate to Linker -> System in the Properties Sidebar
-- Make sure SubSystem is set to `Windows (/SUBSYSTEM:WINDOWS)`
-- Navigate to Linker -> General in the Properties Sidebar
-- Change Platform from All Platforms to x64
-- Add `$(WXWIN)\lib\vc_x64_lib` to Additional Library Directories
-- Change Platform to Win32
-- Add `$(WXWIN)\lib\vc_lib` to Additional Library Directories
-- Apply all settings
+- If wxWidgets was installed manually, the project should already be configured for static linking
+- If wxWidgets was installed through vcpkg, and MSBuild wasn't integrated user-wide:
+  - 1. Create a `WXWIN_VCPKG` Environment Variable pointing to: `%HOMEPATH%\vcpkg\installed\x64-windows`
+  - 2. In your project settings, use:
+    - Include directories: `$(WXWIN_VCPKG)\include`
+    - Library directories: `$(WXWIN_VCPKG)\lib` (Release) or `$(WXWIN_VCPKG)\debug\lib` (Debug)
 
 4. **Compile the project!**
 
