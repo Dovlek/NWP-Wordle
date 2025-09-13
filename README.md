@@ -79,7 +79,7 @@ git clone https://github.com/Dovlek/NWP-Wordle.git cd NWP-Wordle
 ```
 2. **Install wxWidgets**
 #### Installing wxWidgets manually:
-- [Download the wxWidgets ZIP or 7z file](https://wxwidgets.org/downloads/) for Windows
+- [Download the wxWidgets source code ZIP or 7z file](https://wxwidgets.org/downloads/) for Windows
 - Extract the folder (preferably to path without spaces. Example: "C:\Libraries\wxWidgets-x.x.x")
 - Add the extracted path to your Environment Variables under the name **WXWIN**.
 - Navigate to "\build\msw" inside your wxWidgets folder
@@ -107,8 +107,8 @@ git clone https://github.com/microsoft/vcpkg %HOMEPATH%\vcpkg
 3. **Setup Project**
 - If wxWidgets was installed manually, the project should already be configured for static linking
 - If wxWidgets was installed through vcpkg, and MSBuild wasn't integrated user-wide:
-  - 1. Create a `WXWIN_VCPKG` Environment Variable pointing to: `%HOMEPATH%\vcpkg\installed\x64-windows`
-  - 2. In your project settings, use:
+  - Create a `WXWIN_VCPKG` Environment Variable pointing to: `%HOMEPATH%\vcpkg\installed\x64-windows`
+  - In your project settings, use:
     - Include directories: `$(WXWIN_VCPKG)\include`
     - Library directories: `$(WXWIN_VCPKG)\lib` (Release) or `$(WXWIN_VCPKG)\debug\lib` (Debug)
 
