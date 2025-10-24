@@ -1,17 +1,17 @@
 #pragma once
-#include "wx/wx.h"
-#include <wx/simplebook.h>
-#include "cWordle.h"
+#include "cLoad.h"
 #include "cMenu.h"
 #include "cSave.h"
-#include "cLoad.h"
+#include "cWordle.h"
+#include "wx/wx.h"
+#include <wx/simplebook.h>
 
 class cMain : public wxFrame
 {
 public:
     cMain();
     ~cMain();
-    
+
     void SwitchPageToMenu();
     void SwitchPageToWordle();
     void SwitchPageToSave();
@@ -23,7 +23,7 @@ private:
     cMenu* menuPanel;
     cSave* savePanel;
     cLoad* loadPanel;
-    
+
     void OnSwitchToMenu(wxCommandEvent& evt);
     void OnStartNewGame(wxCommandEvent& evt);
     void OnContinueGame(wxCommandEvent& evt);

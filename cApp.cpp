@@ -1,4 +1,6 @@
 #include "cApp.h"
+#include "EmbeddedResources.h"
+#include <wx/fs_mem.h>
 
 wxIMPLEMENT_APP(cApp);
 
@@ -12,10 +14,18 @@ cApp::~cApp()
 
 bool cApp::OnInit()
 {
-	m_frame = new cMain();
-	m_frame->Center();
-	m_frame->SetBackgroundColour(wxColor(20, 20, 20));
-	m_frame->Show();
+    // Initialize all image handlers (required for ICO, BMP, PNG, etc.)
+    wxInitAllImageHandlers();
 
-	return true;
+    // Initialize memory filesystem handler for embedded resources
+    wxFileSystem::AddHandler(new wxMemoryFSHandler);
+    InitializeEmbeddedResources();
+
+    m_frame = new cMain();
+    m_frame->Center();
+    m_frame->SetBackgroundColour(wxColor(20, 20, 20));
+    m_frame->Show();
+    m_frame->SetMinSize(m_frame->GetSize());
+
+    return true;
 }

@@ -7,13 +7,13 @@ class UIScaler
 public:
     // Get the singleton instance
     static UIScaler& GetInstance();
-    
+
     // Scaling methods
     int ScaledFontSize(int baseSize) const;
     wxSize ScaledSize(int baseWidth, int baseHeight) const;
     int ScaledValue(int baseValue) const;
     double GetScaleFactor() const { return scaleFactor; }
-    
+
     // Force recalculation (useful if display changes)
     void RecalculateScaleFactor();
 

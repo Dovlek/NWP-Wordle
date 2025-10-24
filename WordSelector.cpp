@@ -1,9 +1,7 @@
 #include "WordSelector.h"
-#include "resource.h"
-#include <wx/msw/private.h>
-#include <sstream>
-#include <ctime>
+#include "EmbeddedResources.h"
 #include <algorithm>
+#include <ctime>
 
 WordSelector::WordSelector() : rng(static_cast<unsigned int>(std::time(nullptr)))
 {
@@ -13,40 +11,14 @@ WordSelector::WordSelector() : rng(static_cast<unsigned int>(std::time(nullptr))
 bool WordSelector::LoadWordsFromResource()
 {
     words.clear();
-    
-    HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(IDR_WORDSENG), RT_RCDATA);
-    if (!hResource)
-        return false;
-    
-    HGLOBAL hResData = LoadResource(NULL, hResource);
-    if (!hResData)
-        return false;
-    
-    const char* pData = static_cast<const char*>(LockResource(hResData));
-    if (!pData)
-        return false;
-    
-    DWORD dataSize = SizeofResource(NULL, hResource);
-    if (dataSize == 0)
-        return false;
-    
-    std::string fileContent(pData, dataSize);
 
-    std::istringstream stream(fileContent);
-    std::string line;
-    
-    while (std::getline(stream, line))
+    // Load words from embedded array
+    for (size_t i = 0; i < EMBEDDED_WORDS_COUNT; i++)
     {
-        if (!line.empty() && line.back() == '\r')
-            line.pop_back();
-        
-        if (line.length() == 5)
-        {
-            wxString w(line.c_str(), wxConvUTF8);
-            words.push_back(w.Upper());
-        }
+        wxString word(EMBEDDED_WORDS[i], wxConvUTF8);
+        words.push_back(word);
     }
-    
+
     return !words.empty();
 }
 
@@ -54,12 +26,27 @@ wxString WordSelector::GetRandomWord()
 {
     if (words.empty())
         return wxEmptyString;
-    
+
     std::uniform_int_distribution<size_t> dist(0, words.size() - 1);
     size_t randomIndex = dist(rng);
-    
+
     return words[randomIndex];
-}
+}#include "cMain.h"
+#include "EmbeddedResources.h"
+#include <wx/mstream.h>
+#ifdef __WXMSW__
+    #include <dwmapi.h>
+    #include <windows.h>
+    #pragma comment(lib, "dwmapi.lib")
+#endif
+
+// Platform-specific initialization
+#ifdef __WXMSW__
+static void EnableDarkTitleBar(wxFrame* frame)
+{
+    HWND hwnd = frame->GetHWND();
+    if (hwnd)
+    {
 
 bool WordSelector::IsValidWord(const wxString& word) const
 {

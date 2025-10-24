@@ -1,11 +1,11 @@
 #include "cSave.h"
-#include "cWordle.h"
 #include "UIScaler.h"
+#include "cWordle.h"
 #include <wx/dir.h>
 #include <wx/filename.h>
+#include <wx/simplebook.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
-#include <wx/simplebook.h>
 
 cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {
@@ -139,7 +139,6 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     mainSizer->AddStretchSpacer();
 
     SetSizer(mainSizer);
-    mainSizer->SetSizeHints(this);
 
     RefreshSaveFilesList();
     UpdateButtonStates();
@@ -256,7 +255,7 @@ cWordle* cSave::GetWordlePanel()
     wxSimplebook* simplebook = dynamic_cast<wxSimplebook*>(wxWindow::GetParent());
     if (simplebook && simplebook->GetPageCount() >= 1)
         return dynamic_cast<cWordle*>(simplebook->GetPage(1));
-    
+
     return nullptr;
 }
 
@@ -291,8 +290,7 @@ void cSave::OnSaveClicked(wxCommandEvent& evt)
     // Check if file already exists
     if (wxFile::Exists(fullPath))
     {
-        int result = wxMessageBox("A save file with this name already exists. Overwrite?",
-            "File Exists", wxYES_NO | wxICON_QUESTION);
+        int result = wxMessageBox("A save file with this name already exists. Overwrite?", "File Exists", wxYES_NO | wxICON_QUESTION);
         if (result != wxYES)
             return;
     }
@@ -353,8 +351,7 @@ void cSave::OnDeleteClicked(wxCommandEvent& evt)
         return;
 
     wxString fileName = saveFilesList->GetString(selection);
-    int result = wxMessageBox("Are you sure you want to delete '" + fileName + "'?",
-        "Confirm Delete", wxYES_NO | wxICON_QUESTION);
+    int result = wxMessageBox("Are you sure you want to delete '" + fileName + "'?", "Confirm Delete", wxYES_NO | wxICON_QUESTION);
 
     if (result == wxYES)
     {

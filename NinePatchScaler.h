@@ -1,6 +1,6 @@
 #pragma once
-#include <wx/wx.h>
 #include <map>
+#include <wx/wx.h>
 
 class NinePatchScaler
 {

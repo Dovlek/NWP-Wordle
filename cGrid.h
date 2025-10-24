@@ -5,27 +5,27 @@
 class cGrid
 {
 public:
-	cGrid(int width, int height);
-	~cGrid();
-	wxGridSizer* CreateGrid(wxWindow* parent);
+    cGrid(int width, int height);
+    ~cGrid();
+    wxGridSizer* CreateGrid(wxWindow* parent);
 
-	void SetLetter(int row, int col, const wxString& letter);
-	wxString GetLetter(int row, int col) const;
-	bool IsValidPosition(int row, int col) const;
+    void SetLetter(int row, int col, const wxString& letter);
+    wxString GetLetter(int row, int col) const;
+    bool IsValidPosition(int row, int col) const;
 
-	int GetWidth() const { return nFieldWidth; }
-	int GetHeight() const { return nFieldHeight; }
+    int GetWidth() const { return nFieldWidth; }
+    int GetHeight() const { return nFieldHeight; }
 
-	void UpdateActiveRowCells(int row);
-	void UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol, bool forward);
-	void UpdateCellColors(int row, const std::vector<int>& states);
-	void ResetGrid();
-	
+    void UpdateActiveRowCells(int row);
+    void UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol, bool forward);
+    void UpdateCellColors(int row, const std::vector<int>& states);
+    void ResetGrid();
+
 private:
-	int nFieldWidth;
-	int nFieldHeight;
-	std::vector<wxButton*> gridButton;
-	std::vector<wxStaticText*> gridText;
-	wxVector<wxBitmap> bitmapsGrid;
+    wxBitmap DrawTextOnBitmap(const wxBitmap& baseBitmap, const wxString& text, const wxFont& font, const wxColor& textColor);
+    int nFieldWidth;
+    int nFieldHeight;
+    std::vector<wxStaticBitmap*> gridBitmap;
+    std::vector<wxString> gridLabels; // Store letter labels for game logic
+    wxVector<wxBitmap> bitmapsGrid;
 };
-

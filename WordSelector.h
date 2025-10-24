@@ -1,14 +1,14 @@
 #pragma once
-#include <wx/wx.h>
-#include <vector>
 #include <random>
+#include <vector>
+#include <wx/wx.h>
 
 class WordSelector
 {
 private:
     std::vector<wxString> words;
     std::mt19937 rng;
-    
+
 public:
     WordSelector();
     bool LoadWordsFromResource();

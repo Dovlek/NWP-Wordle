@@ -11,7 +11,7 @@ class cMenu : public wxPanel
 public:
     cMenu(wxWindow* parent);
     ~cMenu();
-    
+
     void SetContinueButtonEnabled(bool enabled);
     void SetNewGameButtonFocus();
 
@@ -22,7 +22,7 @@ private:
     wxButton* loadButton;
     wxButton* optionsButton;
     wxButton* exitButton;
-    
+
     void OnContinueClicked(wxCommandEvent& evt);
     void OnNewGameClicked(wxCommandEvent& evt);
     void OnSaveClicked(wxCommandEvent& evt);

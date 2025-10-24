@@ -1,9 +1,9 @@
 #pragma once
-#include "wx/wx.h"
-#include "cKeyboard.h"
-#include "cGrid.h"
-#include "WordSelector.h"
 #include "UIScaler.h"
+#include "WordSelector.h"
+#include "cGrid.h"
+#include "cKeyboard.h"
+#include "wx/wx.h"
 
 wxDECLARE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
 

@@ -32,8 +32,18 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     ckeyboard_eng->BindKeyboardEvents(this, static_cast<void (wxEvtHandler::*)(wxCommandEvent&)>(&cWordle::OnKeyboardButtonClicked));
 
     // Create back button
-    backButton = new wxButton(this, wxID_ANY, wxT("menu"), wxDefaultPosition, scaler.ScaledSize(50, 50), wxBORDER_NONE);
-    backButton->SetFont(wxFont(scaler.ScaledFontSize(20), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Material Symbols Outlined")));
+    bool hasMaterialFont = false;
+    if (wxFileExists("Resources/Fonts/material-symbols-outlined.ttf"))
+    {
+        hasMaterialFont = wxFont::AddPrivateFont("Resources/Fonts/material-symbols-outlined.ttf");
+    }
+
+    wxString buttonText = hasMaterialFont ? wxT("menu") : wxT("☰");
+    wxFont buttonFont = hasMaterialFont ? wxFont(scaler.ScaledFontSize(20), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Material Symbols Outlined"))
+                                        : wxFont(scaler.ScaledFontSize(18), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+
+    backButton = new wxButton(this, wxID_ANY, buttonText, wxDefaultPosition, scaler.ScaledSize(50, 50), wxBORDER_NONE);
+    backButton->SetFont(buttonFont);
     backButton->SetBackgroundColour(wxColor(20, 20, 20));
     backButton->SetForegroundColour(wxColor(*wxWHITE));
     backButton->SetCursor(wxCursor(wxCURSOR_HAND));
@@ -88,7 +98,6 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     gameSizer->Add(keyboardPanel, wxSizerFlags().CenterHorizontal().Border(wxALL, scaler.ScaledValue(25)));
     gameSizer->AddStretchSpacer();
     this->SetSizer(gameSizer);
-    gameSizer->SetSizeHints(this);
 
     // Set up accelerator table
     wxAcceleratorEntry entries[3];
@@ -191,21 +200,11 @@ void cWordle::OnKeyboardButtonPressed(wxKeyEvent& evt)
 
 void cWordle::OnKeyboardButtonClicked(wxCommandEvent& evt)
 {
-    wxButton* button = wxDynamicCast(evt.GetEventObject(), wxButton);
+    wxBitmapButton* button = wxDynamicCast(evt.GetEventObject(), wxBitmapButton);
     if (!button)
         return;
 
-    wxString letter;
-    const wxWindowList& children = button->GetChildren();
-    for (wxWindowList::const_iterator it = children.begin(); it != children.end(); ++it)
-    {
-        wxStaticText* labelCtrl = dynamic_cast<wxStaticText*>(*it);
-        if (labelCtrl)
-        {
-            letter = labelCtrl->GetLabel();
-            break;
-        }
-    }
+    wxString letter = button->GetLabel();
 
     ProcessKey(letter);
     SetFocus();
@@ -314,8 +313,7 @@ void cWordle::CheckGuess(const wxString& guess, int row)
     cgrid->UpdateCellColors(row, intStates);
     ckeyboard_eng->UpdateKeyboardColors(guess, intStates);
 
-    bool allCorrect = std::all_of(states.begin(), states.end(),
-        [](LetterState state) { return state == LetterState::CORRECT; });
+    bool allCorrect = std::all_of(states.begin(), states.end(), [](LetterState state) { return state == LetterState::CORRECT; });
 
     if (allCorrect)
     {
@@ -356,7 +354,7 @@ void cWordle::ShowGameEndDialog(bool won)
         ShowStatusMessage("You lost!", wxColor(255, 100, 100));
         message = wxString::Format("You lost! The word was: %s\n\nStart new round?", targetWord);
     }
-        
+
     wxMessageDialog dialog(this, message, "Round Finished!", wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION);
 
     dialog.SetYesNoLabels("New Round", "Back to Menu");
@@ -392,7 +390,7 @@ void cWordle::StartNewRound()
     gameState = GameState::ACTIVE;
 
     targetWord = wordSelector.GetRandomWord();
-    //wxLogMessage("Target word: %s", targetWord);
+    // wxLogMessage("Target word: %s", targetWord);
 
     cgrid->ResetGrid();
     ckeyboard_eng->ResetKeyboard();
@@ -484,34 +482,34 @@ wxString cWordle::GetGameStateData() const
 bool cWordle::SetGameStateData(const wxString& data)
 {
     wxStringTokenizer tokenizer(data, "\n");
-    
+
     cgrid->ResetGrid();
     ckeyboard_eng->ResetKeyboard();
-    
+
     // Parse each line
     bool inGridData = false;
     int gridRow = 0;
-    
+
     while (tokenizer.HasMoreTokens())
     {
         wxString line = tokenizer.GetNextToken().Trim().Trim(false);
-        
+
         if (line.IsEmpty())
             continue;
-            
+
         if (line == "GRID_DATA=")
         {
             inGridData = true;
             gridRow = 0;
             continue;
         }
-        
+
         if (inGridData)
         {
             // Process grid row data
             if (gridRow < cgrid->GetHeight())
             {
-                for (int col = 0; col < cgrid->GetWidth() && col < line.Length(); col++)
+                for (int col = 0; col < cgrid->GetWidth() && col < static_cast<int>(line.Length()); col++)
                 {
                     wxString letter = wxString(line[col]);
                     if (letter != "_")
@@ -526,10 +524,10 @@ bool cWordle::SetGameStateData(const wxString& data)
             int equalPos = line.Find('=');
             if (equalPos == wxNOT_FOUND)
                 continue;
-                
+
             wxString key = line.SubString(0, equalPos - 1);
             wxString value = line.SubString(equalPos + 1, line.Length() - 1);
-            
+
             if (key == "TARGET_WORD")
                 targetWord = value;
             else if (key == "CURRENT_ROW")
@@ -548,19 +546,19 @@ bool cWordle::SetGameStateData(const wxString& data)
                 maxStreak = std::stoi(value.ToStdString());
         }
     }
-    
+
     if (targetWord.IsEmpty())
     {
         wxLogError("Invalid save data: missing target word");
         return false;
     }
-    
+
     // Recreate the visual state of completed rows
     for (int row = 0; row < currentRow && row < cgrid->GetHeight(); row++)
     {
         wxString guess;
         bool hasCompleteRow = true;
-        
+
         // Get guess from grid
         for (int col = 0; col < cgrid->GetWidth(); col++)
         {
@@ -572,15 +570,15 @@ bool cWordle::SetGameStateData(const wxString& data)
             }
             guess += letter;
         }
-        
+
         // Update colors on completed row
-        if (hasCompleteRow && guess.Length() == cgrid->GetWidth())
+        if (hasCompleteRow && static_cast<int>(guess.Length()) == cgrid->GetWidth())
         {
             std::vector<LetterState> states = CompareWords(guess, targetWord);
             std::vector<int> intStates;
             for (const auto& state : states)
                 intStates.push_back(static_cast<int>(state));
-            
+
             cgrid->UpdateCellColors(row, intStates);
             ckeyboard_eng->UpdateKeyboardColors(guess, intStates);
         }

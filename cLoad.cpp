@@ -1,11 +1,11 @@
 #include "cLoad.h"
-#include "cWordle.h"
 #include "UIScaler.h"
+#include "cWordle.h"
 #include <wx/dir.h>
-#include <wx/filename.h>
-#include <wx/stdpaths.h>
-#include <wx/simplebook.h>
 #include <wx/file.h>
+#include <wx/filename.h>
+#include <wx/simplebook.h>
+#include <wx/stdpaths.h>
 
 cLoad::cLoad(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {
@@ -94,7 +94,7 @@ cLoad::cLoad(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
 
     int titleBorder = scaler.ScaledValue(20);
     int listlabelBorder = scaler.ScaledValue(10);
-    int savelistBorder = scaler.ScaledValue(10);
+    // int savelistBorder = scaler.ScaledValue(10);
     int buttonBorderSmall = scaler.ScaledValue(5);
     int buttonBorderLarge = scaler.ScaledValue(10);
     int loadBorder = scaler.ScaledValue(20);
@@ -113,7 +113,6 @@ cLoad::cLoad(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     mainSizer->AddStretchSpacer();
 
     SetSizer(mainSizer);
-    mainSizer->SetSizeHints(this);
 
     RefreshSaveFilesList();
     UpdateButtonStates();
@@ -181,7 +180,7 @@ cWordle* cLoad::GetWordlePanel()
     wxSimplebook* simplebook = dynamic_cast<wxSimplebook*>(wxWindow::GetParent());
     if (simplebook && simplebook->GetPageCount() >= 1)
         return dynamic_cast<cWordle*>(simplebook->GetPage(1));
-    
+
     return nullptr;
 }
 
@@ -234,15 +233,15 @@ void cLoad::OnLoadClicked(wxCommandEvent& evt)
     if (wordlePanel->SetGameStateData(gameStateData))
     {
         wxMessageBox("Game loaded: " + fileName, "Load Successful", wxOK | wxICON_INFORMATION);
-        
+
         // Switch to game panel
         wxCommandEvent switchEvent(wxEVT_CONTINUE_GAME);
         switchEvent.SetEventObject(this);
-        
+
         wxWindow* parent = GetParent();
         while (parent && !parent->IsTopLevel())
             parent = parent->GetParent();
-        
+
         if (parent)
             wxPostEvent(parent, switchEvent);
     }
