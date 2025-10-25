@@ -31,27 +31,4 @@ wxString WordSelector::GetRandomWord()
     size_t randomIndex = dist(rng);
 
     return words[randomIndex];
-}#include "cMain.h"
-#include "EmbeddedResources.h"
-#include <wx/mstream.h>
-#ifdef __WXMSW__
-    #include <dwmapi.h>
-    #include <windows.h>
-    #pragma comment(lib, "dwmapi.lib")
-#endif
-
-// Platform-specific initialization
-#ifdef __WXMSW__
-static void EnableDarkTitleBar(wxFrame* frame)
-{
-    HWND hwnd = frame->GetHWND();
-    if (hwnd)
-    {
-
-bool WordSelector::IsValidWord(const wxString& word) const
-{
-    if (words.empty())
-        return false;
-
-    return std::find(words.begin(), words.end(), word) != words.end();
 }

@@ -2,9 +2,9 @@
 #include "EmbeddedResources.h"
 #include <wx/mstream.h>
 #ifdef __WXMSW__
-    #include <dwmapi.h>
-    #include <windows.h>
-    #pragma comment(lib, "dwmapi.lib")
+#include <dwmapi.h>
+#include <windows.h>
+#pragma comment(lib, "dwmapi.lib")
 #endif
 
 // Platform-specific initialization
