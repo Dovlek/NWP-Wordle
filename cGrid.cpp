@@ -71,13 +71,6 @@ wxGridSizer* cGrid::CreateGrid(wxWindow* parent)
             grid->Add(gridBitmap[index], 1, wxALL, gridGap);
         }
     }
-
-    // Refresh all cells to ensure proper display initialization
-    for (int i = 0; i < nFieldHeight * nFieldWidth; i++)
-    {
-        gridBitmap[i]->Refresh();
-    }
-
     return grid;
 }
 
