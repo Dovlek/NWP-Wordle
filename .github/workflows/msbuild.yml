@@ -22,9 +22,9 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
       
-    - name: Cache wxWidgets
+    - name: Restore wxWidgets cache
       id: cache-wxwidgets
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       with:
         path: C:\Libraries\wxWidgets-3.3.1
         key: wxwidgets-3.3.1-${{ matrix.platform }}-${{ matrix.configuration }}
@@ -79,7 +79,14 @@ jobs:
           Write-Error "✗ wxWidgets build failed - library directory not created"
           exit 1
         }
-        
+
+    - name: Save wxWidgets cache
+      if: steps.cache-wxwidgets.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: C:\Libraries\wxWidgets-3.3.1
+        key: wxwidgets-3.3.1-${{ matrix.platform }}-${{ matrix.configuration }}
+
     - name: Set WXWIN environment variable
       run: |
         echo "WXWIN=C:\Libraries\wxWidgets-3.3.1" >> $env:GITHUB_ENV

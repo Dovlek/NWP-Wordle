@@ -32,3 +32,8 @@ wxString WordSelector::GetRandomWord()
 
     return words[randomIndex];
 }
+
+bool WordSelector::IsValidWord(const wxString& word) const
+{
+    return std::find(words.begin(), words.end(), word) != words.end();
+}
