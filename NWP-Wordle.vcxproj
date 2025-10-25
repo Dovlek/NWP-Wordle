@@ -27,8 +27,8 @@
     <ClInclude Include="cMenu.h" />
     <ClInclude Include="cSave.h" />
     <ClInclude Include="cWordle.h" />
+    <ClInclude Include="EmbeddedResources.h" />
     <ClInclude Include="NinePatchScaler.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="UIScaler.h" />
     <ClInclude Include="WordSelector.h" />
   </ItemGroup>
@@ -41,12 +41,10 @@
     <ClCompile Include="cMenu.cpp" />
     <ClCompile Include="cSave.cpp" />
     <ClCompile Include="cWordle.cpp" />
+    <ClCompile Include="EmbeddedResources.cpp" />
     <ClCompile Include="NinePatchScaler.cpp" />
     <ClCompile Include="UIScaler.cpp" />
     <ClCompile Include="WordSelector.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="resources.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Grid\Cold.bmp" />
