@@ -90,11 +90,13 @@ void cGrid::SetLetter(int row, int col, const wxString& letter)
         // Use unmarked bitmap as base for typing
         wxBitmap bitmapWithText = DrawTextOnBitmap(bitmapsGrid.at(0), letter, gridFont, wxColor(*wxWHITE));
         gridBitmap[index]->SetBitmap(bitmapWithText);
+        gridBitmap[index]->Refresh();
     }
     else
     {
         // If letter is empty, reset to unmarked bitmap (clear the cell)
         gridBitmap[index]->SetBitmap(bitmapsGrid.at(0)); // IDB_UNMARKED
+        gridBitmap[index]->Refresh();
     }
 }
 
@@ -129,6 +131,7 @@ void cGrid::UpdateActiveRowCells(int row)
         {
             wxBitmap bitmapWithText = DrawTextOnBitmap(bitmapsGrid.at(1), label, gridFont, wxColor(*wxWHITE));
             gridBitmap[index]->SetBitmap(bitmapWithText);
+            gridBitmap[index]->Refresh();
         }
     }
 }
@@ -144,6 +147,7 @@ void cGrid::UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol,
         wxString label = gridLabels[prevIndex];
         wxBitmap bitmapWithText = DrawTextOnBitmap(bitmapsGrid.at(1), label, gridFont, wxColor(*wxWHITE));
         gridBitmap[prevIndex]->SetBitmap(bitmapWithText);
+        gridBitmap[prevIndex]->Refresh();
     }
     if (IsValidPosition(currRow, currCol) && !forward)
     {
@@ -153,10 +157,12 @@ void cGrid::UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol,
         {
             wxBitmap bitmapWithText = DrawTextOnBitmap(bitmapsGrid.at(0), label, gridFont, wxColor(*wxWHITE));
             gridBitmap[currIndex]->SetBitmap(bitmapWithText);
+            gridBitmap[currIndex]->Refresh();
         }
         else
         {
             gridBitmap[currIndex]->SetBitmap(bitmapsGrid.at(0));
+            gridBitmap[currIndex]->Refresh();
         }
     }
 }
