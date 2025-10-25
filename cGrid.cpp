@@ -61,9 +61,10 @@ wxGridSizer* cGrid::CreateGrid(wxWindow* parent)
         {
             int index = x * nFieldWidth + y;
 
-            // Create letter box
-            gridBitmap[index] = new wxStaticBitmap(parent, wxID_ANY, bitmapsGrid.at(0), wxDefaultPosition, wxSize(bitmapsGrid.at(0).GetWidth(), bitmapsGrid.at(0).GetHeight()));
-            gridBitmap[index]->SetMinSize(wxSize(bitmapsGrid.at(0).GetWidth(), bitmapsGrid.at(0).GetHeight()));
+            wxImage img = bitmapsGrid.at(0).ConvertToImage();
+            wxBitmap cellBitmap(img);
+            gridBitmap[index] = new wxStaticBitmap(parent, wxID_ANY, cellBitmap, wxDefaultPosition, wxSize(cellBitmap.GetWidth(), cellBitmap.GetHeight()));
+            gridBitmap[index]->SetMinSize(wxSize(cellBitmap.GetWidth(), cellBitmap.GetHeight()));
             gridLabels[index] = wxEmptyString;
 
             // Add Box to GridSizer
@@ -101,8 +102,9 @@ void cGrid::SetLetter(int row, int col, const wxString& letter)
     }
     else
     {
-        // If letter is empty, reset to unmarked bitmap (clear the cell)
-        gridBitmap[index]->SetBitmap(bitmapsGrid.at(0)); // IDB_UNMARKED
+        wxImage img = bitmapsGrid.at(0).ConvertToImage();
+        wxBitmap emptyBitmap(img);
+        gridBitmap[index]->SetBitmap(emptyBitmap);
         gridBitmap[index]->Refresh();
     }
 }
@@ -168,7 +170,9 @@ void cGrid::UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol,
         }
         else
         {
-            gridBitmap[currIndex]->SetBitmap(bitmapsGrid.at(0));
+            wxImage img = bitmapsGrid.at(0).ConvertToImage();
+            wxBitmap emptyBitmap(img);
+            gridBitmap[currIndex]->SetBitmap(emptyBitmap);
             gridBitmap[currIndex]->Refresh();
         }
     }
@@ -215,7 +219,9 @@ void cGrid::ResetGrid()
             int index = x * nFieldWidth + y;
 
             gridLabels[index] = wxEmptyString;
-            gridBitmap[index]->SetBitmap(bitmapsGrid.at(0)); // IDB_UNMARKED
+            wxImage img = bitmapsGrid.at(0).ConvertToImage();
+            wxBitmap emptyBitmap(img);
+            gridBitmap[index]->SetBitmap(emptyBitmap);
             gridBitmap[index]->Refresh();
         }
     }
