@@ -4,6 +4,8 @@
 #include "cGrid.h"
 #include "cKeyboard.h"
 #include "wx/wx.h"
+#include <map>
+#include <set>
 
 wxDECLARE_EVENT(wxEVT_SWITCH_TO_MENU, wxCommandEvent);
 
@@ -15,6 +17,7 @@ public:
 
     void StartNewRound();
     void ContinueFromFinishedGame();
+    void ForceEndCurrentGame();
     bool IsGameInProgress() const;
     void ResetStats();
     wxString GetGameStateData() const;
@@ -67,6 +70,25 @@ private:
     int streak = 0;
     int maxStreak = 0;
     void UpdateStatsUI();
+
+    // Timer functionality
+    wxTimer gameTimer;
+    wxStaticText* timerDisplay;
+    int timerRemainingSeconds = 300;
+    bool timedModeEnabled = false;
+    void OnTimerTick(wxTimerEvent& evt);
+    void UpdateTimerDisplay();
+    void StartTimer();
+    void PauseTimer();
+    void ResetTimer();
+
+    // Hard mode functionality
+    bool hardModeEnabled = false;
+    std::map<int, std::set<wxChar>> requiredLetters;
+    std::set<wxChar> mustUseLetters;
+    bool ValidateHardModeGuess(const wxString& guess);
+    void UpdateHardModeConstraints(const wxString& guess, const std::vector<LetterState>& states);
+    void ResetHardModeConstraints();
 
     void ShowStatusMessage(const wxString& message, const wxColor& color = wxColor(*wxWHITE));
     void HideStatusMessage(wxTimerEvent& evt);

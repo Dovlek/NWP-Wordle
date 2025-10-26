@@ -25,7 +25,7 @@ bool cApp::OnInit()
     m_frame->Center();
     m_frame->SetBackgroundColour(wxColor(20, 20, 20));
     m_frame->Show();
-    m_frame->SetMinSize(m_frame->GetSize());
+    m_frame->SetMinClientSize(m_frame->GetClientSize());
 
     return true;
 }

@@ -25,6 +25,7 @@
     <ClInclude Include="cLoad.h" />
     <ClInclude Include="cMain.h" />
     <ClInclude Include="cMenu.h" />
+    <ClInclude Include="cOptions.h" />
     <ClInclude Include="cSave.h" />
     <ClInclude Include="cWordle.h" />
     <ClInclude Include="EmbeddedResources.h" />
@@ -39,6 +40,7 @@
     <ClCompile Include="cLoad.cpp" />
     <ClCompile Include="cMain.cpp" />
     <ClCompile Include="cMenu.cpp" />
+    <ClCompile Include="cOptions.cpp" />
     <ClCompile Include="cSave.cpp" />
     <ClCompile Include="cWordle.cpp" />
     <ClCompile Include="EmbeddedResources.cpp" />

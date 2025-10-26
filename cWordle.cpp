@@ -1,7 +1,10 @@
 #include "cWordle.h"
+#include <wx/fileconf.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 
-cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS), statusTimer(this)
+cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS), statusTimer(this), gameTimer(this)
 {
     SetBackgroundColour(wxColor(20, 20, 20));
 
@@ -71,6 +74,13 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     maxStreakText->SetForegroundColour(wxColor(*wxWHITE));
     maxStreakText->SetFont(statsFont);
 
+    // Timer display
+    wxFont timerFont(scaler.ScaledFontSize(16), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+    timerDisplay = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+    timerDisplay->SetBackgroundColour(wxColor(20, 20, 20));
+    timerDisplay->SetForegroundColour(wxColor(*wxWHITE));
+    timerDisplay->SetFont(timerFont);
+
     wxBoxSizer* topBarSizer = new wxBoxSizer(wxHORIZONTAL);
     wxBoxSizer* statsSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -95,7 +105,8 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     gameSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxTOP | wxLEFT | wxRIGHT, scaler.ScaledValue(25)));
     gameSizer->Add(statusMessage, wxSizerFlags().CenterHorizontal().Border(wxTOP | wxLEFT | wxRIGHT, scaler.ScaledValue(10)));
     gameSizer->Add(gridSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, scaler.ScaledValue(10)));
-    gameSizer->Add(keyboardPanel, wxSizerFlags().CenterHorizontal().Border(wxALL, scaler.ScaledValue(25)));
+    gameSizer->Add(timerDisplay, wxSizerFlags().CenterHorizontal().Border(wxBOTTOM | wxLEFT | wxRIGHT, scaler.ScaledValue(10)));
+    gameSizer->Add(keyboardPanel, wxSizerFlags().CenterHorizontal().Border(wxBOTTOM | wxLEFT | wxRIGHT, scaler.ScaledValue(25)));
     gameSizer->AddStretchSpacer();
     this->SetSizer(gameSizer);
 
@@ -120,6 +131,7 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     backButton->Bind(wxEVT_LEAVE_WINDOW, &cWordle::OnBackButtonLeave, this);
 
     Bind(wxEVT_TIMER, &cWordle::HideStatusMessage, this, statusTimer.GetId());
+    Bind(wxEVT_TIMER, &cWordle::OnTimerTick, this, gameTimer.GetId());
 
     UpdateStatsUI();
 }
@@ -233,6 +245,12 @@ void cWordle::ProcessKey(const wxString& key)
                 return;
             }
 
+            if (!ValidateHardModeGuess(currentGuess))
+            {
+                ShowStatusMessage("Hard mode: Must use revealed hints", wxColor(255, 100, 100));
+                return;
+            }
+
             int guessRow = currentRow;
             prevRow = currentRow;
             prevCol = currentCol;
@@ -305,6 +323,8 @@ void cWordle::CheckGuess(const wxString& guess, int row)
 {
     std::vector<LetterState> states = CompareWords(guess, targetWord);
 
+    UpdateHardModeConstraints(guess, states);
+
     std::vector<int> intStates;
     intStates.reserve(states.size());
     for (const auto& state : states)
@@ -317,11 +337,13 @@ void cWordle::CheckGuess(const wxString& guess, int row)
 
     if (allCorrect)
     {
+        PauseTimer();
         gameState = GameState::COMPLETED;
         ShowGameEndDialog(true);
     }
     else if (row >= cgrid->GetHeight() - 1)
     {
+        PauseTimer();
         gameState = GameState::COMPLETED;
         ShowGameEndDialog(false);
     }
@@ -395,6 +417,27 @@ void cWordle::StartNewRound()
     cgrid->ResetGrid();
     ckeyboard_eng->ResetKeyboard();
 
+    // Load game settings from config
+    wxString configPath = wxStandardPaths::Get().GetUserDataDir();
+    wxString configFile = configPath + wxFileName::GetPathSeparator() + "wordle_config.ini";
+    wxFileConfig config(wxEmptyString, wxEmptyString, configFile, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+
+    timedModeEnabled = config.ReadBool("/Settings/TimedMode", false);
+    hardModeEnabled = config.ReadBool("/Settings/HardMode", false);
+
+    // Reset and start timer if enabled
+    ResetTimer();
+    ResetHardModeConstraints();
+
+    if (timedModeEnabled)
+    {
+        StartTimer();
+    }
+    else
+    {
+        timerDisplay->SetLabel(wxEmptyString);
+    }
+
     statusMessage->SetLabel(wxEmptyString);
     gameSizer->Layout();
 
@@ -405,6 +448,16 @@ void cWordle::ContinueFromFinishedGame()
 {
     if (gameState == GameState::COMPLETED_AWAITING_CONTINUE)
         StartNewRound();
+}
+
+void cWordle::ForceEndCurrentGame()
+{
+    if (gameTimer.IsRunning())
+        gameTimer.Stop();
+
+    gameState = GameState::NOT_STARTED;
+    currentRow = 0;
+    currentCol = 0;
 }
 
 bool cWordle::IsGameInProgress() const
@@ -461,6 +514,35 @@ wxString cWordle::GetGameStateData() const
     data += wxString::Format("LOSSES=%d\n", losses);
     data += wxString::Format("STREAK=%d\n", streak);
     data += wxString::Format("MAX_STREAK=%d\n", maxStreak);
+
+    // Save timer settings
+    data += wxString::Format("TIMED_MODE=%d\n", timedModeEnabled ? 1 : 0);
+    data += wxString::Format("TIMER_REMAINING=%d\n", timerRemainingSeconds);
+
+    // Save hard mode settings
+    data += wxString::Format("HARD_MODE=%d\n", hardModeEnabled ? 1 : 0);
+
+    // Save hard mode constraints
+    wxString requiredPosStr;
+    for (const auto& pair : requiredLetters)
+    {
+        for (wxChar letter : pair.second)
+        {
+            if (!requiredPosStr.IsEmpty())
+                requiredPosStr += ",";
+            requiredPosStr += wxString::Format("%c:%d", letter, pair.first);
+        }
+    }
+    data += wxString::Format("HARD_MODE_REQUIRED_POSITIONS=%s\n", requiredPosStr);
+
+    wxString mustUseStr;
+    for (wxChar letter : mustUseLetters)
+    {
+        if (!mustUseStr.IsEmpty())
+            mustUseStr += ",";
+        mustUseStr += letter;
+    }
+    data += wxString::Format("HARD_MODE_MUST_USE=%s\n", mustUseStr);
 
     // Save grid state
     data += "GRID_DATA=\n";
@@ -544,6 +626,39 @@ bool cWordle::SetGameStateData(const wxString& data)
                 streak = std::stoi(value.ToStdString());
             else if (key == "MAX_STREAK")
                 maxStreak = std::stoi(value.ToStdString());
+            else if (key == "TIMED_MODE")
+                timedModeEnabled = (std::stoi(value.ToStdString()) != 0);
+            else if (key == "TIMER_REMAINING")
+                timerRemainingSeconds = std::stoi(value.ToStdString());
+            else if (key == "HARD_MODE")
+                hardModeEnabled = (std::stoi(value.ToStdString()) != 0);
+            else if (key == "HARD_MODE_REQUIRED_POSITIONS" && !value.IsEmpty())
+            {
+                // Parse format: "A:0,D:3"
+                wxStringTokenizer posTokenizer(value, ",");
+                while (posTokenizer.HasMoreTokens())
+                {
+                    wxString pair = posTokenizer.GetNextToken();
+                    size_t colonPos = pair.Find(':');
+                    if (colonPos != wxString::npos && colonPos > 0)
+                    {
+                        wxChar letter = pair[0];
+                        int pos = std::stoi(pair.SubString(colonPos + 1, pair.Length() - 1).ToStdString());
+                        requiredLetters[pos].insert(letter);
+                    }
+                }
+            }
+            else if (key == "HARD_MODE_MUST_USE" && !value.IsEmpty())
+            {
+                // Parse format: "E,R"
+                wxStringTokenizer mustUseTokenizer(value, ",");
+                while (mustUseTokenizer.HasMoreTokens())
+                {
+                    wxString letterStr = mustUseTokenizer.GetNextToken();
+                    if (letterStr.Length() > 0)
+                        mustUseLetters.insert(letterStr[0]);
+                }
+            }
         }
     }
 
@@ -590,9 +705,152 @@ bool cWordle::SetGameStateData(const wxString& data)
 
     UpdateStatsUI();
     statusMessage->SetLabel(wxEmptyString);
+
+    // Restore timer display state
+    if (timedModeEnabled)
+    {
+        UpdateTimerDisplay();
+        // Don't auto-start timer when loading - it will start when game resumes
+    }
+    else
+    {
+        timerDisplay->SetLabel(wxEmptyString);
+    }
+
     gameSizer->Layout();
 
     return true;
+}
+
+// Timer methods
+void cWordle::StartTimer()
+{
+    if (timedModeEnabled && gameState == GameState::ACTIVE)
+    {
+        UpdateTimerDisplay();
+        gameTimer.Start(1000);
+    }
+}
+
+void cWordle::PauseTimer()
+{
+    if (gameTimer.IsRunning())
+    {
+        gameTimer.Stop();
+    }
+}
+
+void cWordle::ResetTimer()
+{
+    gameTimer.Stop();
+    timerRemainingSeconds = 300;
+    UpdateTimerDisplay();
+}
+
+void cWordle::OnTimerTick(wxTimerEvent& evt)
+{
+    if (timerRemainingSeconds > 0)
+    {
+        timerRemainingSeconds--;
+        UpdateTimerDisplay();
+    }
+    else
+    {
+        // Time's up! End game as loss
+        gameTimer.Stop();
+        gameState = GameState::COMPLETED;
+        losses++;
+        streak = 0;
+        UpdateStatsUI();
+        ShowStatusMessage("Time's up!", wxColor(255, 100, 100));
+        ShowGameEndDialog(false);
+    }
+}
+
+void cWordle::UpdateTimerDisplay()
+{
+    int minutes = timerRemainingSeconds / 60;
+    int seconds = timerRemainingSeconds % 60;
+    wxString timeStr = wxString::Format("Time: %02d:%02d", minutes, seconds);
+    timerDisplay->SetLabel(timeStr);
+
+    // Set color based on remaining time
+    if (timerRemainingSeconds > 150) // Above 2.5 minutes (50%)
+    {
+        timerDisplay->SetForegroundColour(wxColor(100, 255, 100)); // Green
+    }
+    else if (timerRemainingSeconds > 45) // Above 45 seconds
+    {
+        timerDisplay->SetForegroundColour(wxColor(255, 165, 0)); // Orange
+    }
+    else // Under 45 seconds
+    {
+        timerDisplay->SetForegroundColour(wxColor(255, 100, 100)); // Red
+    }
+
+    timerDisplay->Refresh();
+}
+
+// Hard mode methods
+bool cWordle::ValidateHardModeGuess(const wxString& guess)
+{
+    if (!hardModeEnabled)
+        return true;
+
+    // Check that all required letters are in their required positions
+    for (const auto& pair : requiredLetters)
+    {
+        int pos = pair.first;
+        const std::set<wxChar>& letters = pair.second;
+
+        if (pos < static_cast<int>(guess.Length()))
+        {
+            wxChar guessChar = guess[pos];
+            if (letters.find(guessChar) == letters.end())
+            {
+                return false; // Required letter not in correct position
+            }
+        }
+    }
+
+    // Check that all must-use letters appear somewhere in the guess
+    for (wxChar letter : mustUseLetters)
+    {
+        if (guess.Find(letter) == wxNOT_FOUND)
+        {
+            return false; // Required letter not used
+        }
+    }
+
+    return true;
+}
+
+void cWordle::UpdateHardModeConstraints(const wxString& guess, const std::vector<LetterState>& states)
+{
+    if (!hardModeEnabled)
+        return;
+
+    for (size_t i = 0; i < states.size() && i < guess.Length(); i++)
+    {
+        wxChar letter = guess[i];
+
+        if (states[i] == LetterState::CORRECT)
+        {
+            // This letter must stay in this position
+            requiredLetters[i].insert(letter);
+        }
+        else if (states[i] == LetterState::WRONG_POSITION)
+        {
+            // This letter must be used somewhere
+            mustUseLetters.insert(letter);
+        }
+    }
+}
+
+void cWordle::ResetHardModeConstraints()
+{
+    requiredLetters.clear();
+    mustUseLetters.clear();
 }
 
 cWordle::~cWordle()

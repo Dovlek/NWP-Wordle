@@ -30,6 +30,7 @@ wxDEFINE_EVENT(wxEVT_START_NEW_GAME, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CONTINUE_GAME, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SWITCH_TO_SAVE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SWITCH_TO_LOAD, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_SWITCH_TO_OPTIONS, wxCommandEvent);
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxDefaultSize)
 {
@@ -70,19 +71,22 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     loadPanel = new cLoad(cSimplebook);
     cSimplebook->AddPage(loadPanel, "Load", false);
 
+    // Create and add the options panel as the fifth Simplebook page
+    optionsPanel = new cOptions(cSimplebook);
+    cSimplebook->AddPage(optionsPanel, "Options", false);
+
     // Bind custom events
     Bind(wxEVT_SWITCH_TO_MENU, &cMain::OnSwitchToMenu, this);
     Bind(wxEVT_START_NEW_GAME, &cMain::OnStartNewGame, this);
     Bind(wxEVT_CONTINUE_GAME, &cMain::OnContinueGame, this);
     Bind(wxEVT_SWITCH_TO_SAVE, &cMain::OnSwitchToSave, this);
     Bind(wxEVT_SWITCH_TO_LOAD, &cMain::OnSwitchToLoad, this);
+    Bind(wxEVT_SWITCH_TO_OPTIONS, &cMain::OnSwitchToOptions, this);
 
     // Set up the main sizer
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     mainSizer->Add(cSimplebook, 1, wxEXPAND);
     mainPanel->SetSizer(mainSizer);
-
-    // Set size hints to get the correct initial size
     mainSizer->SetSizeHints(this);
 
     menuPanel->SetNewGameButtonFocus();
@@ -124,6 +128,28 @@ void cMain::SwitchPageToLoad()
     {
         cSimplebook->SetSelection(3);
     }
+}
+
+void cMain::SwitchPageToOptions()
+{
+    if (cSimplebook)
+    {
+        cSimplebook->SetSelection(4);
+    }
+}
+
+bool cMain::IsGameActive()
+{
+    return wordlePanel && wordlePanel->IsGameInProgress();
+}
+
+void cMain::EndCurrentGame()
+{
+    if (wordlePanel)
+    {
+        wordlePanel->ForceEndCurrentGame();
+    }
+    UpdateMenuState();
 }
 
 void cMain::UpdateMenuState()
@@ -179,5 +205,14 @@ void cMain::OnSwitchToLoad(wxCommandEvent& evt)
     {
         loadPanel->RefreshSaveFilesList();
         SwitchPageToLoad();
+    }
+}
+
+void cMain::OnSwitchToOptions(wxCommandEvent& evt)
+{
+    if (optionsPanel)
+    {
+        optionsPanel->LoadSettings();
+        SwitchPageToOptions();
     }
 }

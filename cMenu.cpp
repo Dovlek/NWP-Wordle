@@ -72,11 +72,11 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     wxBoxSizer* menuSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxVERTICAL);
 
-    int titleBorder = scaler.ScaledValue(40);
+    int titleBorder = scaler.ScaledValue(60);
     int buttonBorder = scaler.ScaledValue(15);
 
     menuSizer->AddStretchSpacer();
-    menuSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxALL, titleBorder));
+    menuSizer->Add(title, wxSizerFlags().CenterHorizontal().Border(wxTOP | wxLEFT | wxRIGHT, titleBorder));
 
     buttonSizer->Add(continueButton, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
     buttonSizer->Add(newGameButton, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
@@ -85,7 +85,7 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
     buttonSizer->Add(optionsButton, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
     buttonSizer->Add(exitButton, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
 
-    menuSizer->Add(buttonSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, buttonBorder));
+    menuSizer->Add(buttonSizer, wxSizerFlags().CenterHorizontal().Border(wxALL, 60));
     menuSizer->AddStretchSpacer();
 
     this->SetSizer(menuSizer);
@@ -162,10 +162,17 @@ void cMenu::OnLoadClicked(wxCommandEvent& evt)
         wxPostEvent(parent, switchEvent);
 }
 
-// TODO: Implement options panel
 void cMenu::OnOptionsClicked(wxCommandEvent& evt)
 {
-    wxMessageBox("Not implemented yet.", "Soon", wxOK | wxICON_INFORMATION);
+    wxCommandEvent switchEvent(wxEVT_SWITCH_TO_OPTIONS);
+    switchEvent.SetEventObject(this);
+
+    wxWindow* parent = GetParent();
+    while (parent && !parent->IsTopLevel())
+        parent = parent->GetParent();
+
+    if (parent)
+        wxPostEvent(parent, switchEvent);
 }
 
 void cMenu::OnExitClicked(wxCommandEvent& evt)

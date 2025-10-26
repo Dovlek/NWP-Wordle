@@ -5,6 +5,7 @@ wxDECLARE_EVENT(wxEVT_START_NEW_GAME, wxCommandEvent);
 wxDECLARE_EVENT(wxEVT_CONTINUE_GAME, wxCommandEvent);
 wxDECLARE_EVENT(wxEVT_SWITCH_TO_SAVE, wxCommandEvent);
 wxDECLARE_EVENT(wxEVT_SWITCH_TO_LOAD, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_SWITCH_TO_OPTIONS, wxCommandEvent);
 
 class cMenu : public wxPanel
 {
