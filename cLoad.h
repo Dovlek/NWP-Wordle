@@ -12,6 +12,7 @@ public:
     ~cLoad();
 
     void RefreshSaveFilesList();
+    void RefreshTheme();
 
 private:
     wxListBox* saveFilesList;

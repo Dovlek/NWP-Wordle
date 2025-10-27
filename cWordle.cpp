@@ -1,4 +1,5 @@
 #include "cWordle.h"
+#include "Theme.h"
 #include <wx/fileconf.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
@@ -6,7 +7,7 @@
 
 cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS), statusTimer(this), gameTimer(this)
 {
-    SetBackgroundColour(wxColor(20, 20, 20));
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
 
     UIScaler& scaler = UIScaler::GetInstance();
 
@@ -14,13 +15,13 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
     wxGridSizer* gridSizer = new wxGridSizer(0, 0, wxSize(0, 0));
 
     wxStaticText* title = new wxStaticText(this, wxID_ANY, "WORDLE", wxDefaultPosition, wxDefaultSize);
-    title->SetBackgroundColour(wxColor(20, 20, 20));
-    title->SetForegroundColour(wxColor(*wxWHITE));
+    title->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    title->SetForegroundColour(ThemeManager::Get().GetTextColor());
     title->SetFont(wxFont(scaler.ScaledFontSize(22), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
     statusMessage = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
-    statusMessage->SetBackgroundColour(wxColor(20, 20, 20));
-    statusMessage->SetForegroundColour(wxColor(*wxWHITE));
+    statusMessage->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    statusMessage->SetForegroundColour(ThemeManager::Get().GetTextColor());
     statusMessage->SetFont(wxFont(scaler.ScaledFontSize(16), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
     // Create Grid
@@ -47,38 +48,38 @@ cWordle::cWordle(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition
 
     backButton = new wxButton(this, wxID_ANY, buttonText, wxDefaultPosition, scaler.ScaledSize(50, 50), wxBORDER_NONE);
     backButton->SetFont(buttonFont);
-    backButton->SetBackgroundColour(wxColor(20, 20, 20));
-    backButton->SetForegroundColour(wxColor(*wxWHITE));
+    backButton->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    backButton->SetForegroundColour(ThemeManager::Get().GetTextColor());
     backButton->SetCursor(wxCursor(wxCURSOR_HAND));
     backButton->Bind(wxEVT_BUTTON, &cWordle::OnBackButtonClicked, this);
 
     // Stats labels
     wxFont statsFont(scaler.ScaledFontSize(14), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
     winsText = new wxStaticText(this, wxID_ANY, "Wins: 0", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-    winsText->SetBackgroundColour(wxColor(20, 20, 20));
-    winsText->SetForegroundColour(wxColor(*wxWHITE));
+    winsText->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    winsText->SetForegroundColour(ThemeManager::Get().GetTextColor());
     winsText->SetFont(statsFont);
 
     lossesText = new wxStaticText(this, wxID_ANY, "Loses: 0", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-    lossesText->SetBackgroundColour(wxColor(20, 20, 20));
-    lossesText->SetForegroundColour(wxColor(*wxWHITE));
+    lossesText->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    lossesText->SetForegroundColour(ThemeManager::Get().GetTextColor());
     lossesText->SetFont(statsFont);
 
     streakText = new wxStaticText(this, wxID_ANY, "Streak: 0", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-    streakText->SetBackgroundColour(wxColor(20, 20, 20));
-    streakText->SetForegroundColour(wxColor(*wxWHITE));
+    streakText->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    streakText->SetForegroundColour(ThemeManager::Get().GetTextColor());
     streakText->SetFont(statsFont);
 
     maxStreakText = new wxStaticText(this, wxID_ANY, "Best streak: 0", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-    maxStreakText->SetBackgroundColour(wxColor(20, 20, 20));
-    maxStreakText->SetForegroundColour(wxColor(*wxWHITE));
+    maxStreakText->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    maxStreakText->SetForegroundColour(ThemeManager::Get().GetTextColor());
     maxStreakText->SetFont(statsFont);
 
     // Timer display
     wxFont timerFont(scaler.ScaledFontSize(16), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
     timerDisplay = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
-    timerDisplay->SetBackgroundColour(wxColor(20, 20, 20));
-    timerDisplay->SetForegroundColour(wxColor(*wxWHITE));
+    timerDisplay->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    timerDisplay->SetForegroundColour(ThemeManager::Get().GetTextColor());
     timerDisplay->SetFont(timerFont);
 
     wxBoxSizer* topBarSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -166,6 +167,8 @@ void cWordle::OnAcceleratorPressed(wxCommandEvent& evt)
 
 void cWordle::OnBackButtonClicked(wxCommandEvent& evt)
 {
+    PauseTimer();
+
     wxCommandEvent switchEvent(wxEVT_SWITCH_TO_MENU);
     switchEvent.SetEventObject(this);
 
@@ -179,14 +182,14 @@ void cWordle::OnBackButtonClicked(wxCommandEvent& evt)
 
 void cWordle::OnBackButtonEnter(wxMouseEvent& evt)
 {
-    backButton->SetBackgroundColour(wxColor(58, 58, 60));
+    backButton->SetBackgroundColour(ThemeManager::Get().GetButtonHoverColor());
     backButton->Refresh();
     evt.Skip();
 }
 
 void cWordle::OnBackButtonLeave(wxMouseEvent& evt)
 {
-    backButton->SetBackgroundColour(wxColor(20, 20, 20));
+    backButton->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
     backButton->Refresh();
     evt.Skip();
 }
@@ -241,13 +244,13 @@ void cWordle::ProcessKey(const wxString& key)
 
             if (!wordSelector.IsValidWord(currentGuess))
             {
-                ShowStatusMessage("Not in word list", wxColor(255, 100, 100));
+                ShowStatusMessage("Not in word list", ThemeManager::Get().GetErrorColor());
                 return;
             }
 
             if (!ValidateHardModeGuess(currentGuess))
             {
-                ShowStatusMessage("Hard mode: Must use revealed hints", wxColor(255, 100, 100));
+                ShowStatusMessage("Hard mode: Must use revealed hints", ThemeManager::Get().GetErrorColor());
                 return;
             }
 
@@ -261,7 +264,7 @@ void cWordle::ProcessKey(const wxString& key)
         }
         else if (currentCol < cgrid->GetWidth() && currentRow < cgrid->GetHeight())
         {
-            ShowStatusMessage("Not enough letters", wxColor(255, 100, 100));
+            ShowStatusMessage("Not enough letters", ThemeManager::Get().GetErrorColor());
         }
     }
     else if (key == "backspace")
@@ -368,12 +371,12 @@ void cWordle::ShowGameEndDialog(bool won)
     wxString message;
     if (won)
     {
-        ShowStatusMessage("Congratulations! You won!", wxColor(100, 255, 100));
+        ShowStatusMessage("Congratulations! You won!", ThemeManager::Get().GetSuccessColor());
         message = wxString::Format("Congratulations! You won!\n\nStart new round?");
     }
     else
     {
-        ShowStatusMessage("You lost!", wxColor(255, 100, 100));
+        ShowStatusMessage("You lost!", ThemeManager::Get().GetErrorColor());
         message = wxString::Format("You lost! The word was: %s\n\nStart new round?", targetWord);
     }
 
@@ -747,6 +750,15 @@ void cWordle::ResetTimer()
     UpdateTimerDisplay();
 }
 
+void cWordle::ResumeTimer()
+{
+    // Resume timer only if game is active and timed mode is enabled
+    if (gameState == GameState::ACTIVE && timedModeEnabled)
+    {
+        StartTimer();
+    }
+}
+
 void cWordle::OnTimerTick(wxTimerEvent& evt)
 {
     if (timerRemainingSeconds > 0)
@@ -762,7 +774,7 @@ void cWordle::OnTimerTick(wxTimerEvent& evt)
         losses++;
         streak = 0;
         UpdateStatsUI();
-        ShowStatusMessage("Time's up!", wxColor(255, 100, 100));
+        ShowStatusMessage("Time's up!", ThemeManager::Get().GetErrorColor());
         ShowGameEndDialog(false);
     }
 }
@@ -777,15 +789,15 @@ void cWordle::UpdateTimerDisplay()
     // Set color based on remaining time
     if (timerRemainingSeconds > 150) // Above 2.5 minutes (50%)
     {
-        timerDisplay->SetForegroundColour(wxColor(100, 255, 100)); // Green
+        timerDisplay->SetForegroundColour(ThemeManager::Get().GetTimerGreenColor());
     }
     else if (timerRemainingSeconds > 45) // Above 45 seconds
     {
-        timerDisplay->SetForegroundColour(wxColor(255, 165, 0)); // Orange
+        timerDisplay->SetForegroundColour(ThemeManager::Get().GetTimerOrangeColor());
     }
     else // Under 45 seconds
     {
-        timerDisplay->SetForegroundColour(wxColor(255, 100, 100)); // Red
+        timerDisplay->SetForegroundColour(ThemeManager::Get().GetTimerRedColor());
     }
 
     timerDisplay->Refresh();
@@ -851,6 +863,46 @@ void cWordle::ResetHardModeConstraints()
 {
     requiredLetters.clear();
     mustUseLetters.clear();
+}
+
+void cWordle::RefreshTheme()
+{
+    // Update panel background
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+
+    // Update title colors
+    for (wxWindowList::compatibility_iterator node = GetChildren().GetFirst(); node; node = node->GetNext())
+    {
+        wxWindow* child = node->GetData();
+        if (wxStaticText* text = dynamic_cast<wxStaticText*>(child))
+        {
+            text->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+            text->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            text->Refresh();
+        }
+    }
+
+    // Update back button
+    if (backButton)
+    {
+        backButton->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+        backButton->SetForegroundColour(ThemeManager::Get().GetTextColor());
+        backButton->Refresh();
+    }
+
+    // Reload grid and keyboard bitmaps
+    if (cgrid)
+    {
+        cgrid->ReloadBitmaps();
+        cgrid->RefreshAllCells();
+    }
+
+    if (ckeyboard_eng)
+    {
+        ckeyboard_eng->ReloadBitmaps();
+    }
+
+    Refresh();
 }
 
 cWordle::~cWordle()

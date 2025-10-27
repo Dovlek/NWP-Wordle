@@ -1,5 +1,6 @@
 #include "cApp.h"
 #include "EmbeddedResources.h"
+#include "Theme.h"
 #include <wx/fs_mem.h>
 
 wxIMPLEMENT_APP(cApp);
@@ -23,7 +24,7 @@ bool cApp::OnInit()
 
     m_frame = new cMain();
     m_frame->Center();
-    m_frame->SetBackgroundColour(wxColor(20, 20, 20));
+    m_frame->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
     m_frame->Show();
     m_frame->SetMinClientSize(m_frame->GetClientSize());
 

@@ -20,6 +20,8 @@ public:
     void UpdateActiveCell(int prevRow, int prevCol, int currRow, int currCol, bool forward);
     void UpdateCellColors(int row, const std::vector<int>& states);
     void ResetGrid();
+    void ReloadBitmaps();
+    void RefreshAllCells();
 
 private:
     wxBitmap DrawTextOnBitmap(const wxBitmap& baseBitmap, const wxString& text, const wxFont& font, const wxColor& textColor);
@@ -27,5 +29,6 @@ private:
     int nFieldHeight;
     std::vector<wxStaticBitmap*> gridBitmap;
     std::vector<wxString> gridLabels; // Store letter labels for game logic
+    std::vector<int> gridStates; // Store cell states (0=unmarked, 1=marked, 2=cold, 3=warm, 4=hot)
     wxVector<wxBitmap> bitmapsGrid;
 };

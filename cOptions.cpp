@@ -2,12 +2,13 @@
 #include "UIScaler.h"
 #include "cMain.h"
 #include "cWordle.h"
+#include "Theme.h"
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 
 cOptions::cOptions(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {
-    SetBackgroundColour(wxColor(20, 20, 20));
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
 
     UIScaler& scaler = UIScaler::GetInstance();
 
@@ -21,8 +22,8 @@ cOptions::cOptions(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPositi
 
     // Titled
     wxStaticText* title = new wxStaticText(this, wxID_ANY, "Game Options", wxDefaultPosition, wxDefaultSize);
-    title->SetBackgroundColour(wxColor(20, 20, 20));
-    title->SetForegroundColour(wxColor(*wxWHITE));
+    title->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    title->SetForegroundColour(ThemeManager::Get().GetTextColor());
     title->SetFont(wxFont(scaler.ScaledFontSize(24), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
     wxFont labelFont(scaler.ScaledFontSize(18), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
@@ -30,74 +31,77 @@ cOptions::cOptions(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPositi
 
     // Timed mode checkbox
     timedModeToggle = new wxToggleButton(this, ID_TIMED_MODE_CHECKBOX, "Enable Timed Mode", wxDefaultPosition, toggleSize, wxBORDER_NONE);
-    timedModeToggle->SetBackgroundColour(wxColor(58, 58, 60));
-    timedModeToggle->SetForegroundColour(wxColor(*wxWHITE));
+    timedModeToggle->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
+    timedModeToggle->SetForegroundColour(ThemeManager::Get().GetTextColor());
     timedModeToggle->SetFont(labelFont);
     timedModeToggle->Bind(wxEVT_TOGGLEBUTTON, &cOptions::OnTimedModeToggled, this);
 
     // Help text for timed mode
     wxStaticText* timedModeHelp = new wxStaticText(this, wxID_ANY, "(5 minutes per round)");
-    timedModeHelp->SetBackgroundColour(wxColor(20, 20, 20));
-    timedModeHelp->SetForegroundColour(wxColor(150, 150, 150));
+    timedModeHelp->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    timedModeHelp->SetForegroundColour(ThemeManager::Get().GetHelpTextColor());
     timedModeHelp->SetFont(wxFont(scaler.ScaledFontSize(12), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false));
 
     // Hard mode checkbox
     hardModeToggle = new wxToggleButton(this, ID_HARD_MODE_CHECKBOX, "Enable Hard Mode", wxDefaultPosition, toggleSize, wxBORDER_NONE);
-    hardModeToggle->SetBackgroundColour(wxColor(58, 58, 60));
-    hardModeToggle->SetForegroundColour(wxColor(*wxWHITE));
+    hardModeToggle->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
+    hardModeToggle->SetForegroundColour(ThemeManager::Get().GetTextColor());
     hardModeToggle->SetFont(labelFont);
     hardModeToggle->Bind(wxEVT_TOGGLEBUTTON, &cOptions::OnHardModeToggled, this);
 
     // Help text for hard mode
     wxStaticText* hardModeHelp = new wxStaticText(this, wxID_ANY, "(Any revealed hints must be used in subsequent guesses)");
-    hardModeHelp->SetBackgroundColour(wxColor(20, 20, 20));
-    hardModeHelp->SetForegroundColour(wxColor(150, 150, 150));
+    hardModeHelp->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    hardModeHelp->SetForegroundColour(ThemeManager::Get().GetHelpTextColor());
     hardModeHelp->SetFont(wxFont(scaler.ScaledFontSize(12), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false));
+
+    // Theme selection buttons
+    wxSize themeButtonSize = scaler.ScaledSize(170, 80);
+    darkThemeButton = new wxButton(this, ID_DARK_THEME_BUTTON, "Dark", wxDefaultPosition, themeButtonSize, wxBORDER_NONE);
+    darkThemeButton->SetFont(labelFont);
+    darkThemeButton->SetCursor(wxCursor(wxCURSOR_HAND));
+    darkThemeButton->Bind(wxEVT_BUTTON, &cOptions::OnDarkThemeClicked, this);
+
+    lightThemeButton = new wxButton(this, ID_LIGHT_THEME_BUTTON, "Light", wxDefaultPosition, themeButtonSize, wxBORDER_NONE);
+    lightThemeButton->SetFont(labelFont);
+    lightThemeButton->SetCursor(wxCursor(wxCURSOR_HAND));
+    lightThemeButton->Bind(wxEVT_BUTTON, &cOptions::OnLightThemeClicked, this);
 
     // Buttons
     wxSize buttonSize = scaler.ScaledSize(120, 40);
-    applyButton = new wxButton(this, ID_SAVE_BUTTON, "Apply", wxDefaultPosition, buttonSize, wxBORDER_NONE);
     backButton = new wxButton(this, ID_BACK_BUTTON, "Back", wxDefaultPosition, buttonSize, wxBORDER_NONE);
 
     // Style buttons
     wxFont buttonFont(scaler.ScaledFontSize(14), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
-    for (int buttonId = ID_SAVE_BUTTON; buttonId <= ID_BACK_BUTTON; buttonId++)
-    {
-        wxButton* button = GetButtonById(buttonId);
-        if (button)
-        {
-            button->SetBackgroundColour(wxColor(58, 58, 60));
-            button->SetForegroundColour(wxColor(*wxWHITE));
-            button->SetCursor(wxCursor(wxCURSOR_HAND));
-            button->SetFont(buttonFont);
-        }
-    }
+
+    // Style back button
+    backButton->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
+    backButton->SetForegroundColour(ThemeManager::Get().GetTextColor());
+    backButton->SetCursor(wxCursor(wxCURSOR_HAND));
+    backButton->SetFont(buttonFont);
 
     // Bind events
-    applyButton->Bind(wxEVT_BUTTON, &cOptions::OnSaveClicked, this);
     backButton->Bind(wxEVT_BUTTON, &cOptions::OnBackClicked, this);
 
-    // Bind mouse events for buttons
-    for (int buttonId = ID_SAVE_BUTTON; buttonId <= ID_BACK_BUTTON; buttonId++)
-    {
-        wxButton* button = GetButtonById(buttonId);
-        if (button)
-        {
-            button->Bind(wxEVT_ENTER_WINDOW, &cOptions::OnButtonEnter, this);
-            button->Bind(wxEVT_LEAVE_WINDOW, &cOptions::OnButtonLeave, this);
-        }
-    }
+    // Bind mouse events for back button
+    backButton->Bind(wxEVT_ENTER_WINDOW, &cOptions::OnButtonEnter, this);
+    backButton->Bind(wxEVT_LEAVE_WINDOW, &cOptions::OnButtonLeave, this);
 
-    // Bind focus events
-    for (int buttonId = ID_SAVE_BUTTON; buttonId <= ID_BACK_BUTTON; buttonId++)
-    {
-        wxButton* button = GetButtonById(buttonId);
-        if (button)
-        {
-            button->Bind(wxEVT_SET_FOCUS, &cOptions::OnButtonSetFocus, this);
-            button->Bind(wxEVT_KILL_FOCUS, &cOptions::OnButtonKillFocus, this);
-        }
-    }
+    // Bind focus events for back button
+    backButton->Bind(wxEVT_SET_FOCUS, &cOptions::OnButtonSetFocus, this);
+    backButton->Bind(wxEVT_KILL_FOCUS, &cOptions::OnButtonKillFocus, this);
+
+    // Bind mouse events for theme buttons
+    darkThemeButton->Bind(wxEVT_ENTER_WINDOW, &cOptions::OnButtonEnter, this);
+    darkThemeButton->Bind(wxEVT_LEAVE_WINDOW, &cOptions::OnButtonLeave, this);
+    lightThemeButton->Bind(wxEVT_ENTER_WINDOW, &cOptions::OnButtonEnter, this);
+    lightThemeButton->Bind(wxEVT_LEAVE_WINDOW, &cOptions::OnButtonLeave, this);
+
+    // Bind focus events for theme buttons
+    darkThemeButton->Bind(wxEVT_SET_FOCUS, &cOptions::OnButtonSetFocus, this);
+    darkThemeButton->Bind(wxEVT_KILL_FOCUS, &cOptions::OnButtonKillFocus, this);
+    lightThemeButton->Bind(wxEVT_SET_FOCUS, &cOptions::OnButtonSetFocus, this);
+    lightThemeButton->Bind(wxEVT_KILL_FOCUS, &cOptions::OnButtonKillFocus, this);
 
     // Set up accelerator table
     wxAcceleratorEntry entries[1];
@@ -129,11 +133,28 @@ cOptions::cOptions(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPositi
 
     contentSizer->AddSpacer(sectionBorder);
 
-    // Buttons
-    wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-    buttonSizer->Add(applyButton, wxSizerFlags().Border(wxALL, smallBorder));
-    buttonSizer->Add(backButton, wxSizerFlags().Border(wxALL, smallBorder));
-    contentSizer->Add(buttonSizer, wxSizerFlags().CenterHorizontal());
+    // Theme selection section
+    wxStaticText* themeLabel = new wxStaticText(this, wxID_ANY, "Theme", wxDefaultPosition, wxDefaultSize);
+    themeLabel->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    themeLabel->SetForegroundColour(ThemeManager::Get().GetTextColor());
+    themeLabel->SetFont(wxFont(scaler.ScaledFontSize(16), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
+    contentSizer->Add(themeLabel, wxSizerFlags().CenterHorizontal().Border(wxALL, smallBorder));
+
+    wxBoxSizer* themeSizer = new wxBoxSizer(wxHORIZONTAL);
+    themeSizer->Add(darkThemeButton, wxSizerFlags().Border(wxALL, scaler.ScaledValue(5)));
+    themeSizer->Add(lightThemeButton, wxSizerFlags().Border(wxALL, scaler.ScaledValue(5)));
+    contentSizer->Add(themeSizer, wxSizerFlags().CenterHorizontal());
+
+    // wxStaticText* themeHelp = new wxStaticText(this, wxID_ANY, "(Changes apply immediately)");
+    // themeHelp->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    // themeHelp->SetForegroundColour(ThemeManager::Get().GetHelpTextColor());
+    // themeHelp->SetFont(wxFont(scaler.ScaledFontSize(12), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false));
+    // contentSizer->Add(themeHelp, wxSizerFlags().CenterHorizontal().Border(wxTOP | wxBOTTOM, scaler.ScaledValue(5)));
+
+    contentSizer->AddSpacer(sectionBorder);
+
+    // Back button
+    contentSizer->Add(backButton, wxSizerFlags().CenterHorizontal().Border(wxTOP, scaler.ScaledValue(60)));
 
     mainSizer->Add(contentSizer, wxSizerFlags().CenterHorizontal());
     mainSizer->AddStretchSpacer();
@@ -142,6 +163,9 @@ cOptions::cOptions(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPositi
 
     // Load initial settings
     LoadSettings();
+
+    // Update theme button states to show current selection
+    UpdateThemeButtonStates();
 }
 
 cOptions::~cOptions()
@@ -154,17 +178,16 @@ void cOptions::LoadSettings()
     timedModeEnabled = config->ReadBool("/Settings/TimedMode", false);
     hardModeEnabled = config->ReadBool("/Settings/HardMode", false);
 
+    // Store previous values for reverting if user cancels
+    prevTimedModeEnabled = timedModeEnabled;
+    prevHardModeEnabled = hardModeEnabled;
+
     timedModeToggle->SetValue(timedModeEnabled);
     hardModeToggle->SetValue(hardModeEnabled);
 
     // Update labels to show correct state
     UpdateToggleButtonLabel(timedModeToggle, "Enable Timed Mode");
     UpdateToggleButtonLabel(hardModeToggle, "Enable Hard Mode");
-
-    // Disable Apply button when entering options panel
-    applyButton->Enable(false);
-    applyButton->SetBackgroundColour(wxColor(40, 40, 40));
-    applyButton->Refresh();
 }
 
 void cOptions::UpdateToggleButtonLabel(wxToggleButton* btn, const wxString& baseText)
@@ -172,11 +195,11 @@ void cOptions::UpdateToggleButtonLabel(wxToggleButton* btn, const wxString& base
     btn->SetLabel(baseText);
     if (btn->GetValue())
     {
-        btn->SetBackgroundColour(wxColor(83, 141, 78)); // Green when checked
+        btn->SetBackgroundColour(ThemeManager::Get().GetToggleCheckedColor()); // Green when checked
     }
     else
     {
-        btn->SetBackgroundColour(wxColor(58, 58, 60)); // Gray when unchecked
+        btn->SetBackgroundColour(ThemeManager::Get().GetButtonColor()); // Gray when unchecked
     }
     btn->Refresh();
 }
@@ -184,31 +207,69 @@ void cOptions::UpdateToggleButtonLabel(wxToggleButton* btn, const wxString& base
 void cOptions::OnTimedModeToggled(wxCommandEvent& evt)
 {
     UpdateToggleButtonLabel(timedModeToggle, "Enable Timed Mode");
-    applyButton->Enable(true);
-    applyButton->SetBackgroundColour(wxColor(58, 58, 60));
-    applyButton->Refresh();
+
+    // Check if setting actually changed
+    bool newValue = timedModeToggle->GetValue();
+    if (newValue == timedModeEnabled)
+    {
+        return; // No change
+    }
+
+    // Show warning and ask for confirmation
+    if (!CheckAndConfirmGameEnd())
+    {
+        // User cancelled - revert the toggle
+        timedModeToggle->SetValue(timedModeEnabled);
+        UpdateToggleButtonLabel(timedModeToggle, "Enable Timed Mode");
+        return;
+    }
+
+    // User confirmed - save the setting immediately
+    SaveTimedModeSetting();
 }
 
 void cOptions::OnHardModeToggled(wxCommandEvent& evt)
 {
     UpdateToggleButtonLabel(hardModeToggle, "Enable Hard Mode");
-    applyButton->Enable(true);
-    applyButton->SetBackgroundColour(wxColor(58, 58, 60));
-    applyButton->Refresh();
+
+    // Check if setting actually changed
+    bool newValue = hardModeToggle->GetValue();
+    if (newValue == hardModeEnabled)
+    {
+        return; // No change
+    }
+
+    // Show warning and ask for confirmation
+    if (!CheckAndConfirmGameEnd())
+    {
+        // User cancelled - revert the toggle
+        hardModeToggle->SetValue(hardModeEnabled);
+        UpdateToggleButtonLabel(hardModeToggle, "Enable Hard Mode");
+        return;
+    }
+
+    // User confirmed - save the setting immediately
+    SaveHardModeSetting();
 }
 
-void cOptions::SaveSettings()
+void cOptions::SaveTimedModeSetting()
 {
     timedModeEnabled = timedModeToggle->GetValue();
-    hardModeEnabled = hardModeToggle->GetValue();
-
     config->Write("/Settings/TimedMode", timedModeEnabled);
-    config->Write("/Settings/HardMode", hardModeEnabled);
+    config->Flush();
 
-    // Disable Apply button after saving
-    applyButton->Enable(false);
-    applyButton->SetBackgroundColour(wxColor(40, 40, 40));
-    applyButton->Refresh();
+    // Update previous value
+    prevTimedModeEnabled = timedModeEnabled;
+}
+
+void cOptions::SaveHardModeSetting()
+{
+    hardModeEnabled = hardModeToggle->GetValue();
+    config->Write("/Settings/HardMode", hardModeEnabled);
+    config->Flush();
+
+    // Update previous value
+    prevHardModeEnabled = hardModeEnabled;
 }
 
 bool cOptions::CheckAndConfirmGameEnd()
@@ -248,17 +309,85 @@ bool cOptions::CheckAndConfirmGameEnd()
     return true; // No active game, OK to proceed
 }
 
-void cOptions::OnSaveClicked(wxCommandEvent& evt)
+void cOptions::OnDarkThemeClicked(wxCommandEvent& evt)
 {
-    if (CheckAndConfirmGameEnd())
+    // Only switch if not already dark theme
+    if (ThemeManager::Get().GetCurrentTheme() == ThemeType::DARK)
     {
-        SaveSettings();
-
-        // wxString configPath = wxStandardPaths::Get().GetUserDataDir();
-        // wxString configFile = configPath + wxFileName::GetPathSeparator() + "wordle_config.ini";
-        // wxString msg = wxString::Format("Settings saved successfully!\n\nConfig file: %s", configFile);
-        // wxMessageBox(msg, "Success", wxOK | wxICON_INFORMATION, this);
+        return;
     }
+
+    // Switch to dark theme immediately
+    ThemeManager::Get().SetTheme(ThemeType::DARK);
+
+    // Save to config
+    config->Write("/Settings/LightTheme", false);
+    config->Flush();
+
+    // Broadcast theme change event to main window
+    wxCommandEvent themeEvent(wxEVT_THEME_CHANGED);
+    themeEvent.SetEventObject(this);
+    wxWindow* parent = GetParent();
+    while (parent && !parent->IsTopLevel())
+        parent = parent->GetParent();
+    if (parent)
+        wxPostEvent(parent, themeEvent);
+
+    // Update button states
+    UpdateThemeButtonStates();
+}
+
+void cOptions::OnLightThemeClicked(wxCommandEvent& evt)
+{
+    // Only switch if not already light theme
+    if (ThemeManager::Get().GetCurrentTheme() == ThemeType::LIGHT)
+    {
+        return;
+    }
+
+    // Switch to light theme immediately
+    ThemeManager::Get().SetTheme(ThemeType::LIGHT);
+
+    // Save to config
+    config->Write("/Settings/LightTheme", true);
+    config->Flush();
+
+    // Broadcast theme change event to main window
+    wxCommandEvent themeEvent(wxEVT_THEME_CHANGED);
+    themeEvent.SetEventObject(this);
+    wxWindow* parent = GetParent();
+    while (parent && !parent->IsTopLevel())
+        parent = parent->GetParent();
+    if (parent)
+        wxPostEvent(parent, themeEvent);
+
+    // Update button states
+    UpdateThemeButtonStates();
+}
+
+void cOptions::UpdateThemeButtonStates()
+{
+    bool isLightTheme = (ThemeManager::Get().GetCurrentTheme() == ThemeType::LIGHT);
+
+    // Update button appearance based on current theme
+    if (isLightTheme)
+    {
+        // Light theme is active
+        darkThemeButton->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
+        lightThemeButton->SetBackgroundColour(ThemeManager::Get().GetToggleCheckedColor());
+    }
+    else
+    {
+        // Dark theme is active
+        darkThemeButton->SetBackgroundColour(ThemeManager::Get().GetToggleCheckedColor());
+        lightThemeButton->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
+    }
+
+    darkThemeButton->SetForegroundColour(ThemeManager::Get().GetTextColor());
+    lightThemeButton->SetForegroundColour(ThemeManager::Get().GetTextColor());
+
+    darkThemeButton->Refresh();
+    lightThemeButton->Refresh();
 }
 
 void cOptions::OnBackClicked(wxCommandEvent& evt)
@@ -287,7 +416,7 @@ void cOptions::OnButtonEnter(wxMouseEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
     if (button->IsEnabled())
     {
-        button->SetBackgroundColour(wxColor(129, 131, 132));
+        button->SetBackgroundColour(ThemeManager::Get().GetButtonHoverColor());
         button->Refresh();
     }
     evt.Skip();
@@ -298,11 +427,11 @@ void cOptions::OnButtonLeave(wxMouseEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
     if (button->IsEnabled())
     {
-        button->SetBackgroundColour(wxColor(58, 58, 60));
+        button->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
     }
     else
     {
-        button->SetBackgroundColour(wxColor(40, 40, 40));
+        button->SetBackgroundColour(ThemeManager::Get().GetButtonDisabledColor());
     }
     button->Refresh();
     evt.Skip();
@@ -313,7 +442,7 @@ void cOptions::OnButtonSetFocus(wxFocusEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
     if (button->IsEnabled())
     {
-        button->SetBackgroundColour(wxColor(86, 87, 88));
+        button->SetBackgroundColour(ThemeManager::Get().GetButtonFocusColor());
         button->Refresh();
     }
     evt.Skip();
@@ -324,11 +453,11 @@ void cOptions::OnButtonKillFocus(wxFocusEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
     if (button->IsEnabled())
     {
-        button->SetBackgroundColour(wxColor(58, 58, 60));
+        button->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
     }
     else
     {
-        button->SetBackgroundColour(wxColor(40, 40, 40));
+        button->SetBackgroundColour(ThemeManager::Get().GetButtonDisabledColor());
     }
     button->Refresh();
     evt.Skip();
@@ -338,11 +467,54 @@ wxButton* cOptions::GetButtonById(int id)
 {
     switch (id)
     {
-    case ID_SAVE_BUTTON:
-        return applyButton;
+    case ID_DARK_THEME_BUTTON:
+        return darkThemeButton;
+    case ID_LIGHT_THEME_BUTTON:
+        return lightThemeButton;
     case ID_BACK_BUTTON:
         return backButton;
     default:
         return nullptr;
     }
+}
+
+void cOptions::RefreshTheme()
+{
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+
+    for (wxWindowList::compatibility_iterator node = GetChildren().GetFirst(); node; node = node->GetNext())
+    {
+        wxWindow* child = node->GetData();
+        if (wxStaticText* text = dynamic_cast<wxStaticText*>(child))
+        {
+            // Check if it's help text (gray color)
+            if (text->GetLabel().Contains("("))
+                text->SetForegroundColour(ThemeManager::Get().GetHelpTextColor());
+            else
+                text->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            text->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+            text->Refresh();
+        }
+        else if (wxToggleButton* toggle = dynamic_cast<wxToggleButton*>(child))
+        {
+            toggle->SetBackgroundColour(toggle->GetValue() ? ThemeManager::Get().GetToggleCheckedColor() : ThemeManager::Get().GetButtonColor());
+            toggle->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            toggle->Refresh();
+        }
+        else if (wxButton* button = dynamic_cast<wxButton*>(child))
+        {
+            // Theme buttons are handled separately
+            if (button != darkThemeButton && button != lightThemeButton)
+            {
+                button->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
+                button->SetForegroundColour(ThemeManager::Get().GetTextColor());
+                button->Refresh();
+            }
+        }
+    }
+
+    // Update theme button states to show current selection
+    UpdateThemeButtonStates();
+
+    Refresh();
 }

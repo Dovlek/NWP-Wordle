@@ -30,6 +30,7 @@
     <ClInclude Include="cWordle.h" />
     <ClInclude Include="EmbeddedResources.h" />
     <ClInclude Include="NinePatchScaler.h" />
+    <ClInclude Include="Theme.h" />
     <ClInclude Include="UIScaler.h" />
     <ClInclude Include="WordSelector.h" />
   </ItemGroup>
@@ -45,6 +46,7 @@
     <ClCompile Include="cWordle.cpp" />
     <ClCompile Include="EmbeddedResources.cpp" />
     <ClCompile Include="NinePatchScaler.cpp" />
+    <ClCompile Include="Theme.cpp" />
     <ClCompile Include="UIScaler.cpp" />
     <ClCompile Include="WordSelector.cpp" />
   </ItemGroup>

@@ -10,6 +10,7 @@ public:
     ~cOptions();
 
     void LoadSettings();
+    void RefreshTheme();
 
     // Getters for settings
     bool IsTimedModeEnabled() const { return timedModeEnabled; }
@@ -18,17 +19,21 @@ public:
 private:
     wxToggleButton* timedModeToggle;
     wxToggleButton* hardModeToggle;
-    wxButton* applyButton;
+    wxButton* darkThemeButton;
+    wxButton* lightThemeButton;
     wxButton* backButton;
 
     bool timedModeEnabled;
     bool hardModeEnabled;
+    bool prevTimedModeEnabled;
+    bool prevHardModeEnabled;
 
     wxFileConfig* config;
 
     void OnTimedModeToggled(wxCommandEvent& evt);
     void OnHardModeToggled(wxCommandEvent& evt);
-    void OnSaveClicked(wxCommandEvent& evt);
+    void OnDarkThemeClicked(wxCommandEvent& evt);
+    void OnLightThemeClicked(wxCommandEvent& evt);
     void OnBackClicked(wxCommandEvent& evt);
     void OnButtonEnter(wxMouseEvent& evt);
     void OnButtonLeave(wxMouseEvent& evt);
@@ -36,8 +41,10 @@ private:
     void OnButtonKillFocus(wxFocusEvent& evt);
     void OnAcceleratorPressed(wxCommandEvent& evt);
 
-    void SaveSettings();
     void UpdateToggleButtonLabel(wxToggleButton* btn, const wxString& baseText);
+    void UpdateThemeButtonStates();
+    void SaveTimedModeSetting();
+    void SaveHardModeSetting();
     bool CheckAndConfirmGameEnd();
     wxButton* GetButtonById(int id);
 
@@ -45,7 +52,8 @@ private:
     {
         ID_TIMED_MODE_CHECKBOX = 3000,
         ID_HARD_MODE_CHECKBOX,
-        ID_SAVE_BUTTON,
+        ID_DARK_THEME_BUTTON,
+        ID_LIGHT_THEME_BUTTON,
         ID_BACK_BUTTON,
         ID_ACCEL_ESCAPE
     };

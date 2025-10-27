@@ -15,6 +15,7 @@ public:
 
     void SetContinueButtonEnabled(bool enabled);
     void SetNewGameButtonFocus();
+    void RefreshTheme();
 
 private:
     wxButton* continueButton;

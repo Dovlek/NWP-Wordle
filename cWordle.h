@@ -22,6 +22,8 @@ public:
     void ResetStats();
     wxString GetGameStateData() const;
     bool SetGameStateData(const wxString& data);
+    void RefreshTheme();
+    void ResumeTimer();
 
     enum class GameState
     {

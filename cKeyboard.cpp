@@ -1,6 +1,7 @@
 #include "cKeyboard.h"
 #include "NinePatchScaler.h"
 #include "UIScaler.h"
+#include "Theme.h"
 
 wxBitmap cKeyboard::DrawTextOnBitmap(const wxBitmap& baseBitmap, const wxString& text, const wxFont& font, const wxColor& textColor)
 {
@@ -59,7 +60,7 @@ void cKeyboard::UpdateKeyboardColors(const wxString& guess, const std::vector<in
                 }
 
                 // Draw text on the new bitmap
-                wxBitmap bitmapWithText = DrawTextOnBitmap(newBaseBitmap, letter, keyFont, wxColor(*wxWHITE));
+                wxBitmap bitmapWithText = DrawTextOnBitmap(newBaseBitmap, letter, keyFont, ThemeManager::Get().GetTextColor());
                 gridKey[keyIndex]->SetBitmap(bitmapWithText);
                 gridKey[keyIndex]->Refresh();
                 break;
@@ -81,24 +82,24 @@ void cKeyboard::ResetKeyboard()
 
         if (keyLabelText == "ENTER")
         {
-            bitmapWithText = DrawTextOnBitmap(bitmapsKeys[1], keyLabelText, enterFont, wxColor(*wxWHITE));
+            bitmapWithText = DrawTextOnBitmap(bitmapsKeys[1], keyLabelText, enterFont, ThemeManager::Get().GetTextColor());
         }
         else if (keyLabelText == "backspace")
         {
             if (hasMaterialFont)
             {
                 wxFont backspaceFont = wxFont(scaler.ScaledFontSize(20), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Material Symbols Outlined"));
-                bitmapWithText = DrawTextOnBitmap(bitmapsKeys[1], wxT("backspace"), backspaceFont, wxColor(*wxWHITE));
+                bitmapWithText = DrawTextOnBitmap(bitmapsKeys[1], wxT("backspace"), backspaceFont, ThemeManager::Get().GetTextColor());
             }
             else
             {
                 wxFont backspaceFont = wxFont(scaler.ScaledFontSize(18), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
-                bitmapWithText = DrawTextOnBitmap(bitmapsKeys[1], wxT("⌫"), backspaceFont, wxColor(*wxWHITE));
+                bitmapWithText = DrawTextOnBitmap(bitmapsKeys[1], wxT("⌫"), backspaceFont, ThemeManager::Get().GetTextColor());
             }
         }
         else
         {
-            bitmapWithText = DrawTextOnBitmap(bitmapsKeys[0], keyLabelText, keyFont, wxColor(*wxWHITE));
+            bitmapWithText = DrawTextOnBitmap(bitmapsKeys[0], keyLabelText, keyFont, ThemeManager::Get().GetTextColor());
         }
 
         gridKey[keyIndex]->SetBitmap(bitmapWithText);
@@ -110,6 +111,34 @@ void cKeyboard::BindKeyboardEvents(wxEvtHandler* handler, void (wxEvtHandler::*m
 {
     for (int i = 0; i < keyboardSize + 2; i++)
         gridKey[i]->Bind(wxEVT_BUTTON, method, handler);
+}
+
+void cKeyboard::ReloadBitmaps()
+{
+    // Clear existing bitmaps
+    bitmapsKeys.clear();
+
+    // Reload with current theme
+    UIScaler& uiScaler = UIScaler::GetInstance();
+    NinePatchScaler& ninePatchScaler = NinePatchScaler::GetInstance();
+
+    wxSize baseKeySize(44, 58);
+    wxSize baseBigKeySize(66, 58);
+    wxSize scaledKeySize = uiScaler.ScaledSize(baseKeySize.GetWidth(), baseKeySize.GetHeight());
+    wxSize scaledBigKeySize = uiScaler.ScaledSize(baseBigKeySize.GetWidth(), baseBigKeySize.GetHeight());
+    int borderSize = 4;
+
+    // Determine suffix based on theme
+    wxString suffix = (ThemeManager::Get().GetCurrentTheme() == ThemeType::LIGHT) ? wxT("_Light") : wxT("");
+
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_UNUSED") + suffix, baseKeySize, scaledKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_BIGBUTTON") + suffix, baseBigKeySize, scaledBigKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_USED") + suffix, baseKeySize, scaledKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_ALMOST") + suffix, baseKeySize, scaledKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_CORRECT") + suffix, baseKeySize, scaledKeySize, borderSize));
+
+    // After reloading bitmaps, call ResetKeyboard to update all key visuals
+    ResetKeyboard();
 }
 
 cKeyboardENG::cKeyboardENG()
@@ -138,11 +167,15 @@ cKeyboardENG::cKeyboardENG()
 
     // Load scaled bitmaps using nine-patch scaling
     int borderSize = 4;
-    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_UNUSED"), baseKeySize, scaledKeySize, borderSize));
-    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_BIGBUTTON"), baseBigKeySize, scaledBigKeySize, borderSize));
-    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_USED"), baseKeySize, scaledKeySize, borderSize));
-    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_ALMOST"), baseKeySize, scaledKeySize, borderSize));
-    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_CORRECT"), baseKeySize, scaledKeySize, borderSize));
+
+    // Determine suffix based on theme
+    wxString suffix = (ThemeManager::Get().GetCurrentTheme() == ThemeType::LIGHT) ? wxT("_Light") : wxT("");
+
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_UNUSED") + suffix, baseKeySize, scaledKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_BIGBUTTON") + suffix, baseBigKeySize, scaledBigKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_USED") + suffix, baseKeySize, scaledKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_ALMOST") + suffix, baseKeySize, scaledKeySize, borderSize));
+    bitmapsKeys.push_back(ninePatchScaler.GetScaledBitmap(wxT("IDB_CORRECT") + suffix, baseKeySize, scaledKeySize, borderSize));
 }
 
 wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
@@ -172,7 +205,7 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
     for (int x = 0; x < 10; x++)
     {
         wxString label = keyboardString.at(keyPosition);
-        wxBitmap bitmapWithText = DrawTextOnBitmap(bitmapsKeys.at(0), label, keyFont, wxColor(*wxWHITE));
+        wxBitmap bitmapWithText = DrawTextOnBitmap(bitmapsKeys.at(0), label, keyFont, ThemeManager::Get().GetTextColor());
 
         gridKey[keyPosition] = new wxBitmapButton(parent, 500 + keyPosition, bitmapWithText, wxDefaultPosition, wxSize(bitmapsKeys[0].GetWidth(), bitmapsKeys[0].GetHeight()), wxBORDER_NONE);
         gridKey[keyPosition]->SetLabel(label);
@@ -186,7 +219,7 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
     for (int x = 0; x < 9; x++)
     {
         wxString label = keyboardString.at(keyPosition);
-        wxBitmap bitmapWithText = DrawTextOnBitmap(bitmapsKeys.at(0), label, keyFont, wxColor(*wxWHITE));
+        wxBitmap bitmapWithText = DrawTextOnBitmap(bitmapsKeys.at(0), label, keyFont, ThemeManager::Get().GetTextColor());
 
         gridKey[keyPosition] = new wxBitmapButton(parent, 500 + keyPosition, bitmapWithText, wxDefaultPosition, wxSize(bitmapsKeys[0].GetWidth(), bitmapsKeys[0].GetHeight()), wxBORDER_NONE);
         gridKey[keyPosition]->SetLabel(label);
@@ -198,7 +231,7 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
     }
 
     wxFont enterFont = wxFont(scaler.ScaledFontSize(9), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
-    wxBitmap enterBitmap = DrawTextOnBitmap(bitmapsKeys.at(1), wxT("ENTER"), enterFont, wxColor(*wxWHITE));
+    wxBitmap enterBitmap = DrawTextOnBitmap(bitmapsKeys.at(1), wxT("ENTER"), enterFont, ThemeManager::Get().GetTextColor());
 
     gridKey[keyPosition] = new wxBitmapButton(parent, 500 + keyPosition, enterBitmap, wxDefaultPosition, wxSize(bitmapsKeys[1].GetWidth(), bitmapsKeys[1].GetHeight()), wxBORDER_NONE);
     gridKey[keyPosition]->SetLabel(wxT("ENTER"));
@@ -211,7 +244,7 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
     for (int x = 0; x < 7; x++)
     {
         wxString label = keyboardString.at(keyPosition - 1);
-        wxBitmap bitmapWithText = DrawTextOnBitmap(bitmapsKeys.at(0), label, keyFont, wxColor(*wxWHITE));
+        wxBitmap bitmapWithText = DrawTextOnBitmap(bitmapsKeys.at(0), label, keyFont, ThemeManager::Get().GetTextColor());
 
         gridKey[keyPosition] = new wxBitmapButton(parent, 500 + keyPosition, bitmapWithText, wxDefaultPosition, wxSize(bitmapsKeys[0].GetWidth(), bitmapsKeys[0].GetHeight()), wxBORDER_NONE);
         gridKey[keyPosition]->SetLabel(label);
@@ -234,7 +267,7 @@ wxBoxSizer* cKeyboardENG::CreateKeyboard(wxWindow* parent)
         backspaceFont = wxFont(scaler.ScaledFontSize(18), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
         backspaceText = wxT("⌫");
     }
-    wxBitmap backspaceBitmap = DrawTextOnBitmap(bitmapsKeys.at(1), backspaceText, backspaceFont, wxColor(*wxWHITE));
+    wxBitmap backspaceBitmap = DrawTextOnBitmap(bitmapsKeys.at(1), backspaceText, backspaceFont, ThemeManager::Get().GetTextColor());
 
     gridKey[keyPosition] = new wxBitmapButton(parent, 500 + keyPosition, backspaceBitmap, wxDefaultPosition, wxSize(bitmapsKeys[1].GetWidth(), bitmapsKeys[1].GetHeight()), wxBORDER_NONE);
     gridKey[keyPosition]->SetLabel(wxT("backspace"));

@@ -10,6 +10,7 @@ public:
     ~cSave();
 
     void RefreshSaveFilesList();
+    void RefreshTheme();
 
 private:
     wxTextCtrl* saveNameInput;

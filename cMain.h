@@ -7,6 +7,8 @@
 #include "wx/wx.h"
 #include <wx/simplebook.h>
 
+wxDECLARE_EVENT(wxEVT_THEME_CHANGED, wxCommandEvent);
+
 class cMain : public wxFrame
 {
 public:
@@ -21,6 +23,7 @@ public:
 
     bool IsGameActive();
     void EndCurrentGame();
+    void RefreshAllPanelsTheme();
 
 private:
     wxSimplebook* cSimplebook;
@@ -36,5 +39,6 @@ private:
     void OnSwitchToSave(wxCommandEvent& evt);
     void OnSwitchToLoad(wxCommandEvent& evt);
     void OnSwitchToOptions(wxCommandEvent& evt);
+    void OnThemeChanged(wxCommandEvent& evt);
     void UpdateMenuState();
 };

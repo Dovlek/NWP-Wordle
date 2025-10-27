@@ -1,6 +1,7 @@
 #include "cLoad.h"
 #include "UIScaler.h"
 #include "cWordle.h"
+#include "Theme.h"
 #include <wx/dir.h>
 #include <wx/file.h>
 #include <wx/filename.h>
@@ -9,26 +10,26 @@
 
 cLoad::cLoad(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {
-    SetBackgroundColour(wxColor(20, 20, 20));
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
 
     UIScaler& scaler = UIScaler::GetInstance();
 
     // Title
     wxStaticText* title = new wxStaticText(this, wxID_ANY, "Load Game", wxDefaultPosition, wxDefaultSize);
-    title->SetBackgroundColour(wxColor(20, 20, 20));
-    title->SetForegroundColour(wxColor(*wxWHITE));
+    title->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    title->SetForegroundColour(ThemeManager::Get().GetTextColor());
     title->SetFont(wxFont(scaler.ScaledFontSize(24), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
     // Saved games list
     wxStaticText* listLabel = new wxStaticText(this, wxID_ANY, "Saved Games:", wxDefaultPosition, wxDefaultSize);
-    listLabel->SetBackgroundColour(wxColor(20, 20, 20));
-    listLabel->SetForegroundColour(wxColor(*wxWHITE));
+    listLabel->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    listLabel->SetForegroundColour(ThemeManager::Get().GetTextColor());
     listLabel->SetFont(wxFont(scaler.ScaledFontSize(14), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
     wxSize listSize = scaler.ScaledSize(400, 500);
     saveFilesList = new wxListBox(this, ID_SAVE_FILES_LIST_LOAD, wxDefaultPosition, listSize);
-    saveFilesList->SetBackgroundColour(wxColor(58, 58, 60));
-    saveFilesList->SetForegroundColour(wxColor(*wxWHITE));
+    saveFilesList->SetBackgroundColour(ThemeManager::Get().GetInputColor());
+    saveFilesList->SetForegroundColour(ThemeManager::Get().GetTextColor());
     saveFilesList->SetFont(wxFont(scaler.ScaledFontSize(12), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
     // Buttons
@@ -43,8 +44,8 @@ cLoad::cLoad(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
         wxButton* button = GetButtonById(buttonId);
         if (button)
         {
-            button->SetBackgroundColour(wxColor(58, 58, 60));
-            button->SetForegroundColour(wxColor(*wxWHITE));
+            button->SetBackgroundColour(ThemeManager::Get().GetInputColor());
+            button->SetForegroundColour(ThemeManager::Get().GetTextColor());
             button->SetCursor(wxCursor(wxCURSOR_HAND));
             button->SetFont(buttonFont);
         }
@@ -270,7 +271,7 @@ void cLoad::OnSaveFileSelected(wxCommandEvent& evt)
 void cLoad::OnButtonEnter(wxMouseEvent& evt)
 {
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
-    button->SetBackgroundColour(wxColor(129, 131, 132));
+    button->SetBackgroundColour(ThemeManager::Get().GetButtonHoverColor());
     button->Refresh();
     evt.Skip();
 }
@@ -278,7 +279,7 @@ void cLoad::OnButtonEnter(wxMouseEvent& evt)
 void cLoad::OnButtonLeave(wxMouseEvent& evt)
 {
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
-    button->SetBackgroundColour(wxColor(58, 58, 60));
+    button->SetBackgroundColour(ThemeManager::Get().GetInputColor());
     button->Refresh();
     evt.Skip();
 }
@@ -288,7 +289,7 @@ void cLoad::OnButtonSetFocus(wxFocusEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
 
     // Set to tab highlight color
-    button->SetBackgroundColour(wxColor(86, 87, 88));
+    button->SetBackgroundColour(ThemeManager::Get().GetButtonFocusColor());
     button->Refresh();
     evt.Skip();
 }
@@ -298,7 +299,7 @@ void cLoad::OnButtonKillFocus(wxFocusEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
 
     // Reset to the original background color
-    button->SetBackgroundColour(wxColor(58, 58, 60));
+    button->SetBackgroundColour(ThemeManager::Get().GetInputColor());
     button->Refresh();
     evt.Skip();
 }
@@ -354,4 +355,34 @@ wxButton* cLoad::GetButtonById(int id)
     default:
         return nullptr;
     }
+}
+
+void cLoad::RefreshTheme()
+{
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+
+    for (wxWindowList::compatibility_iterator node = GetChildren().GetFirst(); node; node = node->GetNext())
+    {
+        wxWindow* child = node->GetData();
+        if (wxStaticText* text = dynamic_cast<wxStaticText*>(child))
+        {
+            text->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+            text->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            text->Refresh();
+        }
+        else if (wxListBox* listBox = dynamic_cast<wxListBox*>(child))
+        {
+            listBox->SetBackgroundColour(ThemeManager::Get().GetInputColor());
+            listBox->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            listBox->Refresh();
+        }
+        else if (wxButton* button = dynamic_cast<wxButton*>(child))
+        {
+            button->SetBackgroundColour(ThemeManager::Get().GetInputColor());
+            button->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            button->Refresh();
+        }
+    }
+
+    Refresh();
 }

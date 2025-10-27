@@ -20,6 +20,7 @@ public:
     virtual wxBoxSizer* CreateKeyboard(wxWindow* parent) = 0;
     void UpdateKeyboardColors(const wxString& guess, const std::vector<int>& states);
     void ResetKeyboard();
+    void ReloadBitmaps();
 
     void BindKeyboardEvents(wxEvtHandler* handler, void (wxEvtHandler::*method)(wxCommandEvent&));
 

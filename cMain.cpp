@@ -1,5 +1,6 @@
 #include "cMain.h"
 #include "EmbeddedResources.h"
+#include "Theme.h"
 #include <wx/mstream.h>
 #ifdef __WXMSW__
 #include <dwmapi.h>
@@ -31,6 +32,7 @@ wxDEFINE_EVENT(wxEVT_CONTINUE_GAME, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SWITCH_TO_SAVE, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SWITCH_TO_LOAD, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SWITCH_TO_OPTIONS, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_THEME_CHANGED, wxCommandEvent);
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, wxDefaultSize)
 {
@@ -51,7 +53,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     EnableDarkTitleBar(this);
 
     wxPanel* mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
-    mainPanel->SetBackgroundColour(wxColor(20, 20, 20));
+    mainPanel->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
 
     cSimplebook = new wxSimplebook(mainPanel, wxID_ANY);
 
@@ -82,6 +84,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "NWP - Wordle", wxDefaultPosition, w
     Bind(wxEVT_SWITCH_TO_SAVE, &cMain::OnSwitchToSave, this);
     Bind(wxEVT_SWITCH_TO_LOAD, &cMain::OnSwitchToLoad, this);
     Bind(wxEVT_SWITCH_TO_OPTIONS, &cMain::OnSwitchToOptions, this);
+    Bind(wxEVT_THEME_CHANGED, &cMain::OnThemeChanged, this);
 
     // Set up the main sizer
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -185,6 +188,7 @@ void cMain::OnContinueGame(wxCommandEvent& evt)
     if (wordlePanel)
     {
         wordlePanel->ContinueFromFinishedGame();
+        wordlePanel->ResumeTimer();
     }
 
     SwitchPageToWordle();
@@ -215,4 +219,36 @@ void cMain::OnSwitchToOptions(wxCommandEvent& evt)
         optionsPanel->LoadSettings();
         SwitchPageToOptions();
     }
+}
+
+void cMain::OnThemeChanged(wxCommandEvent& evt)
+{
+    RefreshAllPanelsTheme();
+}
+
+void cMain::RefreshAllPanelsTheme()
+{
+    // Update main panel background
+    wxPanel* mainPanel = dynamic_cast<wxPanel*>(cSimplebook->GetParent());
+    if (mainPanel)
+    {
+        mainPanel->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+        mainPanel->Refresh();
+    }
+
+    // Update frame background
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    Refresh();
+
+    // Refresh all panels
+    if (wordlePanel)
+        wordlePanel->RefreshTheme();
+    if (menuPanel)
+        menuPanel->RefreshTheme();
+    if (optionsPanel)
+        optionsPanel->RefreshTheme();
+    if (savePanel)
+        savePanel->RefreshTheme();
+    if (loadPanel)
+        loadPanel->RefreshTheme();
 }

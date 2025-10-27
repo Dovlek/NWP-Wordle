@@ -1,6 +1,7 @@
 #include "cSave.h"
 #include "UIScaler.h"
 #include "cWordle.h"
+#include "Theme.h"
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <wx/simplebook.h>
@@ -9,39 +10,39 @@
 
 cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {
-    SetBackgroundColour(wxColor(20, 20, 20));
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
 
     UIScaler& scaler = UIScaler::GetInstance();
 
     // Title
     wxStaticText* title = new wxStaticText(this, wxID_ANY, "Save Game", wxDefaultPosition, wxDefaultSize);
-    title->SetBackgroundColour(wxColor(20, 20, 20));
-    title->SetForegroundColour(wxColor(*wxWHITE));
+    title->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    title->SetForegroundColour(ThemeManager::Get().GetTextColor());
     title->SetFont(wxFont(scaler.ScaledFontSize(24), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
     // Save name input
     wxStaticText* nameLabel = new wxStaticText(this, wxID_ANY, "Save Name:", wxDefaultPosition, wxDefaultSize);
-    nameLabel->SetBackgroundColour(wxColor(20, 20, 20));
-    nameLabel->SetForegroundColour(wxColor(*wxWHITE));
+    nameLabel->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    nameLabel->SetForegroundColour(ThemeManager::Get().GetTextColor());
     nameLabel->SetFont(wxFont(scaler.ScaledFontSize(14), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
     wxSize inputSize = scaler.ScaledSize(400, 25);
     saveNameInput = new wxTextCtrl(this, ID_SAVE_NAME_INPUT, "", wxDefaultPosition, inputSize, wxTE_PROCESS_ENTER);
-    saveNameInput->SetBackgroundColour(wxColor(58, 58, 60));
-    saveNameInput->SetForegroundColour(wxColor(*wxWHITE));
+    saveNameInput->SetBackgroundColour(ThemeManager::Get().GetInputColor());
+    saveNameInput->SetForegroundColour(ThemeManager::Get().GetTextColor());
     saveNameInput->SetFont(wxFont(scaler.ScaledFontSize(12), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
     saveNameInput->SetMaxLength(25);
 
     // Existing saves list
     wxStaticText* listLabel = new wxStaticText(this, wxID_ANY, "Existing Saves:", wxDefaultPosition, wxDefaultSize);
-    listLabel->SetBackgroundColour(wxColor(20, 20, 20));
-    listLabel->SetForegroundColour(wxColor(*wxWHITE));
+    listLabel->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    listLabel->SetForegroundColour(ThemeManager::Get().GetTextColor());
     listLabel->SetFont(wxFont(scaler.ScaledFontSize(14), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
     wxSize listSize = scaler.ScaledSize(400, 425);
     saveFilesList = new wxListBox(this, ID_SAVE_FILES_LIST, wxDefaultPosition, listSize);
-    saveFilesList->SetBackgroundColour(wxColor(58, 58, 60));
-    saveFilesList->SetForegroundColour(wxColor(*wxWHITE));
+    saveFilesList->SetBackgroundColour(ThemeManager::Get().GetInputColor());
+    saveFilesList->SetForegroundColour(ThemeManager::Get().GetTextColor());
     saveFilesList->SetFont(wxFont(scaler.ScaledFontSize(12), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false));
 
     // Buttons
@@ -57,8 +58,8 @@ cSave::cSave(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
         wxButton* button = GetButtonById(buttonId);
         if (button)
         {
-            button->SetBackgroundColour(wxColor(58, 58, 60));
-            button->SetForegroundColour(wxColor(*wxWHITE));
+            button->SetBackgroundColour(ThemeManager::Get().GetInputColor());
+            button->SetForegroundColour(ThemeManager::Get().GetTextColor());
             button->SetCursor(wxCursor(wxCURSOR_HAND));
             button->SetFont(buttonFont);
         }
@@ -409,7 +410,7 @@ void cSave::OnSaveFileSelected(wxCommandEvent& evt)
 void cSave::OnButtonEnter(wxMouseEvent& evt)
 {
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
-    button->SetBackgroundColour(wxColor(129, 131, 132));
+    button->SetBackgroundColour(ThemeManager::Get().GetButtonHoverColor());
     button->Refresh();
     evt.Skip();
 }
@@ -417,7 +418,7 @@ void cSave::OnButtonEnter(wxMouseEvent& evt)
 void cSave::OnButtonLeave(wxMouseEvent& evt)
 {
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
-    button->SetBackgroundColour(wxColor(58, 58, 60));
+    button->SetBackgroundColour(ThemeManager::Get().GetInputColor());
     button->Refresh();
     evt.Skip();
 }
@@ -427,7 +428,7 @@ void cSave::OnButtonSetFocus(wxFocusEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
 
     // Set to tab highlight color
-    button->SetBackgroundColour(wxColor(86, 87, 88));
+    button->SetBackgroundColour(ThemeManager::Get().GetButtonFocusColor());
     button->Refresh();
     evt.Skip();
 }
@@ -437,7 +438,7 @@ void cSave::OnButtonKillFocus(wxFocusEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
 
     // Reset to the original background color
-    button->SetBackgroundColour(wxColor(58, 58, 60));
+    button->SetBackgroundColour(ThemeManager::Get().GetInputColor());
     button->Refresh();
     evt.Skip();
 }
@@ -509,4 +510,40 @@ wxButton* cSave::GetButtonById(int id)
     default:
         return nullptr;
     }
+}
+
+void cSave::RefreshTheme()
+{
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+
+    for (wxWindowList::compatibility_iterator node = GetChildren().GetFirst(); node; node = node->GetNext())
+    {
+        wxWindow* child = node->GetData();
+        if (wxStaticText* text = dynamic_cast<wxStaticText*>(child))
+        {
+            text->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+            text->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            text->Refresh();
+        }
+        else if (wxTextCtrl* textCtrl = dynamic_cast<wxTextCtrl*>(child))
+        {
+            textCtrl->SetBackgroundColour(ThemeManager::Get().GetInputColor());
+            textCtrl->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            textCtrl->Refresh();
+        }
+        else if (wxListBox* listBox = dynamic_cast<wxListBox*>(child))
+        {
+            listBox->SetBackgroundColour(ThemeManager::Get().GetInputColor());
+            listBox->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            listBox->Refresh();
+        }
+        else if (wxButton* button = dynamic_cast<wxButton*>(child))
+        {
+            button->SetBackgroundColour(ThemeManager::Get().GetInputColor());
+            button->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            button->Refresh();
+        }
+    }
+
+    Refresh();
 }

@@ -25,6 +25,26 @@ extern const unsigned char IDB_UNUSED_data[];
 extern const size_t IDB_UNUSED_data_size;
 extern const unsigned char IDB_USED_data[];
 extern const size_t IDB_USED_data_size;
+extern const unsigned char IDB_UNMARKED_Light_data[];
+extern const size_t IDB_UNMARKED_Light_data_size;
+extern const unsigned char IDB_MARKED_Light_data[];
+extern const size_t IDB_MARKED_Light_data_size;
+extern const unsigned char IDB_COLD_Light_data[];
+extern const size_t IDB_COLD_Light_data_size;
+extern const unsigned char IDB_WARM_Light_data[];
+extern const size_t IDB_WARM_Light_data_size;
+extern const unsigned char IDB_HOT_Light_data[];
+extern const size_t IDB_HOT_Light_data_size;
+extern const unsigned char IDB_ALMOST_Light_data[];
+extern const size_t IDB_ALMOST_Light_data_size;
+extern const unsigned char IDB_BIGBUTTON_Light_data[];
+extern const size_t IDB_BIGBUTTON_Light_data_size;
+extern const unsigned char IDB_CORRECT_Light_data[];
+extern const size_t IDB_CORRECT_Light_data_size;
+extern const unsigned char IDB_UNUSED_Light_data[];
+extern const size_t IDB_UNUSED_Light_data_size;
+extern const unsigned char IDB_USED_Light_data[];
+extern const size_t IDB_USED_Light_data_size;
 
 // Embedded word list
 extern const char* EMBEDDED_WORDS[];

@@ -1,15 +1,16 @@
 #include "cMenu.h"
 #include "UIScaler.h"
+#include "Theme.h"
 
 cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {
-    SetBackgroundColour(wxColor(20, 20, 20));
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
 
     UIScaler& scaler = UIScaler::GetInstance();
 
     wxStaticText* title = new wxStaticText(this, wxID_ANY, "Let's play WORDLE!", wxDefaultPosition, wxDefaultSize);
-    title->SetBackgroundColour(wxColor(20, 20, 20));
-    title->SetForegroundColour(wxColor(*wxWHITE));
+    title->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+    title->SetForegroundColour(ThemeManager::Get().GetTextColor());
     title->SetFont(wxFont(scaler.ScaledFontSize(24), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false));
 
     wxSize buttonSize = scaler.ScaledSize(350, 80);
@@ -27,15 +28,15 @@ cMenu::cMenu(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wx
         wxButton* button = GetButtonById(buttonId);
         if (button)
         {
-            button->SetBackgroundColour(wxColor(58, 58, 60));
-            button->SetForegroundColour(wxColor(*wxWHITE));
+            button->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
+            button->SetForegroundColour(ThemeManager::Get().GetTextColor());
             button->SetCursor(wxCursor(wxCURSOR_HAND));
             button->SetFont(buttonFont);
         }
     }
 
     // Initially disable continue button
-    continueButton->SetBackgroundColour(wxColor(35, 35, 35));
+    continueButton->SetBackgroundColour(ThemeManager::Get().GetButtonDisabledColor());
     continueButton->Enable(false);
 
     // Bind button events
@@ -100,11 +101,11 @@ void cMenu::SetContinueButtonEnabled(bool enabled)
     if (enabled)
     {
         continueButton->Enable(enabled);
-        continueButton->SetBackgroundColour(wxColor(58, 58, 60));
+        continueButton->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
     }
     else
     {
-        continueButton->SetBackgroundColour(wxColor(35, 35, 35));
+        continueButton->SetBackgroundColour(ThemeManager::Get().GetButtonDisabledColor());
         continueButton->Enable(enabled);
     }
     continueButton->Refresh();
@@ -190,7 +191,7 @@ void cMenu::OnButtonEnter(wxMouseEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
 
     // Set to mouse highlight color
-    button->SetBackgroundColour(wxColor(129, 131, 132));
+    button->SetBackgroundColour(ThemeManager::Get().GetButtonHoverColor());
     button->Refresh();
     evt.Skip();
 }
@@ -200,7 +201,7 @@ void cMenu::OnButtonLeave(wxMouseEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
 
     // Reset to the original background color
-    button->SetBackgroundColour(wxColor(58, 58, 60));
+    button->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
     button->Refresh();
     evt.Skip();
 }
@@ -210,7 +211,7 @@ void cMenu::OnButtonSetFocus(wxFocusEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
 
     // Set to tab highlight color
-    button->SetBackgroundColour(wxColor(86, 87, 88));
+    button->SetBackgroundColour(ThemeManager::Get().GetButtonFocusColor());
     button->Refresh();
     evt.Skip();
 }
@@ -220,7 +221,7 @@ void cMenu::OnButtonKillFocus(wxFocusEvent& evt)
     wxButton* button = static_cast<wxButton*>(evt.GetEventObject());
 
     // Reset to the original background color
-    button->SetBackgroundColour(wxColor(58, 58, 60));
+    button->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
     button->Refresh();
     evt.Skip();
 }
@@ -250,4 +251,33 @@ wxButton* cMenu::GetButtonById(int id)
     default:
         return nullptr;
     }
+}
+
+void cMenu::RefreshTheme()
+{
+    // Update panel background
+    SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+
+    // Update title and all text controls
+    for (wxWindowList::compatibility_iterator node = GetChildren().GetFirst(); node; node = node->GetNext())
+    {
+        wxWindow* child = node->GetData();
+        if (wxStaticText* text = dynamic_cast<wxStaticText*>(child))
+        {
+            text->SetBackgroundColour(ThemeManager::Get().GetBackgroundColor());
+            text->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            text->Refresh();
+        }
+        else if (wxButton* button = dynamic_cast<wxButton*>(child))
+        {
+            if (button == continueButton && !continueButton->IsEnabled())
+                button->SetBackgroundColour(ThemeManager::Get().GetButtonDisabledColor());
+            else
+                button->SetBackgroundColour(ThemeManager::Get().GetButtonColor());
+            button->SetForegroundColour(ThemeManager::Get().GetTextColor());
+            button->Refresh();
+        }
+    }
+
+    Refresh();
 }
